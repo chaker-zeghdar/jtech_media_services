@@ -28,7 +28,7 @@ export async function FullRange() {
   return (
     <Section
       id="range"
-      background="white"
+      background="gray"
       device={<Halftone corner="top-end" size={210} opacity={0.35} />}
     >
       <Container>
@@ -37,7 +37,7 @@ export async function FullRange() {
         <Carousel label={`${t('title')} — ${tA11y('carouselProgress')}`} className="mt-14">
           {products.map((product) => (
             <div key={product.slug} className={RAIL_ITEM}>
-              <ProductCard product={product} sizes={RAIL_SIZES} />
+              <ProductCard product={product} bed="white" sizes={RAIL_SIZES} />
             </div>
           ))}
         </Carousel>

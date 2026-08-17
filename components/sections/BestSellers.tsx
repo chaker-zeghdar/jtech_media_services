@@ -23,7 +23,7 @@ export async function BestSellers() {
   return (
     <Section
       id="bestsellers"
-      background="gray"
+      background="white"
       device={<CornerBlob corner="bottom-start" size={38} opacity={0.08} />}
     >
       <Container>
@@ -43,7 +43,6 @@ export async function BestSellers() {
             <Reveal key={product.slug} as="li" delayMs={(index % 4) * 70}>
               <ProductCard
                 product={product}
-                quickView
                 sizes="(max-width: 767px) 44vw, (max-width: 1023px) 30vw, 300px"
               />
             </Reveal>

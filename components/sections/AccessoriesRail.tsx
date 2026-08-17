@@ -20,7 +20,7 @@ export async function AccessoriesRail() {
   return (
     <Section
       id="accessories"
-      background="white"
+      background="gray"
       device={<Halftone corner="bottom-start" size={190} opacity={0.35} />}
     >
       <Container>
@@ -29,7 +29,7 @@ export async function AccessoriesRail() {
         <Carousel label={`${t('title')} — ${tA11y('carouselProgress')}`} className="mt-14">
           {products.map((product) => (
             <div key={product.slug} className={RAIL_ITEM}>
-              <ProductCard product={product} sizes={RAIL_SIZES} />
+              <ProductCard product={product} bed="white" sizes={RAIL_SIZES} />
             </div>
           ))}
         </Carousel>

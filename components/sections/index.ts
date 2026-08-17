@@ -1,11 +1,12 @@
 export { AccessoriesRail } from './AccessoriesRail';
 export { BestSellers } from './BestSellers';
+export { BrandMarquee } from './BrandMarquee';
 export { Categories } from './Categories';
 export { Contact } from './Contact';
 export { Delivery } from './Delivery';
+export { FeatureMosaic } from './FeatureMosaic';
 export { FeaturedProduct } from './FeaturedProduct';
 export { FullRange } from './FullRange';
 export { Hero } from './Hero';
-export { InstagramStrip } from './InstagramStrip';
 export { Services } from './Services';
 export { WhyJtech } from './WhyJtech';
