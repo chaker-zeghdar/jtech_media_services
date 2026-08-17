@@ -22,13 +22,15 @@ type QuickViewTriggerProps = {
 };
 
 /**
- * The only interactive part of a product card, split out as its own island.
+ * The "learn more" link on a product card, and the only interactive part of it.
  *
- * <ProductCard /> is a server component: its markup, hover choreography and
- * order link are all static HTML and CSS. Keeping the whole card a client
- * component meant React hydrated ~24 full card trees on load for the sake of one
- * boolean each. Now only the cards that actually offer quick view ship JS, and
- * what they ship is a button.
+ * <ProductCard /> is a server component: its markup and its whole hover
+ * choreography are static HTML and CSS. This island is a single text link, so a
+ * card costs one small hydration boundary rather than a hydrated card tree.
+ *
+ * Styled to match `Button`'s `link` tier exactly — gold-text on light surfaces
+ * (the brand gold is 2.1:1 on white and can never be text) with the chevron
+ * sliding 3px toward the inline end on hover.
  */
 export function QuickViewTrigger({ product, label, ariaLabel }: QuickViewTriggerProps) {
   const [open, setOpen] = useState(false);
@@ -44,18 +46,18 @@ export function QuickViewTrigger({ product, label, ariaLabel }: QuickViewTrigger
           setOpen(true);
         }}
         aria-label={ariaLabel}
-        className="absolute inset-0 z-30 flex items-start justify-end p-3.5"
+        className="group/link inline-flex items-center gap-1.5 text-sm font-semibold leading-none text-gold-text transition-colors duration-200 ease-brand hover:text-ink"
       >
-        <span
+        {label}
+        <Icon
+          name="chevron"
+          size={16}
           className={cn(
-            'inline-flex items-center gap-1.5 rounded-full bg-ink/90 px-3.5 py-2 text-pill text-white',
-            'opacity-0 transition-opacity duration-300 ease-brand',
-            'group-hover:opacity-100 group-focus-within:opacity-100',
+            'rtl:-scale-x-100',
+            'transition-transform duration-200 ease-brand',
+            'ltr:group-hover/link:translate-x-[3px] rtl:group-hover/link:-translate-x-[3px]',
           )}
-        >
-          <Icon name="camera" size={14} />
-          {label}
-        </span>
+        />
       </button>
 
       {mounted ? (

@@ -2,89 +2,78 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import type { Product } from '@/content/schemas';
 import { whatsappLink } from '@/content/contact';
 import { cn } from '@/lib/cn';
-import { pickLocale } from '@/lib/format';
-import { priceFrom, primaryVariant } from '@/lib/product';
+import { firstClause, pickLocale } from '@/lib/format';
+import { primaryBadge, priceFrom, primaryVariant } from '@/lib/product';
 import { Badge } from './Badge';
-import { Icon } from './Icon';
-import { Price } from './Price';
+import { Button } from './Button';
+import { PriceFrom } from './Price';
 import { ProductImage } from './ProductImage';
 import { QuickViewTrigger } from './QuickViewTrigger';
-import { StockDot } from './StockDot';
 
 type ProductCardProps = {
   product: Product;
   /** Passed through to next/image. Required — see ProductImage. */
   sizes?: string;
   /**
-   * Mounts the quick-view island. Only the best-sellers grid enables it; the
-   * carousels ship as pure static markup.
+   * The image bed's resting colour, which must CONTRAST with the section behind
+   * it. `gray` is the default (DESIGN.md: bed is #F5F5F7) and is correct on a
+   * white section; on a gray-50 section the bed would vanish into the background
+   * and the cards would read as images floating with no container, so those
+   * sections pass `white`. The hover tint is gold-tint either way.
    */
-  quickView?: boolean;
+  bed?: 'gray' | 'white';
   className?: string;
 };
 
 /**
- * The component that decides whether the site looks real.
+ * Apple lineup treatment, not an e-commerce tile.
  *
- * A **server component**. All of the choreography below is CSS on the card's
- * `group`, so the card needs no JavaScript at all:
+ * Order is deliberate: bed → badge → name → one-line tagline → "من X دج" → two
+ * text links. There is no solid button on the card face — Apple's lineup cards
+ * use two links, and the filled button is reserved for the featured block and the
+ * sticky mobile bar, which is what keeps it meaning something.
+ *
+ * Exactly ONE badge, and it sits above the name rather than floating over the
+ * image: stacked badges over a product read as a rendering fault.
+ *
+ * A **server component**. The hover choreography is CSS on the card's `group`:
  *   bed         gray-50 → gold-tint
  *   light sweep one diagonal white pass over 600ms (globals.css)
  *   product     lifts 6px and rotates −1deg
  *   spec pills  fade in along the bottom of the bed
- *   order       slides up from the card's bottom edge
  *
- * Every reveal is also bound to `group-focus-within`, so a keyboard user gets the
- * same affordances a mouse user does — a hover-only control is an inaccessible
- * control.
+ * Only <QuickViewTrigger /> is a client island, and it is one text link.
  *
- * Only <QuickViewTrigger /> is a client island, and only where quick view is
- * actually offered. Hydrating every card wholesale cost main-thread time for one
- * boolean per card.
- *
- * PHASE 2: `order` deep-links to WhatsApp with the product name prefilled,
- * because there is no cart yet. Swap the <a> for an addToCart handler and
- * nothing else about this component needs to change.
+ * PHASE 2: "اعرف أكثر" opens the quick view because product detail pages don't
+ * exist yet; point it at /products/{slug} when they do. "اطلبها" deep-links to
+ * WhatsApp with the product name prefilled because there is no cart yet.
  */
 export async function ProductCard({
   product,
   sizes = '(max-width: 639px) 78vw, (max-width: 1023px) 44vw, (max-width: 1439px) 30vw, 300px',
-  quickView = false,
+  bed = 'gray',
   className,
 }: ProductCardProps) {
   const locale = await getLocale();
   const t = await getTranslations('product');
 
   const name = pickLocale(product.name, locale);
+  const tagline = firstClause(pickLocale(product.description, locale));
   const variant = primaryVariant(product);
-  const lowest = priceFrom(product);
+  const badge = primaryBadge(product);
   const specPills = product.specs.slice(0, 2);
 
   return (
-    <article
-      className={cn(
-        'group relative flex h-full flex-col overflow-hidden rounded-card pb-14',
-        className,
-      )}
-    >
+    <article className={cn('group relative flex h-full flex-col', className)}>
       {/* ---- Image bed --------------------------------------------------- */}
       <div
         className={cn(
-          'light-sweep relative isolate aspect-[4/5] overflow-hidden rounded-card bg-gray-50',
+          'light-sweep relative isolate aspect-[4/5] overflow-hidden rounded-card',
+          bed === 'white' ? 'bg-white' : 'bg-gray-50',
           'transition-colors duration-500 ease-brand',
           'group-hover:bg-gold-tint group-focus-within:bg-gold-tint',
         )}
       >
-        {product.badges.length > 0 ? (
-          <ul className="absolute start-3.5 top-3.5 z-20 flex flex-col items-start gap-1.5">
-            {product.badges.map((badge) => (
-              <li key={badge}>
-                <Badge badge={badge} />
-              </li>
-            ))}
-          </ul>
-        ) : null}
-
         <div
           className={cn(
             'absolute inset-0 z-10 flex items-center justify-center p-8',
@@ -122,50 +111,41 @@ export async function ProductCard({
             ))}
           </div>
         ) : null}
-
-        {quickView ? (
-          <QuickViewTrigger
-            product={product}
-            label={t('quickView')}
-            ariaLabel={t('quickViewOpen', { product: name })}
-          />
-        ) : null}
       </div>
 
       {/* ---- Info -------------------------------------------------------- */}
-      <div className="mt-5 flex flex-1 flex-col items-start gap-2">
-        {/* ink/70, not gray-700: where a CornerBlob tints the section bed
-            (#F5F5F7 + 8% gold = #F5EFE7), gray-700 measures 4.43:1 at 12px and
-            misses AA. This clears 5.8:1 on white, gray and tinted beds alike. */}
-        <p className="text-caption uppercase text-ink/70">{product.brand}</p>
-        <h3 className="text-base font-semibold leading-snug">{name}</h3>
-        <div className="mt-auto pt-2">
-          <Price value={lowest} compareAt={lowest === variant.price ? variant.compareAt : null} />
-        </div>
-        <StockDot status={variant.stock} />
-      </div>
+      <div className="mt-5 flex flex-1 flex-col items-start">
+        {badge ? (
+          <div className="mb-3">
+            <Badge badge={badge} />
+          </div>
+        ) : null}
 
-      {/* ---- Order: slides up from the card's bottom edge ----------------
-          The 56px of pb on the card reserves this strip, so the reveal costs
-          no layout shift. */}
-      <div
-        className={cn(
-          'absolute inset-x-0 bottom-0 z-20 pt-2',
-          'translate-y-full opacity-0 transition-[transform,opacity] duration-300 ease-brand',
-          'group-hover:translate-y-0 group-hover:opacity-100',
-          'group-focus-within:translate-y-0 group-focus-within:opacity-100',
-        )}
-      >
-        <a
-          href={whatsappLink(t('orderMessage', { product: name }))}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-gray-700"
-        >
-          <Icon name="whatsapp" size={16} />
-          {t('order')}
-          <span className="sr-only">— {name}</span>
-        </a>
+        <h3 className="text-h3 font-semibold leading-tight">{name}</h3>
+
+        <p className="mt-2 max-w-[34ch] text-sm text-gray-700">{tagline}</p>
+
+        <div className="mt-4">
+          <PriceFrom value={priceFrom(product)} />
+        </div>
+
+        {/* Two text links, never a solid button — see the note above. */}
+        <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <QuickViewTrigger
+            product={product}
+            label={t('learnMore')}
+            ariaLabel={t('quickViewOpen', { product: name })}
+          />
+          <Button
+            variant="link"
+            size="sm"
+            href={whatsappLink(t('orderMessage', { product: name }))}
+            external
+            ariaLabel={`${t('order')} — ${name}`}
+          >
+            {t('order')}
+          </Button>
+        </div>
       </div>
     </article>
   );

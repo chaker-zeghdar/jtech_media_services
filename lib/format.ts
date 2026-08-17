@@ -25,6 +25,24 @@ export function pickLocale(text: LocalizedText, locale: Locale): string {
 }
 
 /**
+ * The first clause of a description, for the one-line tagline on a product card.
+ *
+ * Splits on sentence enders only — never on a comma, because Arabic uses `،`
+ * mid-phrase and cutting there ("التيتانيوم") strands a fragment rather than a
+ * clause. Falls back to a word-boundary truncation when the first sentence is
+ * still too long for a card.
+ */
+export function firstClause(text: string, maxChars = 72): string {
+  const end = text.search(/[.!?؟]/u);
+  const clause = (end > 8 ? text.slice(0, end) : text).trim();
+  if (clause.length <= maxChars) return clause;
+
+  const slice = clause.slice(0, maxChars);
+  const lastSpace = slice.lastIndexOf(' ');
+  return `${(lastSpace > 20 ? slice.slice(0, lastSpace) : slice).trim()}…`;
+}
+
+/**
  * Percentage saved against a compare-at price, rounded down so the claim is
  * never overstated. Returns null when there's no discount to show.
  */

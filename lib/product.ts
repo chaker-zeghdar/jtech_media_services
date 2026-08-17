@@ -1,4 +1,19 @@
-import type { Product, ProductColour, ProductVariant } from '@/content/schemas';
+import type { Badge, Product, ProductColour, ProductVariant } from '@/content/schemas';
+
+/**
+ * Cards show exactly ONE badge. Stacking two ("جديد" over "الأكثر مبيعاً") reads
+ * as a rendering bug rather than as emphasis, so this picks the single most
+ * useful one: an active deal beats novelty, novelty beats scarcity, and a
+ * generic warranty note is the weakest claim of the set.
+ */
+const BADGE_PRIORITY: readonly Badge[] = ['promo', 'new', 'last-units', 'bestseller', 'warranty'];
+
+export function primaryBadge(product: Product): Badge | null {
+  for (const badge of BADGE_PRIORITY) {
+    if (product.badges.includes(badge)) return badge;
+  }
+  return null;
+}
 
 /**
  * Pure product selectors.
