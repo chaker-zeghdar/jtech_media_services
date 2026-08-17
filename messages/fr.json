@@ -3,15 +3,14 @@
     "title": "JTECH Media Services — Téléphones, accessoires et ordinateurs à Batna",
     "description": "iPhone, Samsung, Android et ordinateurs authentiques avec garantie écrite. Livraison dans les 58 wilayas, paiement à la réception, réparation et déblocage en magasin à Batna."
   },
-
   "common": {
     "currency": "DA",
     "priceFrom": "À partir de",
     "viewAll": "Tout voir",
     "close": "Fermer",
-    "free": "Gratuit"
+    "free": "Gratuit",
+    "priceNote": "Prix en dinars algériens, susceptibles de changer. Le prix final est confirmé avant expédition."
   },
-
   "a11y": {
     "skipToContent": "Aller au contenu",
     "mainContent": "Contenu principal",
@@ -39,7 +38,6 @@
     "openTiktok": "Compte TikTok de JTECH",
     "expandSection": "Ouvrir la section"
   },
-
   "badges": {
     "new": "Nouveau",
     "bestseller": "Meilleure vente",
@@ -47,19 +45,16 @@
     "lastUnits": "Dernières pièces",
     "warranty": "Sous garantie"
   },
-
   "stock": {
     "inStock": "En stock",
     "lowStock": "Dernières pièces",
     "outOfStock": "Épuisé"
   },
-
   "announcement": {
     "delivery": "Livraison dans les 58 wilayas",
     "cod": "Paiement à la réception",
     "call": "Appelez-nous"
   },
-
   "nav": {
     "categories": "Catégories",
     "featured": "En vedette",
@@ -72,21 +67,18 @@
     "contact": "Contact",
     "order": "Commander"
   },
-
   "hero": {
     "eyebrow": "Téléphonie et informatique à Batna",
     "title": "Authentique. Garanti. Livré.",
     "subhead": "iPhone, Samsung, Android et ordinateurs — garantie écrite, livraison dans les 58 wilayas, et vous payez à la réception.",
     "ctaPrimary": "Voir la gamme",
     "ctaSecondary": "Nous écrire sur WhatsApp",
-    "trust": "Plus de 4 ans au service des clients de Batna et de l’Est algérien."
+    "trust": "Plus de 7 ans à vendre, acheter et réparer — et plus de 5 000 clients satisfaits."
   },
-
   "categories": {
     "title": "Qu’est-ce que vous cherchez ?",
     "subhead": "Cinq catégories, toutes disponibles en magasin et sous garantie."
   },
-
   "featured": {
     "eyebrow": "L’appareil en vedette",
     "title": "Le titane, et une caméra de cinéma.",
@@ -96,22 +88,18 @@
     "cta": "Commander l’iPhone 16 Pro",
     "ctaSecondary": "Voir tous les iPhone"
   },
-
   "range": {
     "title": "La gamme complète",
     "subhead": "Téléphones et ordinateurs choisis un par un, tous authentiques et scellés."
   },
-
   "bestsellers": {
     "title": "Meilleures ventes",
     "subhead": "Ce que nos clients achètent le plus ce mois-ci."
   },
-
   "accessoriesSection": {
     "title": "Des accessoires qui tiennent",
     "subhead": "Chargeurs, écouteurs, coques et protections — sélectionnés et testés avant d’être mis en rayon."
   },
-
   "why": {
     "title": "Pourquoi acheter chez JTECH",
     "subhead": "Quatre raisons claires, sans discours superflu.",
@@ -132,16 +120,15 @@
         "title": "On ne disparaît pas après la vente",
         "body": "Un problème ? Vous revenez au magasin et on s’en occupe : réparation, échange ou coup de main côté logiciel."
       }
-    }
+    },
+    "socialProof": "Plus de 160 000 abonnés sur Instagram, 56 000 sur TikTok et 50 000 sur Facebook."
   },
-
   "services": {
     "title": "Nos services en magasin",
     "subhead": "On ne fait pas que vendre. On répare, on débloque, et on règle les problèmes qui arrivent.",
     "durationLabel": "Délai",
     "cta": "Prendre rendez-vous sur WhatsApp"
   },
-
   "delivery": {
     "title": "On livre où que vous soyez",
     "subhead": "58 wilayas, paiement à la réception, et commande confirmée en moins de 24 heures.",
@@ -154,24 +141,9 @@
     "note": "Les tarifs affichés sont la grille standard. Les wilayas du Grand Sud coûtent un peu plus selon le transporteur — nous vous le disons à la confirmation, avant tout paiement.",
     "cta": "Commander sur WhatsApp"
   },
-
-  "instagram": {
-    "title": "Suivez-nous sur Instagram",
-    "subhead": "Les nouveautés, les offres et des conseils utiles — chaque jour sur {handle}.",
-    "cta": "Voir le compte",
-    "posts": {
-      "p1": "L’iPhone 16 Pro est arrivé, tous coloris",
-      "p2": "Offre accessoires : deux achetés, le troisième à moitié prix",
-      "p3": "Remplacement d’écran le jour même",
-      "p4": "Galaxy Z Flip 8 — venez l’essayer en magasin",
-      "p5": "Pourquoi la garantie écrite change tout",
-      "p6": "Livraison 58 wilayas, paiement à la réception"
-    }
-  },
-
   "contact": {
     "title": "Passez au magasin ou écrivez-nous",
-    "subhead": "Nous sommes au centre-ville de Batna, et nous répondons sur WhatsApp du matin au soir.",
+    "subhead": "Le magasin est face au CHU de Batna, et nous répondons sur WhatsApp du matin au soir.",
     "phone": "Téléphone",
     "whatsapp": "WhatsApp",
     "email": "E-mail",
@@ -179,9 +151,11 @@
     "hours": "Horaires",
     "follow": "Suivez-nous",
     "mapCta": "Ouvrir dans la carte",
-    "placeholderNotice": "Les coordonnées affichées sont provisoires et seront remplacées par celles du magasin avant la mise en ligne."
+    "departments": "Nos numéros",
+    "website": "Site web",
+    "emailNotice": "L’adresse e-mail est déduite du nom de domaine et n’est pas encore confirmée par le client.",
+    "mapNotice": "Le repère sur la carte est approximatif — l’adresse écrite fait foi en attendant confirmation."
   },
-
   "footer": {
     "about": "Magasin de téléphonie, d’accessoires et d’informatique à Batna. Appareils authentiques avec garantie écrite, réparation et déblocage sur place, livraison partout en Algérie.",
     "shopTitle": "Boutique",
@@ -211,7 +185,6 @@
     },
     "madeIn": "Fait à Batna, Algérie."
   },
-
   "product": {
     "order": "Commander",
     "quickView": "Aperçu rapide",
@@ -223,10 +196,49 @@
     "orderMessage": "Bonjour, je suis intéressé par le {product}. Quel est le prix et la disponibilité ?",
     "serviceMessage": "Bonjour, je souhaite prendre rendez-vous pour : {service}.",
     "deliveryMessage": "Bonjour, je voudrais commander et connaître les frais de livraison pour ma wilaya.",
-    "generalMessage": "Bonjour JTECH, j’aurais une question sur un produit."
+    "generalMessage": "Bonjour JTECH, j’aurais une question sur un produit.",
+    "learnMore": "En savoir plus"
   },
-
   "locale": {
     "label": "Langue"
+  },
+  "mosaic": {
+    "title": "Trois choses sur lesquelles on ne transige pas",
+    "subhead": "Pas des promesses — voilà ce que vous obtenez réellement en achetant chez nous.",
+    "items": {
+      "warranty": {
+        "eyebrow": "Garantie",
+        "title": "Une garantie écrite, en main.",
+        "body": "Un bon qui précise ce qui est couvert et pour combien de mois — pas une parole sur le pas de la porte.",
+        "cta": "Voir les détails",
+        "imageAlt": "iPhone 16 Pro garanti par JTECH"
+      },
+      "repair": {
+        "eyebrow": "Réparation",
+        "title": "On répare sur place.",
+        "body": "Écran, batterie ou logiciel — diagnostic gratuit avant toute intervention.",
+        "cta": "Voir les services",
+        "imageAlt": "Galaxy Z Fold 8 Ultra à l’atelier de réparation"
+      },
+      "delivery": {
+        "eyebrow": "Livraison",
+        "title": "58 wilayas, payées à la réception.",
+        "body": "Bureau du transporteur ou domicile — à vous de choisir, confirmé en moins de 24 heures.",
+        "cta": "Voir les tarifs",
+        "imageAlt": "Galaxy Watch Ultra 2 prête à être expédiée"
+      }
+    }
+  },
+  "social": {
+    "title": "Sur nos réseaux",
+    "subhead": "Ce que nous publions chaque jour sur {handle} — nouveautés, offres et services.",
+    "cta": "Voir le compte",
+    "marqueeLabel": "Publications JTECH sur les réseaux sociaux",
+    "slides": {
+      "s1": "Publication JTECH : bienvenue — présentation du magasin et de ses services",
+      "s2": "Publication JTECH : services de branding et d’identité visuelle",
+      "s3": "Publication JTECH : création de sites, d’applications et photographie professionnelle",
+      "s4": "Publication JTECH : publicité sponsorisée Facebook et Google, et recharge électronique"
+    }
   }
 }

@@ -48,6 +48,12 @@ export async function WhyJtech() {
             </Reveal>
           ))}
         </ul>
+
+        {/* Social proof as a plain sentence. DESIGN.md bans animated counters —
+            the numbers are facts, not a scoreboard. */}
+        <Reveal delayMs={320}>
+          <p className="mt-10 text-caption text-gray-700">{t('socialProof')}</p>
+        </Reveal>
       </Container>
     </Section>
   );

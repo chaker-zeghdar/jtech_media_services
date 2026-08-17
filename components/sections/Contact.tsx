@@ -5,13 +5,17 @@ import { SectionHeader } from '@/components/layout/SectionHeader';
 import { Reveal } from '@/components/motion/Reveal';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
-import { mailLink, settings, telLink, whatsappLink } from '@/content/settings';
+import { mailLink, ordersDepartment, settings, telHref, whatsappLink } from '@/content/settings';
 import { pickLocale } from '@/lib/format';
 
 /**
- * Section 11 — contact. Brand device: none, deliberately. This is the section a
+ * Section — contact. Brand device: none, deliberately. This is the section a
  * customer reads when they've decided; a gold shape competing with a phone number
  * is a shape in the way.
+ *
+ * The three department numbers are listed separately and labelled, because they
+ * are not interchangeable — the branding line does not take repair enquiries.
+ * Only the orders line carries the WhatsApp entry.
  */
 export async function Contact() {
   const locale = await getLocale();
@@ -19,20 +23,30 @@ export async function Contact() {
   const tA11y = await getTranslations('a11y');
   const tProduct = await getTranslations('product');
 
+  const orders = ordersDepartment();
+
   const socials = [
     {
       key: 'instagram',
       icon: 'instagram',
       label: tA11y('openInstagram'),
+      followers: settings.socialProof.instagram,
       ...settings.socials.instagram,
     },
     {
       key: 'facebook',
       icon: 'facebook',
       label: tA11y('openFacebook'),
+      followers: settings.socialProof.facebook,
       ...settings.socials.facebook,
     },
-    { key: 'tiktok', icon: 'tiktok', label: tA11y('openTiktok'), ...settings.socials.tiktok },
+    {
+      key: 'tiktok',
+      icon: 'tiktok',
+      label: tA11y('openTiktok'),
+      followers: settings.socialProof.tiktok,
+      ...settings.socials.tiktok,
+    },
   ] as const;
 
   return (
@@ -43,24 +57,33 @@ export async function Contact() {
         <div className="mt-14 grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-16">
           {/* ---- Details -------------------------------------------------- */}
           <Reveal>
-            {/* A <dl> may only contain dt/dd (optionally wrapped in a single div),
-                so the row icon lives INSIDE the <dt> rather than as a sibling of
-                it. `ps-9` (icon 20px + 16px gap) lines the value up under the
-                label, and being a logical property it mirrors in RTL for free. */}
+            {/* A <dl> may only contain dt/dd (optionally wrapped in one div), so
+                the row icon lives INSIDE the <dt> rather than as a sibling of it.
+                `ps-9` (icon 20px + 16px gap) lines the value up under the label,
+                and being a logical property it mirrors in RTL for free. */}
             <dl className="flex flex-col divide-y divide-gray-300 border-y border-gray-300">
               <div className="py-5">
                 <dt className="flex items-center gap-4 text-caption uppercase text-gray-700">
                   <Icon name="phone" size={20} className="shrink-0 text-gold-text" />
-                  {t('phone')}
+                  {t('departments')}
                 </dt>
-                <dd className="mt-1 ps-9 text-base font-semibold">
-                  <a
-                    href={telLink}
-                    aria-label={tA11y('callPhone', { phone: settings.phone })}
-                    className="transition-colors duration-200 hover:text-gold-text"
-                  >
-                    <bdi className="num">{settings.phone}</bdi>
-                  </a>
+                <dd className="mt-2 ps-9">
+                  <ul className="flex flex-col gap-3">
+                    {settings.departments.map((department) => (
+                      <li key={department.key} className="flex flex-col gap-0.5">
+                        <a
+                          href={telHref(department.phoneE164)}
+                          aria-label={tA11y('callPhone', { phone: department.phone })}
+                          className="text-base font-semibold transition-colors duration-200 hover:text-gold-text"
+                        >
+                          <bdi className="num">{department.phone}</bdi>
+                        </a>
+                        <span className="text-caption text-gray-700">
+                          {pickLocale(department.label, locale)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
                 </dd>
               </div>
 
@@ -77,10 +100,10 @@ export async function Contact() {
                     // The visible text is the number, so the accessible name has
                     // to contain it — otherwise voice control can't target the
                     // link by what the user can see (WCAG 2.5.3).
-                    aria-label={`${tA11y('openWhatsapp')} ${settings.phone}`}
+                    aria-label={`${tA11y('openWhatsapp')} ${orders.phone}`}
                     className="transition-colors duration-200 hover:text-gold-text"
                   >
-                    <bdi className="num">{settings.phone}</bdi>
+                    <bdi className="num">{orders.phone}</bdi>
                   </a>
                 </dd>
               </div>
@@ -98,6 +121,24 @@ export async function Contact() {
                     dir="ltr"
                   >
                     {settings.email}
+                  </a>
+                </dd>
+              </div>
+
+              <div className="py-5">
+                <dt className="flex items-center gap-4 text-caption uppercase text-gray-700">
+                  <Icon name="external" size={20} className="shrink-0 text-gold-text" />
+                  {t('website')}
+                </dt>
+                <dd className="mt-1 break-words ps-9 text-base font-semibold">
+                  <a
+                    href={settings.website.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-latin transition-colors duration-200 hover:text-gold-text"
+                    dir="ltr"
+                  >
+                    {settings.website.label}
                   </a>
                 </dd>
               </div>
@@ -126,7 +167,7 @@ export async function Contact() {
 
             <div className="mt-8">
               <h3 className="text-caption uppercase text-gray-700">{t('follow')}</h3>
-              <ul aria-label={tA11y('socialLinks')} className="mt-4 flex items-center gap-2.5">
+              <ul aria-label={tA11y('socialLinks')} className="mt-4 flex flex-wrap items-center gap-2.5">
                 {socials.map((social) => (
                   <li key={social.key}>
                     <a
@@ -134,19 +175,24 @@ export async function Contact() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={social.label}
-                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-gray-300 text-ink transition-[background-color,border-color] duration-200 hover:border-gold hover:bg-gold-tint"
+                      className="inline-flex items-center gap-2.5 rounded-full border border-gray-300 py-2 pe-4 ps-3 text-ink transition-[background-color,border-color] duration-200 hover:border-gold hover:bg-gold-tint"
                     >
                       <Icon name={social.icon} size={18} />
+                      {/* Plain text, never an animated counter — see DESIGN.md. */}
+                      <bdi className="num text-caption font-semibold">
+                        {Math.round(social.followers / 1000)}K+
+                      </bdi>
                     </a>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Removed once settings.placeholderContacts flips to false. */}
-            {settings.placeholderContacts ? (
+            {/* Both notices are removed by flipping the matching flag in
+                content/settings.ts once the client confirms. */}
+            {!settings.emailConfirmed ? (
               <p className="mt-8 rounded-card border border-gold bg-gold-tint px-4 py-3 text-caption text-gold-text">
-                {t('placeholderNotice')}
+                {t('emailNotice')}
               </p>
             ) : null}
           </Reveal>
@@ -166,6 +212,10 @@ export async function Contact() {
                 className="block aspect-[8/5] h-auto w-full border-0"
               />
             </div>
+
+            {!settings.mapPinConfirmed ? (
+              <p className="text-caption text-gray-700">{t('mapNotice')}</p>
+            ) : null}
 
             <Button variant="link" href={settings.mapLinkUrl} external>
               {t('mapCta')}

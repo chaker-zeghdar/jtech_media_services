@@ -3,15 +3,14 @@
     "title": "JTECH Media Services — Phones, accessories and computers in Batna",
     "description": "Genuine iPhone, Samsung, Android and computers with a written warranty. Delivery to all 58 wilayas, cash on delivery, plus in-store repair and unlocking in Batna."
   },
-
   "common": {
     "currency": "DA",
     "priceFrom": "From",
     "viewAll": "View all",
     "close": "Close",
-    "free": "Free"
+    "free": "Free",
+    "priceNote": "Prices in Algerian dinars and subject to change. The final price is confirmed before dispatch."
   },
-
   "a11y": {
     "skipToContent": "Skip to content",
     "mainContent": "Main content",
@@ -39,7 +38,6 @@
     "openTiktok": "JTECH on TikTok",
     "expandSection": "Open section"
   },
-
   "badges": {
     "new": "New",
     "bestseller": "Best seller",
@@ -47,19 +45,16 @@
     "lastUnits": "Last units",
     "warranty": "Under warranty"
   },
-
   "stock": {
     "inStock": "In stock",
     "lowStock": "Last units",
     "outOfStock": "Out of stock"
   },
-
   "announcement": {
     "delivery": "Delivery to all 58 wilayas",
     "cod": "Cash on delivery",
     "call": "Call us"
   },
-
   "nav": {
     "categories": "Categories",
     "featured": "Featured",
@@ -72,21 +67,18 @@
     "contact": "Contact",
     "order": "Order now"
   },
-
   "hero": {
     "eyebrow": "Phones and computers in Batna",
     "title": "Genuine. Guaranteed. Delivered.",
     "subhead": "iPhone, Samsung, Android and computers — a written warranty, delivery to all 58 wilayas, and you pay when it arrives.",
     "ctaPrimary": "See the range",
     "ctaSecondary": "Message us on WhatsApp",
-    "trust": "Over 4 years serving customers across Batna and eastern Algeria."
+    "trust": "Over 7 years buying, selling and repairing — and more than 5,000 happy customers."
   },
-
   "categories": {
     "title": "What are you looking for?",
     "subhead": "Five categories, all in stock at the shop and all under warranty."
   },
-
   "featured": {
     "eyebrow": "Featured device",
     "title": "Titanium, and a camera that shoots cinema.",
@@ -96,22 +88,18 @@
     "cta": "Order the iPhone 16 Pro",
     "ctaSecondary": "See every iPhone"
   },
-
   "range": {
     "title": "The full range",
     "subhead": "Phones and computers picked one by one, every unit genuine and sealed."
   },
-
   "bestsellers": {
     "title": "Best sellers",
     "subhead": "What our customers are buying most this month."
   },
-
   "accessoriesSection": {
     "title": "Accessories that hold up",
     "subhead": "Chargers, earbuds, cases and protection — chosen and tested before they reach the shelf."
   },
-
   "why": {
     "title": "Why buy from JTECH",
     "subhead": "Four straight reasons, no filler.",
@@ -132,16 +120,15 @@
         "title": "We don’t vanish after the sale",
         "body": "Something wrong? Come back to the shop and we handle it: repair, exchange, or a hand with the software."
       }
-    }
+    },
+    "socialProof": "Over 160,000 followers on Instagram, 56,000 on TikTok and 50,000 on Facebook."
   },
-
   "services": {
     "title": "In-store services",
     "subhead": "We don’t only sell. We repair, we unlock, and we fix the things that go wrong.",
     "durationLabel": "Turnaround",
     "cta": "Book on WhatsApp"
   },
-
   "delivery": {
     "title": "We deliver wherever you are",
     "subhead": "58 wilayas, cash on delivery, and your order confirmed in under 24 hours.",
@@ -154,24 +141,9 @@
     "note": "The prices shown are the standard grid. Deep-south wilayas cost a little more depending on the carrier — we tell you at confirmation, before you pay anything.",
     "cta": "Order on WhatsApp"
   },
-
-  "instagram": {
-    "title": "Follow us on Instagram",
-    "subhead": "New arrivals, offers and tips worth knowing — every day at {handle}.",
-    "cta": "Visit the account",
-    "posts": {
-      "p1": "The iPhone 16 Pro has landed, every colour",
-      "p2": "Accessory offer: buy two, third at half price",
-      "p3": "Same-day screen replacement",
-      "p4": "Galaxy Z Flip 8 — come try it in store",
-      "p5": "Why a written warranty actually matters",
-      "p6": "58-wilaya delivery, pay on arrival"
-    }
-  },
-
   "contact": {
     "title": "Come by the shop, or message us",
-    "subhead": "We’re in the centre of Batna, and we answer on WhatsApp from morning to evening.",
+    "subhead": "The shop is opposite the university hospital in Batna, and we answer on WhatsApp from morning to evening.",
     "phone": "Phone",
     "whatsapp": "WhatsApp",
     "email": "Email",
@@ -179,9 +151,11 @@
     "hours": "Opening hours",
     "follow": "Follow us",
     "mapCta": "Open in maps",
-    "placeholderNotice": "The contact details shown are placeholders and will be replaced with the shop’s real details before launch."
+    "departments": "Our numbers",
+    "website": "Website",
+    "emailNotice": "The email address is inferred from the domain and is not yet confirmed by the client.",
+    "mapNotice": "The map pin is approximate — the written address is authoritative until it is confirmed."
   },
-
   "footer": {
     "about": "A phone, accessory and computer shop in Batna. Genuine devices with a written warranty, repair and unlocking on site, and delivery anywhere in Algeria.",
     "shopTitle": "Shop",
@@ -211,7 +185,6 @@
     },
     "madeIn": "Made in Batna, Algeria."
   },
-
   "product": {
     "order": "Order this",
     "quickView": "Quick view",
@@ -223,10 +196,49 @@
     "orderMessage": "Hi, I’m interested in the {product}. What’s the price and availability?",
     "serviceMessage": "Hi, I’d like to book an appointment for: {service}.",
     "deliveryMessage": "Hi, I’d like to order and find out the delivery cost for my wilaya.",
-    "generalMessage": "Hi JTECH, I have a question about a product."
+    "generalMessage": "Hi JTECH, I have a question about a product.",
+    "learnMore": "Learn more"
   },
-
   "locale": {
     "label": "Language"
+  },
+  "mosaic": {
+    "title": "Three things we don’t compromise on",
+    "subhead": "Not promises — this is what you actually get when you buy from us.",
+    "items": {
+      "warranty": {
+        "eyebrow": "Warranty",
+        "title": "A written warranty, in your hand.",
+        "body": "A slip that states what is covered and for how many months — not a word at the door.",
+        "cta": "See the details",
+        "imageAlt": "iPhone 16 Pro covered by the JTECH warranty"
+      },
+      "repair": {
+        "eyebrow": "Repair",
+        "title": "We repair in the shop.",
+        "body": "Screen, battery or software — a free diagnosis before we start.",
+        "cta": "See the services",
+        "imageAlt": "Galaxy Z Fold 8 Ultra in the repair workshop"
+      },
+      "delivery": {
+        "eyebrow": "Delivery",
+        "title": "58 wilayas, paid on arrival.",
+        "body": "Carrier desk or your door — your choice, confirmed in under 24 hours.",
+        "cta": "See the rates",
+        "imageAlt": "Galaxy Watch Ultra 2 ready to ship"
+      }
+    }
+  },
+  "social": {
+    "title": "From our feed",
+    "subhead": "What we post every day on {handle} — new arrivals, offers and services.",
+    "cta": "Visit the account",
+    "marqueeLabel": "JTECH social media posts",
+    "slides": {
+      "s1": "JTECH post: welcome — an introduction to the shop and its services",
+      "s2": "JTECH post: branding and visual identity services",
+      "s3": "JTECH post: web and app development and professional photography",
+      "s4": "JTECH post: sponsored Facebook and Google advertising, and e-recharge"
+    }
   }
 }

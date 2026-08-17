@@ -206,13 +206,44 @@ export type Wilaya = z.infer<typeof wilayaSchema>;
 /*  Settings                                                                  */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * A staffed line. The client runs three, and they are **not** interchangeable —
+ * calling the ads line about a phone repair reaches the wrong person.
+ */
+export const departmentSchema = z.object({
+  key: slugSchema,
+  label: localizedTextSchema,
+  /** Human-readable, spaced for legibility: "0659 39 13 13". */
+  phone: z.string().min(1),
+  phoneE164: z.string().regex(/^\+\d{8,15}$/),
+});
+export type Department = z.infer<typeof departmentSchema>;
+
 export const settingsSchema = z.object({
-  /** Human-readable, spaced for legibility: "05 00 00 00 00". */
+  /** Human-readable, spaced for legibility: "0659 39 13 13". */
   phone: z.string().min(1),
   /** E.164, used in tel: and wa.me links. */
   phoneE164: z.string().regex(/^\+\d{8,15}$/),
   whatsapp: z.string().regex(/^\+\d{8,15}$/),
   email: z.string().email(),
+  /** False while the email is inferred rather than confirmed by the client. */
+  emailConfirmed: z.boolean(),
+  /** The three staffed lines, ordered. The first is the orders/WhatsApp line. */
+  departments: z.array(departmentSchema).min(1),
+  /** The client's existing site, linked from the footer. */
+  website: z.object({ label: z.string().min(1), url: z.string().url() }),
+  /** Years trading. Quoted as a plain fact in copy — never an animated counter. */
+  yearsExperience: z.number().int().positive(),
+  /**
+   * Follower and customer counts, quoted as plain text.
+   * DESIGN.md bans animated counters; these are facts, not a scoreboard.
+   */
+  socialProof: z.object({
+    facebook: z.number().int().positive(),
+    instagram: z.number().int().positive(),
+    tiktok: z.number().int().positive(),
+    buyers: z.number().int().positive(),
+  }),
   address: localizedTextSchema,
   city: localizedTextSchema,
   hours: z.object({
@@ -233,8 +264,12 @@ export const settingsSchema = z.object({
   /** OpenStreetMap embed — no API key, no third-party script, no cookie banner. */
   mapEmbedUrl: z.string().url(),
   mapLinkUrl: z.string().url(),
-  /** Flipped to false once the client confirms the real contact details. */
-  placeholderContacts: z.boolean(),
+  /**
+   * False while the map marker is an approximation. The written address is
+   * confirmed; the lat/long behind the pin is not, and a confidently wrong pin
+   * sends customers to the wrong street.
+   */
+  mapPinConfirmed: z.boolean(),
 });
 export type Settings = z.infer<typeof settingsSchema>;
 

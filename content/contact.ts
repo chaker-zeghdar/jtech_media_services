@@ -10,16 +10,19 @@
  * `content/settings.ts` consumes these same literals, so there is still one
  * source of truth: edit here, and the validated settings object picks it up.
  *
- * ⚠️ PLACEHOLDER — replace with the client's real details before launch. ⚠️
+ * These are the client's REAL details, taken from their marketing posts — except
+ * the email, which is inferred from the domain and is still unconfirmed. See
+ * `settings.emailConfirmed`.
  */
 export const CONTACT = {
-  /** Human-readable, spaced for legibility. */
-  phone: '05 00 00 00 00',
+  /** Orders and WhatsApp — the primary number. Human-readable, spaced. */
+  phone: '0659 39 13 13',
   /** E.164, for tel: links. */
-  phoneE164: '+213500000000',
+  phoneE164: '+213659391313',
   /** E.164, for wa.me links. */
-  whatsapp: '+213500000000',
-  email: 'contact@jtech-dz.com',
+  whatsapp: '+213659391313',
+  /** ⚠️ UNCONFIRMED — inferred from the domain. Confirm before launch. */
+  email: 'contact@jtechmediaservice.com',
 } as const;
 
 /** `wa.me` wants the number with no `+` and no spaces. */
@@ -33,3 +36,8 @@ export function whatsappLink(text?: string): string {
 
 export const telLink = `tel:${CONTACT.phoneE164}`;
 export const mailLink = `mailto:${CONTACT.email}`;
+
+/** Builds a `tel:` href from any department's E.164 number. */
+export function telHref(e164: string): string {
+  return `tel:${e164}`;
+}
