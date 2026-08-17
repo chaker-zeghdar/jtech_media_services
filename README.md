@@ -59,9 +59,11 @@ components/
                            QuickView, Accordion, Field, Badge, Icon
   layout/                  AnnouncementBar, Header, LocalNav, MobileMenu,
                            MobileOrderBar, Footer, Section, SectionHeader,
-                           Container, LocaleSwitcher, navigation.ts
+                           Container, LocaleSwitcher, HashAnchorFix,
+                           navigation.ts
   motion/                  Enter, Reveal, StaggerText, Parallax
-  sections/                One file per homepage section
+  sections/                One file per homepage section (incl. FeatureMosaic,
+                           BrandMarquee)
 content/                   Typed content modules — see below
 i18n/                      routing.ts, request.ts, navigation.ts
 lib/                       cn, format, product selectors, useInView, clientMessages
@@ -175,39 +177,74 @@ build.
 
 ### Adding product photos
 
-`variants[].images` is currently **empty for every product**, because the client's
-cutouts haven't arrived yet. An empty array is a valid state: `<ProductImage />`
-renders a *branded* empty state (the `#F5F5F7` bed, the JTECH mark at 28px / 12%
-opacity, and the product name beneath) rather than a broken image or a bare gray
-rectangle.
+Six products carry photos (`public/products/`). Everything else has `images: []`,
+which is a valid, intentional state: `<ProductImage />` renders a *branded* empty
+state — the `#F5F5F7` bed, the JTECH mark at 12% opacity and the product name —
+rather than a broken image or a bare gray rectangle. **Do not replace that with a
+gray box, a spinner or an upload placeholder.**
 
-To add a photo, drop the file in `public/products/` and list its path:
+⚠️ **The current cutouts are low resolution.** They were extracted from the
+client's Instagram posts:
+
+| File | Size |
+| --- | --- |
+| `iphone-16-pro.png` | 520×677 |
+| `galaxy-z-fold-8-ultra.png` | 173×261 |
+| `galaxy-z-fold-8.png` | 150×256 |
+| `galaxy-z-flip-8.png` | 186×201 |
+| `galaxy-watch-ultra-2.png` | 157×185 |
+| `galaxy-watch-9.png` | 111×179 |
+
+They prove the layout and are fine to show the client; they are **not launch
+assets**. They are deliberately never upscaled — upscaling adds artefacts, not
+detail. Consequences baked into the code:
+
+- **The hero stays on the empty state.** The iPhone shot is 520px wide, the hero
+  stage is 620px. A visibly soft hero is worse than a considered placeholder.
+  `components/sections/Hero.tsx` carries the note; swap `src` to
+  `primaryVariant(product).images[0]` when a real hero shot arrives.
+- **The mosaic renders them at 140–260px**, all below intrinsic size.
+- **Only one shot exists per product**, so every colour variant of the iPhone 16
+  Pro points at the same white-titanium photo.
+
+To add a photo, drop the file in `public/products/` and list its path on the
+matching variant:
 
 ```ts
 images: ['/products/iphone-16-pro.png'],
 ```
 
-That is the whole change — no component edits, no config. The homepage was
-composed around six specific cutouts; `public/products/README.md` lists the exact
-filenames they should get and the framing requirements (transparent background,
-square-ish, ≥1200px for the hero shot).
-
----
+That is the whole change — no component edits, no config.
 
 ## How to change contact details
 
-Two files, both marked with `⚠️ PLACEHOLDER` comments. **Every contact detail on
-the site is currently a placeholder.**
+These are the client's real details. Two files:
 
-1. **`content/contact.ts`** — phone, WhatsApp, email. These live separately so
-   client components can build `tel:` and `wa.me` links without pulling zod into
-   the browser bundle.
-2. **`content/settings.ts`** — address, city, opening hours, social handles and
-   URLs, delivery fees, map embed. It spreads in the values from `contact.ts`, so
+1. **`content/contact.ts`** — the primary (orders/WhatsApp) phone and the email.
+   These live separately so client components can build `tel:` and `wa.me` links
+   without pulling zod into the browser bundle.
+2. **`content/settings.ts`** — the three departments, address, hours, socials,
+   website, delivery fees and map. It spreads in the values from `contact.ts`, so
    nothing is duplicated.
 
-Then flip `placeholderContacts: false` in `settings.ts`. That removes the amber
-"these details are provisional" notice from the contact section.
+**The three numbers are not interchangeable** and are modelled as `departments`
+rather than as extra string fields, so a component can't accidentally show the
+advertising line as the shop number:
+
+| Department    | Number           |
+| ------------- | ---------------- |
+| Orders + WhatsApp | `0659 39 13 13` |
+| Branding, web and apps | `0782 76 30 40` |
+| Advertising + e-recharge | `0792 00 86 88` |
+
+**Two items are still unconfirmed**, and the data says so rather than assuming:
+
+- `emailConfirmed: false` — `contact@jtechmediaservice.com` is inferred from the
+  domain, not stated by the client. An amber notice renders until it flips.
+- `mapPinConfirmed: false` — the written address is confirmed; the lat/long behind
+  the marker is an approximation of the university-hospital district. A caption
+  says so, and "open in maps" runs a **search** for the landmark rather than a
+  fixed coordinate, so a customer lands correctly regardless.
 
 No component hardcodes a phone number, an address or a social handle.
 
@@ -258,10 +295,16 @@ These are deliberate interim choices, each marked `PHASE 2:` in the code:
   homepage. It ships now so that page is a composition job.
 - **`Field` is built but unused** for the same reason: Phase 2's order form and
   wilaya picker build on it.
-- **The Instagram strip renders caption tiles, not fake photo thumbnails.**
-  Nothing pretends to be a real post. Copy lives in `messages.instagram.posts.*`;
-  when the real feed arrives, swap the tile body for the image and keep the
-  caption as alt text.
+- **The brand marquee shows the client's four real marketing posts**, contained in
+  cards on a neutral band rather than full-bleed — they use a pale cyan palette
+  that would fight every other section if bled edge to edge. Alt text lives in
+  `messages.social.slides.*`.
+- **⚠️ Three of those four slides advertise branding, web development,
+  photography and paid Facebook/Google ads** — an agency service line that appears
+  nowhere else on this site, which is otherwise a phone shop. The business clearly
+  offers it (two of the three phone numbers are for it), but the website doesn't
+  say so. Either add a "خدمات الوكالة" section or swap those slides for retail
+  posts. Flagged as a `TODO` in `components/sections/BrandMarquee.tsx`.
 
 ---
 
@@ -296,8 +339,15 @@ Measured against the production build (`next start`), not asserted.
 - Latin digits only — no Arabic-Indic digits leak into any locale
 - Every section carries `aria-labelledby` pointing at its own heading
 - No physical `left`/`right` layout classes in the rendered HTML
-- Message files: 150 keys, identical across `ar`/`fr`/`en`, placeholders matched
+- Message files: 172 keys, identical across `ar`/`fr`/`en`, placeholders matched
 - Content renders with JavaScript disabled — no section is `opacity: 0` by default
+- Every anchor (`#promise` `#range` `#bestsellers` `#accessories` `#services`
+  `#delivery` `#contact`) lands 15px below the sticky nav, consistently
+- Fast scroll top→bottom and back leaves **zero** elements at `opacity: 0`; a deep
+  link to `#services` leaves nothing hidden above the viewport
+- Brand marquee: 45s linear infinite, pauses on hover and focus-within, and under
+  `prefers-reduced-motion` drops to `animation: none` with the duplicate hidden
+- **No console errors or warnings** on `/`, `/fr` or `/#accessories`
 
 ### Lighthouse
 
