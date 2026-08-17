@@ -17,16 +17,29 @@ export function useInView<T extends Element>(options?: {
   const ref = useRef<T | null>(null);
   const [inView, setInView] = useState(false);
 
-  const rootMargin = options?.rootMargin ?? '0px 0px -12% 0px';
-  const threshold = options?.threshold ?? 0.15;
+  // Commits slightly before the element enters, so a fast scroll can't outrun
+  // the observer and leave a band of the page blank.
+  const rootMargin = options?.rootMargin ?? '0px 0px -10% 0px';
+  const threshold = options?.threshold ?? 0;
 
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
 
-    // No IntersectionObserver (or reduced motion): show content immediately
+    // No IntersectionObserver, or reduced motion: show content immediately
     // rather than leaving it stuck at opacity 0.
-    if (typeof IntersectionObserver === 'undefined') {
+    if (
+      typeof IntersectionObserver === 'undefined' ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      setInView(true);
+      return;
+    }
+
+    // Already scrolled past — the element is above the viewport top and will
+    // never intersect again on a downward scroll. Deep links and restored scroll
+    // positions land here, and without this the content stays hidden for good.
+    if (element.getBoundingClientRect().bottom <= 0) {
       setInView(true);
       return;
     }

@@ -15,21 +15,26 @@ type RevealProps = {
  * Fade + 20px rise, 600ms on the brand easing, once only — for content BELOW the
  * fold. Above the fold use <Enter />, which needs no JavaScript at all.
  *
- * Fails safe to visible. The server-rendered markup carries no `.reveal` class,
- * so the content is painted normally; the class (and therefore opacity 0) is only
- * applied on mount, and only when the element is still offscreen. A JS error, a
- * failed hydration or a scripting-disabled browser therefore leaves the page fully
- * readable instead of blanking every section — which is what an
- * `opacity: 0`-by-default reveal does.
+ * ── Why this is written defensively ──────────────────────────────────────────
+ * A scroll reveal that defaults to `opacity: 0` can strand real content
+ * permanently invisible, and there are four separate ways in:
  *
- * The transition itself is CSS; this component only toggles a data attribute, so
- * the most-used motion primitive on the page costs effectively no bundle weight.
- * Framer Motion stays reserved for <QuickView />, which is lazily loaded.
+ *   1. JS never runs (error, failed hydration, scripting disabled)
+ *   2. IntersectionObserver is missing
+ *   3. the reader lands mid-page — a deep link, or a restored scroll position —
+ *      so sections ABOVE them never intersect and never fire
+ *   4. `prefers-reduced-motion`, where nothing should be hidden in the first place
+ *
+ * Each is handled below, and the order matters: the component starts in the
+ * 'initial' phase with NO `.reveal` class at all, so the server-rendered markup
+ * is visible as delivered. Opacity is only ever applied on the client, and only
+ * to an element that is genuinely still below the fold — where hiding it is
+ * imperceptible.
  */
 export function Reveal({ children, delayMs = 0, as: Tag = 'div', className }: RevealProps) {
   const ref = useRef<HTMLElement | null>(null);
   // 'initial' → untouched server markup (visible)
-  // 'armed'   → offscreen, hidden, waiting to cross into view
+  // 'armed'   → below the fold, hidden, waiting to cross into view
   // 'shown'   → revealed
   const [phase, setPhase] = useState<'initial' | 'armed' | 'shown'>('initial');
 
@@ -37,6 +42,7 @@ export function Reveal({ children, delayMs = 0, as: Tag = 'div', className }: Re
     const element = ref.current;
     if (!element) return;
 
+    // (2) and (4): never hide anything we can't reliably reveal again.
     if (
       typeof IntersectionObserver === 'undefined' ||
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -45,10 +51,19 @@ export function Reveal({ children, delayMs = 0, as: Tag = 'div', className }: Re
       return;
     }
 
-    // Already on screen when we mount: leave it alone rather than hiding it and
-    // animating it back in, which would read as a flicker.
     const rect = element.getBoundingClientRect();
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
+
+    // (3) Already scrolled PAST — the element sits above the viewport top. It
+    // will never intersect again on a downward scroll, so show it immediately
+    // and without animating. This is the deep-link and restored-scroll case.
+    if (rect.bottom <= 0) {
+      setPhase('shown');
+      return;
+    }
+
+    // Already on screen at mount: leave it alone rather than hiding it and
+    // animating it back in, which would read as a flicker.
+    if (rect.top < window.innerHeight) {
       setPhase('shown');
       return;
     }
@@ -64,7 +79,9 @@ export function Reveal({ children, delayMs = 0, as: Tag = 'div', className }: Re
           }
         }
       },
-      { rootMargin: '0px 0px -12% 0px', threshold: 0.15 },
+      // Commits slightly BEFORE the element enters, so a fast scroll doesn't
+      // outrun the observer and leave a band of the page blank.
+      { rootMargin: '0px 0px -10% 0px', threshold: 0 },
     );
 
     observer.observe(element);

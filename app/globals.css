@@ -41,6 +41,16 @@
 
   --nav-height: 48px;
   --announce-height: 34px;
+
+  /**
+   * How far an anchored section must clear the top of the viewport.
+   *
+   * Only the LocalNav is `position: sticky`, so it is the only chrome still
+   * overlapping content once the page has scrolled. 16px keeps the section edge
+   * off the nav without adding a gap — each section already opens with 72/120px
+   * of its own padding above the heading, which is the breathing room.
+   */
+  --nav-offset: calc(var(--nav-height) + 16px);
 }
 
 /* Arabic locale picks up the Arabic stack from the same `font-sans` class, so
@@ -60,9 +70,30 @@ html[lang^='ar'] {
 
   html {
     scroll-behavior: smooth;
-    /* Sticky LocalNav must not cover the target of an in-page anchor. */
-    scroll-padding-top: calc(var(--nav-height) + 24px);
     -webkit-text-size-adjust: 100%;
+    /**
+     * NOTE: no `scroll-padding-top` here.
+     *
+     * `scroll-padding` on the scrollport and `scroll-margin` on the target both
+     * apply, and they ADD — carrying both offset every anchor by 2 × --nav-offset
+     * (measured: 176px instead of 88px), dropping each section far below the nav.
+     * The per-target `scroll-margin-top` below is the precise mechanism, so it is
+     * the only one.
+     */
+  }
+
+  /**
+   * The actual anchor fix.
+   *
+   * `scroll-padding-top` on the scroll container alone was not enough: every
+   * `section[id]` still computed `scroll-margin-top: 0`, so navigating to
+   * `#accessories` landed the section flush against the sticky nav. This puts the
+   * offset on the targets themselves, which is what `scrollIntoView()` and a
+   * plain hash navigation both honour.
+   */
+  section[id],
+  [id][data-anchor] {
+    scroll-margin-top: var(--nav-offset);
   }
 
   body {
@@ -228,6 +259,25 @@ html[lang^='ar'] {
   }
 }
 
+/**
+ * Brand marquee conveyor.
+ *
+ * The track holds the slide set TWICE, so translating it by exactly -50% of its
+ * own width lands copy B precisely where copy A started — the loop restart is
+ * invisible. Running -50% → 0 moves the content left → right.
+ *
+ * Only `transform` animates, so the compositor owns every frame: no layout, no
+ * paint, no JS timer, no requestAnimationFrame.
+ */
+@keyframes marquee-track {
+  from {
+    transform: translate3d(-50%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 /* ==========================================================================
    Utilities
    ========================================================================== */
@@ -311,6 +361,30 @@ html[lang^='ar'] {
     font-feature-settings: 'tnum' 1;
   }
 
+  /* --- Brand marquee ------------------------------------------------------
+     A conveyor, not a slideshow: no snapping, no arrows, no dots. */
+  .marquee-viewport {
+    overflow: hidden;
+    /* Fades the slides out at both edges so they enter and leave the band
+       rather than being chopped off by it. */
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee-track 45s linear infinite;
+    will-change: transform;
+  }
+
+  /* Pause on hover AND on focus-within — a keyboard user must be able to stop
+     it to reach the links, and hover alone doesn't give them that. */
+  .marquee-viewport:hover .marquee-track,
+  .marquee-viewport:focus-within .marquee-track {
+    animation-play-state: paused;
+  }
+
   /* Lets the browser skip style, layout and paint for sections that are still
      offscreen — the page's dominant cost on a throttled mobile CPU was Style &
      Layout across ~1,850 elements, most of them far below the fold.
@@ -362,5 +436,22 @@ html[lang^='ar'] {
 
   .snap-rail {
     scroll-behavior: auto;
+  }
+
+  /* The marquee stops being a conveyor and becomes an ordinary scrollable rail
+     the reader drives themselves. The duplicated set is dropped so it doesn't
+     read as eight slides when it is really four. */
+  .marquee-viewport {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .marquee-track {
+    animation: none !important;
+    transform: none !important;
+    will-change: auto;
+  }
+  .marquee-clone {
+    display: none;
   }
 }

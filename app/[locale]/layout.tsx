@@ -6,6 +6,7 @@ import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server
 import type { ReactNode } from 'react';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Footer } from '@/components/layout/Footer';
+import { HashAnchorFix } from '@/components/layout/HashAnchorFix';
 import { Header } from '@/components/layout/Header';
 import { LocalNav } from '@/components/layout/LocalNav';
 import { MobileOrderBar } from '@/components/layout/MobileOrderBar';
@@ -127,12 +128,17 @@ export default async function LocaleLayout({
       lang={localeTags[locale]}
       dir={localeDirections[locale]}
       className={fontClassName}
+      // Tells Next.js the smooth scrolling in globals.css is deliberate, which
+      // silences its "detected scroll-behavior: smooth" console warning.
+      data-scroll-behavior="smooth"
     >
       <body className="pb-[68px] md:pb-0">
         <NextIntlClientProvider locale={locale} messages={clientMessages(messages)}>
           <a href="#main" className="skip-link">
             {t('skipToContent')}
           </a>
+
+          <HashAnchorFix />
 
           <AnnouncementBar />
           <Header />
