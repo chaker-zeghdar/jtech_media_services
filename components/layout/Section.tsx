@@ -14,6 +14,12 @@ type SectionProps = {
   device?: ReactNode;
   /** Drop the vertical padding when the child supplies its own full-bleed bed. */
   flush?: boolean;
+  /**
+   * Skip rendering work while the section is offscreen (`content-visibility`).
+   * On by default; turn it off only for a section whose height genuinely can't
+   * be estimated, where a bad guess would move the scrollbar.
+   */
+  deferOffscreen?: boolean;
   children: ReactNode;
   className?: string;
 };
@@ -36,6 +42,7 @@ export function Section({
   background = 'white',
   device,
   flush = false,
+  deferOffscreen = true,
   children,
   className,
 }: SectionProps) {
@@ -47,6 +54,7 @@ export function Section({
         'relative overflow-hidden',
         BACKGROUND[background],
         !flush && 'py-section-sm md:py-section',
+        deferOffscreen && 'defer-offscreen',
         className,
       )}
     >

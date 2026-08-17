@@ -18,7 +18,7 @@ import { bestsellers } from '@/content/products';
 export async function BestSellers() {
   const t = await getTranslations('bestsellers');
   const tCommon = await getTranslations('common');
-  const products = bestsellers();
+  const products = bestsellers().slice(0, 8);
 
   return (
     <Section
@@ -43,6 +43,7 @@ export async function BestSellers() {
             <Reveal key={product.slug} as="li" delayMs={(index % 4) * 70}>
               <ProductCard
                 product={product}
+                quickView
                 sizes="(max-width: 767px) 44vw, (max-width: 1023px) 30vw, 300px"
               />
             </Reveal>

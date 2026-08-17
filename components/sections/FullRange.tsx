@@ -9,6 +9,8 @@ import { deviceRange } from '@/content/products';
 
 /** Rail item width. Shared with <AccessoriesRail /> so both rails snap alike. */
 export const RAIL_ITEM = 'w-[72vw] sm:w-[42vw] md:w-[31vw] lg:w-[23vw] xl:w-[290px]';
+/** Homepage rails show this many products; the full list lives in content/. */
+export const RAIL_LIMIT = 10;
 export const RAIL_SIZES =
   '(max-width: 639px) 72vw, (max-width: 767px) 42vw, (max-width: 1023px) 31vw, (max-width: 1279px) 23vw, 290px';
 
@@ -19,7 +21,9 @@ export const RAIL_SIZES =
 export async function FullRange() {
   const t = await getTranslations('range');
   const tA11y = await getTranslations('a11y');
-  const products = deviceRange();
+  // Display cap. The homepage rail is a taste of the range, not the catalogue —
+  // and every extra card is ~40 DOM nodes of layout work on a throttled phone.
+  const products = deviceRange().slice(0, RAIL_LIMIT);
 
   return (
     <Section

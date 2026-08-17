@@ -1,11 +1,5 @@
-'use client';
-
-import dynamic from 'next/dynamic';
-import { useLocale, useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { getLocale, getTranslations } from 'next-intl/server';
 import type { Product } from '@/content/schemas';
-// Client component: import from content/contact and lib/product, never from
-// content/products or content/settings — those carry zod and the catalogue.
 import { whatsappLink } from '@/content/contact';
 import { cn } from '@/lib/cn';
 import { pickLocale } from '@/lib/format';
@@ -14,21 +8,17 @@ import { Badge } from './Badge';
 import { Icon } from './Icon';
 import { Price } from './Price';
 import { ProductImage } from './ProductImage';
+import { QuickViewTrigger } from './QuickViewTrigger';
 import { StockDot } from './StockDot';
-
-/**
- * Loaded on first quick-view click only. This is what keeps Framer Motion out of
- * the initial bundle while still using it for the interaction it's good at.
- */
-const QuickView = dynamic(() => import('./QuickView').then((module) => module.QuickView), {
-  ssr: false,
-});
 
 type ProductCardProps = {
   product: Product;
   /** Passed through to next/image. Required — see ProductImage. */
   sizes?: string;
-  /** Enables the quick-view dialog. Off inside carousels where drag conflicts. */
+  /**
+   * Mounts the quick-view island. Only the best-sellers grid enables it; the
+   * carousels ship as pure static markup.
+   */
   quickView?: boolean;
   className?: string;
 };
@@ -36,9 +26,10 @@ type ProductCardProps = {
 /**
  * The component that decides whether the site looks real.
  *
- * Hover choreography, all on the card's `group`:
+ * A **server component**. All of the choreography below is CSS on the card's
+ * `group`, so the card needs no JavaScript at all:
  *   bed         gray-50 → gold-tint
- *   light sweep one diagonal white pass over 600ms (CSS, globals.css)
+ *   light sweep one diagonal white pass over 600ms (globals.css)
  *   product     lifts 6px and rotates −1deg
  *   spec pills  fade in along the bottom of the bed
  *   order       slides up from the card's bottom edge
@@ -47,31 +38,27 @@ type ProductCardProps = {
  * same affordances a mouse user does — a hover-only control is an inaccessible
  * control.
  *
- * PHASE 2: `order` currently deep-links to WhatsApp with the product name
- * prefilled, because there is no cart yet. Swap the <a> for an addToCart handler
- * and nothing else about this component needs to change.
+ * Only <QuickViewTrigger /> is a client island, and only where quick view is
+ * actually offered. Hydrating every card wholesale cost main-thread time for one
+ * boolean per card.
+ *
+ * PHASE 2: `order` deep-links to WhatsApp with the product name prefilled,
+ * because there is no cart yet. Swap the <a> for an addToCart handler and
+ * nothing else about this component needs to change.
  */
-export function ProductCard({
+export async function ProductCard({
   product,
   sizes = '(max-width: 639px) 78vw, (max-width: 1023px) 44vw, (max-width: 1439px) 30vw, 300px',
-  quickView = true,
+  quickView = false,
   className,
 }: ProductCardProps) {
-  const locale = useLocale();
-  const t = useTranslations('product');
-  const [dialogOpen, setDialogOpen] = useState(false);
-  // Keeps QuickView (and Framer Motion) unmounted until the first open.
-  const [dialogMounted, setDialogMounted] = useState(false);
+  const locale = await getLocale();
+  const t = await getTranslations('product');
 
   const name = pickLocale(product.name, locale);
   const variant = primaryVariant(product);
   const lowest = priceFrom(product);
   const specPills = product.specs.slice(0, 2);
-
-  const openDialog = () => {
-    setDialogMounted(true);
-    setDialogOpen(true);
-  };
 
   return (
     <article
@@ -117,7 +104,7 @@ export function ProductCard({
         </div>
 
         {specPills.length > 0 ? (
-          <ul
+          <div
             aria-hidden="true"
             className={cn(
               'absolute inset-x-3.5 bottom-3.5 z-20 flex flex-wrap justify-center gap-1.5',
@@ -126,46 +113,34 @@ export function ProductCard({
             )}
           >
             {specPills.map((spec) => (
-              <li
+              <bdi
                 key={spec.key}
-                className="rounded-full bg-white/85 px-2.5 py-1 text-caption text-gray-700 backdrop-blur-[2px]"
+                className="num rounded-full bg-white/90 px-2.5 py-1 text-caption text-gray-700"
               >
-                <bdi className="num">{spec.value}</bdi>
-              </li>
+                {spec.value}
+              </bdi>
             ))}
-          </ul>
+          </div>
         ) : null}
 
         {quickView ? (
-          <button
-            type="button"
-            onClick={openDialog}
-            aria-label={t('quickViewOpen', { product: name })}
-            className="absolute inset-0 z-30 flex items-start justify-end p-3.5"
-          >
-            <span
-              className={cn(
-                'inline-flex items-center gap-1.5 rounded-full bg-ink/90 px-3.5 py-2 text-pill text-white',
-                'opacity-0 transition-opacity duration-300 ease-brand',
-                'group-hover:opacity-100 group-focus-within:opacity-100',
-              )}
-            >
-              <Icon name="camera" size={14} />
-              {t('quickView')}
-            </span>
-          </button>
+          <QuickViewTrigger
+            product={product}
+            label={t('quickView')}
+            ariaLabel={t('quickViewOpen', { product: name })}
+          />
         ) : null}
       </div>
 
       {/* ---- Info -------------------------------------------------------- */}
       <div className="mt-5 flex flex-1 flex-col items-start gap-2">
-        <p className="text-caption uppercase text-gray-500">{product.brand}</p>
+        {/* ink/70, not gray-700: where a CornerBlob tints the section bed
+            (#F5F5F7 + 8% gold = #F5EFE7), gray-700 measures 4.43:1 at 12px and
+            misses AA. This clears 5.8:1 on white, gray and tinted beds alike. */}
+        <p className="text-caption uppercase text-ink/70">{product.brand}</p>
         <h3 className="text-base font-semibold leading-snug">{name}</h3>
         <div className="mt-auto pt-2">
-          <Price
-            value={lowest}
-            compareAt={lowest === variant.price ? variant.compareAt : null}
-          />
+          <Price value={lowest} compareAt={lowest === variant.price ? variant.compareAt : null} />
         </div>
         <StockDot status={variant.stock} />
       </div>
@@ -192,10 +167,6 @@ export function ProductCard({
           <span className="sr-only">— {name}</span>
         </a>
       </div>
-
-      {dialogMounted ? (
-        <QuickView product={product} open={dialogOpen} onClose={() => setDialogOpen(false)} />
-      ) : null}
     </article>
   );
 }

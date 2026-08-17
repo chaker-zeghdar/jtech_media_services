@@ -15,7 +15,7 @@ import { RAIL_ITEM, RAIL_SIZES } from './FullRange';
 export async function AccessoriesRail() {
   const t = await getTranslations('accessoriesSection');
   const tA11y = await getTranslations('a11y');
-  const products = accessories();
+  const products = accessories().slice(0, 6);
 
   return (
     <Section

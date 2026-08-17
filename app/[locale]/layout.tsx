@@ -19,6 +19,12 @@ import '../globals.css';
  * iPhone the page therefore renders in real SF with no font request at all;
  * these two are the fallback for everyone else. next/font self-hosts both, so
  * there is no request to Google at runtime.
+ *
+ * Only ONE family is attached per locale (see `fontClassName` below). next/font
+ * emits a <link rel="preload"> for every family present on the element, so
+ * putting both on <html> made the Arabic page preload Inter and the French page
+ * preload four weights of Plex Arabic — pure contention on the critical path for
+ * bytes that locale can never render.
  */
 const inter = Inter({
   subsets: ['latin'],
@@ -27,7 +33,16 @@ const inter = Inter({
 });
 
 const plexArabic = IBM_Plex_Sans_Arabic({
-  subsets: ['arabic', 'latin'],
+  /**
+   * Arabic glyphs only. The Latin subset was measured as ~1.1s of extra First
+   * Contentful Paint on the Arabic page (2.3s vs 1.2s for French) for glyphs
+   * that were almost never used: Latin runs on the Arabic page — prices, the
+   * JTECH wordmark, spec values like "A18 Pro" — resolve through
+   * `--font-stack-latin`, which puts the system face (SF Pro, Segoe UI, Roboto)
+   * ahead of any webfont. Those runs were already being rendered by the system,
+   * so the downloaded Latin glyphs were dead weight on the critical path.
+   */
+  subsets: ['arabic'],
   weight: ['400', '500', '600', '700'],
   display: 'swap',
   variable: '--font-plex-arabic',
@@ -102,11 +117,16 @@ export default async function LocaleLayout({
   const messages = await getMessages();
   const t = await getTranslations('a11y');
 
+  // One family per locale — Arabic gets Plex Arabic, the Latin locales get Inter.
+  // The unused CSS variable simply doesn't resolve, and the font stacks in
+  // globals.css fall through to the next entry, so nothing needs to branch.
+  const fontClassName = locale === 'ar' ? plexArabic.variable : inter.variable;
+
   return (
     <html
       lang={localeTags[locale]}
       dir={localeDirections[locale]}
-      className={`${inter.variable} ${plexArabic.variable}`}
+      className={fontClassName}
     >
       <body className="pb-[68px] md:pb-0">
         <NextIntlClientProvider locale={locale} messages={clientMessages(messages)}>

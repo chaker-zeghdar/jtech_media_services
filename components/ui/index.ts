@@ -11,5 +11,6 @@ export { Price, PriceFrom } from './Price';
 export { ProductCard } from './ProductCard';
 export { ProductImage } from './ProductImage';
 export { QuickView } from './QuickView';
+export { QuickViewTrigger } from './QuickViewTrigger';
 export { SpecStat } from './SpecStat';
 export { StockDot } from './StockDot';
