@@ -10,7 +10,6 @@ import { Container } from './Container';
  */
 export function AnnouncementBar() {
   const t = useTranslations('announcement');
-  const tA11y = useTranslations('a11y');
 
   return (
     <div className="on-ink bg-ink text-white">
@@ -27,9 +26,11 @@ export function AnnouncementBar() {
           </li>
           <li aria-hidden="true" className="hidden h-3 w-px shrink-0 bg-white/20 md:block" />
           <li className="hidden shrink-0 md:block">
+            {/* No aria-label: the visible text already reads "call us <number>",
+                and an aria-label that omits the visible words would make the link
+                untargetable by voice control (WCAG 2.5.3). */}
             <a
               href={telLink}
-              aria-label={tA11y('callPhone', { phone: settings.phone })}
               className="flex items-center gap-1.5 transition-colors duration-200 hover:text-white"
             >
               <Icon name="phone" size={14} className="text-gold" />

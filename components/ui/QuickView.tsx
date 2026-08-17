@@ -159,7 +159,7 @@ export function QuickView({ product, open, onClose }: QuickViewProps) {
               </div>
 
               <div className="flex flex-col">
-                <p className="text-caption uppercase text-gray-500">{product.brand}</p>
+                <p className="text-caption uppercase text-ink/70">{product.brand}</p>
                 <h2 id={titleId} className="mt-2 text-h2 font-semibold">
                   {name}
                 </h2>
@@ -180,7 +180,7 @@ export function QuickView({ product, open, onClose }: QuickViewProps) {
 
                 {colours.length > 1 ? (
                   <div className="mt-7">
-                    <h3 className="text-caption uppercase text-gray-500">{t('colours')}</h3>
+                    <h3 className="text-caption uppercase text-gray-700">{t('colours')}</h3>
                     <ul className="mt-3 flex flex-wrap gap-2.5">
                       {colours.map((colour) => (
                         <li key={colour.slug}>
@@ -199,7 +199,7 @@ export function QuickView({ product, open, onClose }: QuickViewProps) {
 
                 {product.specs.length > 0 ? (
                   <div className="mt-7">
-                    <h3 className="text-caption uppercase text-gray-500">{t('specs')}</h3>
+                    <h3 className="text-caption uppercase text-gray-700">{t('specs')}</h3>
                     <dl className="mt-3 divide-y divide-gray-300 border-t border-gray-300">
                       {product.specs.map((spec) => (
                         <div key={spec.key} className="flex items-baseline justify-between gap-4 py-2.5">

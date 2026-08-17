@@ -3,6 +3,7 @@ import { GoldRibbon } from '@/components/brand/GoldRibbon';
 import { Swash } from '@/components/brand/Swash';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
+import { Parallax } from '@/components/motion/Parallax';
 import { Reveal } from '@/components/motion/Reveal';
 import { Button } from '@/components/ui/Button';
 import { Price } from '@/components/ui/Price';
@@ -47,14 +48,19 @@ export async function FeaturedProduct() {
             />
 
             <div className="absolute inset-0 z-20 flex items-center justify-center p-10 sm:p-14">
-              <ProductImage
-                src={variant.images[0]}
-                name={name}
-                width={560}
-                height={560}
-                sizes="(max-width: 1023px) 84vw, 480px"
-                className="drop-shadow-product"
-              />
+              {/* 4% drift, so the product moves against the ribbon behind it
+                  rather than the whole composition sliding as one flat plane.
+                  Below the fold, so it costs nothing on the LCP path. */}
+              <Parallax strength={0.04} className="h-full w-full">
+                <ProductImage
+                  src={variant.images[0]}
+                  name={name}
+                  width={560}
+                  height={560}
+                  sizes="(max-width: 1023px) 84vw, 480px"
+                  className="drop-shadow-product"
+                />
+              </Parallax>
             </div>
           </div>
         </Reveal>
@@ -95,6 +101,7 @@ export async function FeaturedProduct() {
           {/* Colour swatches */}
           {colours.length > 1 ? (
             <Reveal delayMs={180} className="mt-12">
+              {/* gray-500 on ink, not gray-700 — see the note in Price.tsx. */}
               <h3 className="text-caption uppercase text-gray-500">{t('coloursLabel')}</h3>
               <ul className="mt-4 flex flex-wrap items-center gap-3">
                 {colours.map((colour) => (

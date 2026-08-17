@@ -43,82 +43,89 @@ export async function Contact() {
         <div className="mt-14 grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-16">
           {/* ---- Details -------------------------------------------------- */}
           <Reveal>
+            {/* A <dl> may only contain dt/dd (optionally wrapped in a single div),
+                so the row icon lives INSIDE the <dt> rather than as a sibling of
+                it. `ps-9` (icon 20px + 16px gap) lines the value up under the
+                label, and being a logical property it mirrors in RTL for free. */}
             <dl className="flex flex-col divide-y divide-gray-300 border-y border-gray-300">
-              <div className="flex items-start gap-4 py-5">
-                <Icon name="phone" size={20} className="mt-0.5 text-gold-text" />
-                <div className="min-w-0 flex-1">
-                  <dt className="text-caption uppercase text-gray-500">{t('phone')}</dt>
-                  <dd className="mt-1 text-base font-semibold">
-                    <a
-                      href={telLink}
-                      aria-label={tA11y('callPhone', { phone: settings.phone })}
-                      className="transition-colors duration-200 hover:text-gold-text"
-                    >
-                      <bdi className="num">{settings.phone}</bdi>
-                    </a>
-                  </dd>
-                </div>
+              <div className="py-5">
+                <dt className="flex items-center gap-4 text-caption uppercase text-gray-700">
+                  <Icon name="phone" size={20} className="shrink-0 text-gold-text" />
+                  {t('phone')}
+                </dt>
+                <dd className="mt-1 ps-9 text-base font-semibold">
+                  <a
+                    href={telLink}
+                    aria-label={tA11y('callPhone', { phone: settings.phone })}
+                    className="transition-colors duration-200 hover:text-gold-text"
+                  >
+                    <bdi className="num">{settings.phone}</bdi>
+                  </a>
+                </dd>
               </div>
 
-              <div className="flex items-start gap-4 py-5">
-                <Icon name="whatsapp" size={20} className="mt-0.5 text-gold-text" />
-                <div className="min-w-0 flex-1">
-                  <dt className="text-caption uppercase text-gray-500">{t('whatsapp')}</dt>
-                  <dd className="mt-1 text-base font-semibold">
-                    <a
-                      href={whatsappLink(tProduct('generalMessage'))}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={tA11y('openWhatsapp')}
-                      className="transition-colors duration-200 hover:text-gold-text"
-                    >
-                      <bdi className="num">{settings.phone}</bdi>
-                    </a>
-                  </dd>
-                </div>
+              <div className="py-5">
+                <dt className="flex items-center gap-4 text-caption uppercase text-gray-700">
+                  <Icon name="whatsapp" size={20} className="shrink-0 text-gold-text" />
+                  {t('whatsapp')}
+                </dt>
+                <dd className="mt-1 ps-9 text-base font-semibold">
+                  <a
+                    href={whatsappLink(tProduct('generalMessage'))}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    // The visible text is the number, so the accessible name has
+                    // to contain it — otherwise voice control can't target the
+                    // link by what the user can see (WCAG 2.5.3).
+                    aria-label={`${tA11y('openWhatsapp')} ${settings.phone}`}
+                    className="transition-colors duration-200 hover:text-gold-text"
+                  >
+                    <bdi className="num">{settings.phone}</bdi>
+                  </a>
+                </dd>
               </div>
 
-              <div className="flex items-start gap-4 py-5">
-                <Icon name="mail" size={20} className="mt-0.5 text-gold-text" />
-                <div className="min-w-0 flex-1">
-                  <dt className="text-caption uppercase text-gray-500">{t('email')}</dt>
-                  <dd className="mt-1 break-words text-base font-semibold">
-                    <a
-                      href={mailLink}
-                      aria-label={tA11y('sendEmail', { email: settings.email })}
-                      className="font-latin transition-colors duration-200 hover:text-gold-text"
-                      dir="ltr"
-                    >
-                      {settings.email}
-                    </a>
-                  </dd>
-                </div>
+              <div className="py-5">
+                <dt className="flex items-center gap-4 text-caption uppercase text-gray-700">
+                  <Icon name="mail" size={20} className="shrink-0 text-gold-text" />
+                  {t('email')}
+                </dt>
+                <dd className="mt-1 break-words ps-9 text-base font-semibold">
+                  <a
+                    href={mailLink}
+                    aria-label={tA11y('sendEmail', { email: settings.email })}
+                    className="font-latin transition-colors duration-200 hover:text-gold-text"
+                    dir="ltr"
+                  >
+                    {settings.email}
+                  </a>
+                </dd>
               </div>
 
-              <div className="flex items-start gap-4 py-5">
-                <Icon name="pin" size={20} className="mt-0.5 text-gold-text" />
-                <div className="min-w-0 flex-1">
-                  <dt className="text-caption uppercase text-gray-500">{t('address')}</dt>
-                  <dd className="mt-1 text-base">{pickLocale(settings.address, locale)}</dd>
-                </div>
+              <div className="py-5">
+                <dt className="flex items-center gap-4 text-caption uppercase text-gray-700">
+                  <Icon name="pin" size={20} className="shrink-0 text-gold-text" />
+                  {t('address')}
+                </dt>
+                <dd className="mt-1 ps-9 text-base">{pickLocale(settings.address, locale)}</dd>
               </div>
 
-              <div className="flex items-start gap-4 py-5">
-                <Icon name="clock" size={20} className="mt-0.5 text-gold-text" />
-                <div className="min-w-0 flex-1">
-                  <dt className="text-caption uppercase text-gray-500">{t('hours')}</dt>
-                  <dd className="mt-1 text-base">
-                    {pickLocale(settings.hours.weekdays, locale)}
-                    <span className="mt-1 block text-sm text-gray-500">
-                      {pickLocale(settings.hours.closed, locale)}
-                    </span>
-                  </dd>
-                </div>
+              <div className="py-5">
+                <dt className="flex items-center gap-4 text-caption uppercase text-gray-700">
+                  <Icon name="clock" size={20} className="shrink-0 text-gold-text" />
+                  {t('hours')}
+                </dt>
+                <dd className="mt-1 ps-9 text-base">
+                  {pickLocale(settings.hours.weekdays, locale)}
+                  <span className="mt-1 block text-sm text-gray-700">
+                    {pickLocale(settings.hours.closed, locale)}
+                  </span>
+                </dd>
               </div>
             </dl>
 
             <div className="mt-8">
-              <h3 className="text-caption uppercase text-gray-500">{t('follow')}</h3>
+              <h3 className="text-caption uppercase text-gray-700">{t('follow')}</h3>
               <ul aria-label={tA11y('socialLinks')} className="mt-4 flex items-center gap-2.5">
                 {socials.map((social) => (
                   <li key={social.key}>

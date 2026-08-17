@@ -37,7 +37,7 @@ export async function Hero() {
         {/* ---- Copy ------------------------------------------------------ */}
         <div className="max-w-[36ch]">
           <Enter>
-            <p className="text-eyebrow uppercase text-gray-500">{t('eyebrow')}</p>
+            <p className="text-eyebrow uppercase text-gray-700">{t('eyebrow')}</p>
           </Enter>
 
           <StaggerText
@@ -64,7 +64,7 @@ export async function Hero() {
           </Enter>
 
           <Enter delayMs={440}>
-            <p className="mt-10 max-w-[42ch] text-caption text-gray-500">{t('trust')}</p>
+            <p className="mt-10 max-w-[42ch] text-caption text-gray-700">{t('trust')}</p>
           </Enter>
         </div>
 

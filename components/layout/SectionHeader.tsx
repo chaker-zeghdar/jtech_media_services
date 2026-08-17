@@ -23,7 +23,7 @@ const SUBHEAD_TONE: Record<NonNullable<SectionHeaderProps['surface']>, string> =
 };
 
 const EYEBROW_TONE: Record<NonNullable<SectionHeaderProps['surface']>, string> = {
-  light: 'text-gray-500',
+  light: 'text-gray-700',
   ink: 'text-gold',
   gold: 'text-ink/70',
 };
@@ -58,7 +58,7 @@ export function SectionHeader({
           <p className={cn('mb-4 text-eyebrow uppercase', EYEBROW_TONE[surface])}>{eyebrow}</p>
         ) : null}
 
-        <h2 id={`${id}-title`} className="text-section font-semibold">
+        <h2 id={`${id}-title`} className="text-balance text-section font-semibold">
           {title}
         </h2>
 

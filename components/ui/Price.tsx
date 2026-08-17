@@ -20,8 +20,13 @@ const SIZE: Record<NonNullable<PriceProps['size']>, string> = {
   lg: 'text-h3',
 };
 
+/**
+ * The two grays swap by surface, and it is not interchangeable:
+ *   on white  #6E6E73 (gray-700) = 5.0:1 ✓   #86868B (gray-500) = 3.6:1 ✗
+ *   on ink    #86868B (gray-500) = 4.6:1 ✓   #6E6E73 (gray-700) = 3.3:1 ✗
+ */
 const MUTED: Record<NonNullable<PriceProps['surface']>, string> = {
-  light: 'text-gray-500',
+  light: 'text-gray-700',
   ink: 'text-gray-500',
   gold: 'text-ink/60',
 };

@@ -41,17 +41,18 @@ export function ProductImage({
   const t = useTranslations('a11y');
 
   if (!src) {
+    // No drop-shadow here. `filter: drop-shadow()` on a flat box is pure paint
+    // cost with nothing to cast a shadow from — it's for the cutout, so it lives
+    // on the <Image> branch only. Callers pass it via `className` and it is
+    // deliberately ignored in this branch.
     return (
       <div
-        className={cn(
-          'flex h-full w-full flex-col items-center justify-center gap-3 px-6 text-center',
-          className,
-        )}
+        className="flex h-full w-full flex-col items-center justify-center gap-3 px-6 text-center"
         role="img"
         aria-label={t('imagePending', { product: name })}
       >
         <LogoMark size={28} className="text-ink opacity-[0.12]" />
-        <span className="max-w-[18ch] text-caption font-medium text-gray-500">{name}</span>
+        <span className="max-w-[18ch] text-caption font-medium text-gray-700">{name}</span>
       </div>
     );
   }

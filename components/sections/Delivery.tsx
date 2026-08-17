@@ -63,7 +63,11 @@ export async function Delivery() {
           <Reveal delayMs={120}>
             <dl className="mt-14 grid grid-cols-2 gap-x-8 gap-y-10 border-t border-ink/20 pt-10 lg:grid-cols-4">
               {stats.map((stat) => (
-                <div key={stat.key} className="flex flex-col gap-2">
+                // A <dl> group must be dt-then-dd in the DOM; `flex-col-reverse`
+                // keeps the numeral visually above its label without lying about
+                // the order in the markup.
+                <div key={stat.key} className="flex flex-col-reverse gap-2">
+                  <dt className="text-caption text-ink/70">{t(`stats.${stat.key}`)}</dt>
                   <dd className="flex items-baseline gap-1.5 text-numeral-sm font-semibold text-ink">
                     {/* `.num` goes on the numeral only. On the parent it would
                         also force the Arabic currency word into the Latin font
@@ -71,7 +75,6 @@ export async function Delivery() {
                     <bdi className="num">{stat.value}</bdi>
                     {stat.unit ? <bdi className="text-[0.4em] font-semibold">{stat.unit}</bdi> : null}
                   </dd>
-                  <dt className="text-caption text-ink/70">{t(`stats.${stat.key}`)}</dt>
                 </div>
               ))}
             </dl>

@@ -58,14 +58,17 @@ export async function Services() {
                         {service.priceFrom > 0 ? (
                           <PriceFrom value={service.priceFrom} />
                         ) : (
-                          <span className="text-base font-semibold text-green">
+                          // Ink, not green. --color-green is scoped to the
+                          // in-stock dot; as 17px text on white it measures
+                          // 2.4:1. This is a price, so it reads like one.
+                          <span className="text-base font-semibold text-ink">
                             {tCommon('free')}
                           </span>
                         )}
                       </dd>
                     </div>
                     <div className="flex items-baseline justify-between gap-3">
-                      <dt className="text-caption text-gray-500">{t('durationLabel')}</dt>
+                      <dt className="text-caption text-gray-700">{t('durationLabel')}</dt>
                       <dd className="text-caption font-medium text-gray-700">
                         <bdi>{pickLocale(service.duration, locale)}</bdi>
                       </dd>

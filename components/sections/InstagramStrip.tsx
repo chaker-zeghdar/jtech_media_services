@@ -62,7 +62,7 @@ export async function InstagramStrip() {
 
                 <span className="flex flex-col gap-2">
                   <span className="text-sm font-semibold leading-snug">{t(`posts.${key}`)}</span>
-                  <span className="font-latin text-caption text-gray-500" dir="ltr">
+                  <span className="font-latin text-caption text-gray-700" dir="ltr">
                     {handle}
                   </span>
                 </span>

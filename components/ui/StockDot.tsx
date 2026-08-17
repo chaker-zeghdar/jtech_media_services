@@ -37,7 +37,7 @@ export function StockDot({ status, surface = 'light', className }: StockDotProps
         ? 'text-gray-700'
         : status === 'low-stock'
           ? 'text-amber'
-          : 'text-gray-500';
+          : 'text-gray-700';
 
   return (
     <span className={cn('inline-flex items-center gap-2 text-caption', labelTone, className)}>

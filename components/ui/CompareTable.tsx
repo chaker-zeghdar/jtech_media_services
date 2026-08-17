@@ -44,12 +44,12 @@ export function CompareTable({ products, className }: CompareTableProps) {
         <caption className="sr-only">{t('specs')}</caption>
         <thead>
           <tr className="border-b border-gray-300">
-            <th scope="col" className="w-[28%] py-4 text-start text-caption uppercase text-gray-500">
+            <th scope="col" className="w-[28%] py-4 text-start text-caption uppercase text-gray-700">
               {t('specs')}
             </th>
             {products.map((product) => (
               <th key={product.slug} scope="col" className="py-4 text-start align-bottom">
-                <span className="block text-caption uppercase text-gray-500">{product.brand}</span>
+                <span className="block text-caption uppercase text-gray-700">{product.brand}</span>
                 <span className="mt-1 block text-base font-semibold">
                   {pickLocale(product.name, locale)}
                 </span>

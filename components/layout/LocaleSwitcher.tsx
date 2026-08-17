@@ -38,7 +38,6 @@ export function LocaleSwitcher({ tone = 'light', className }: LocaleSwitcherProp
                 lang={locale}
                 hrefLang={locale}
                 aria-current={current ? 'true' : undefined}
-                aria-label={localeLabels[locale]}
                 className={cn(
                   'font-latin block rounded-full px-2.5 py-1 text-caption uppercase transition-colors duration-200',
                   current
@@ -51,6 +50,10 @@ export function LocaleSwitcher({ tone = 'light', className }: LocaleSwitcherProp
                 )}
               >
                 {locale}
+                {/* The full language name is appended rather than replacing the
+                    visible code via aria-label: an accessible name that doesn't
+                    contain the visible text breaks voice control (WCAG 2.5.3). */}
+                <span className="sr-only"> {localeLabels[locale]}</span>
               </Link>
             </li>
           );

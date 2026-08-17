@@ -3,7 +3,7 @@ import { cn } from '@/lib/cn';
 
 const CONTROL =
   'w-full rounded-card border border-gray-300 bg-white px-4 py-3 text-base text-ink ' +
-  'placeholder:text-gray-500 transition-[border-color,box-shadow] duration-200 ease-brand ' +
+  'placeholder:text-gray-700 transition-[border-color,box-shadow] duration-200 ease-brand ' +
   'hover:border-gray-500 focus:border-ink focus:outline-none ' +
   'aria-[invalid=true]:border-amber';
 
@@ -65,7 +65,7 @@ export function Field({
       })}
 
       {hint ? (
-        <p id={hintId} className="text-caption text-gray-500">
+        <p id={hintId} className="text-caption text-gray-700">
           {hint}
         </p>
       ) : null}
