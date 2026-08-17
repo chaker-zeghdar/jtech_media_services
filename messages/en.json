@@ -1,0 +1,232 @@
+{
+  "meta": {
+    "title": "JTECH Media Services — Phones, accessories and computers in Batna",
+    "description": "Genuine iPhone, Samsung, Android and computers with a written warranty. Delivery to all 58 wilayas, cash on delivery, plus in-store repair and unlocking in Batna."
+  },
+
+  "common": {
+    "currency": "DA",
+    "priceFrom": "From",
+    "viewAll": "View all",
+    "close": "Close",
+    "free": "Free"
+  },
+
+  "a11y": {
+    "skipToContent": "Skip to content",
+    "mainContent": "Main content",
+    "primaryNav": "Primary navigation",
+    "sectionNav": "Page sections",
+    "footerNav": "Footer links",
+    "socialLinks": "Social links",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "localeSwitcher": "Change language",
+    "carouselPrev": "Previous products",
+    "carouselNext": "Next products",
+    "carouselProgress": "Scroll progress",
+    "readingProgress": "Page reading progress",
+    "imagePending": "Photo of {product} — the final image is coming soon",
+    "colourSwatch": "{colour} colour",
+    "logo": "JTECH Media Services — home page",
+    "logoMark": "JTECH logo",
+    "mapTitle": "Map showing the JTECH shop in Batna",
+    "callPhone": "Call {phone}",
+    "openWhatsapp": "Message us on WhatsApp",
+    "sendEmail": "Send an email to {email}",
+    "openInstagram": "JTECH on Instagram",
+    "openFacebook": "JTECH on Facebook",
+    "openTiktok": "JTECH on TikTok",
+    "expandSection": "Open section"
+  },
+
+  "badges": {
+    "new": "New",
+    "bestseller": "Best seller",
+    "promo": "Sale",
+    "lastUnits": "Last units",
+    "warranty": "Under warranty"
+  },
+
+  "stock": {
+    "inStock": "In stock",
+    "lowStock": "Last units",
+    "outOfStock": "Out of stock"
+  },
+
+  "announcement": {
+    "delivery": "Delivery to all 58 wilayas",
+    "cod": "Cash on delivery",
+    "call": "Call us"
+  },
+
+  "nav": {
+    "categories": "Categories",
+    "featured": "Featured",
+    "range": "The range",
+    "bestsellers": "Best sellers",
+    "accessories": "Accessories",
+    "why": "Why JTECH",
+    "services": "Services",
+    "delivery": "Delivery",
+    "contact": "Contact",
+    "order": "Order now"
+  },
+
+  "hero": {
+    "eyebrow": "Phones and computers in Batna",
+    "title": "Genuine. Guaranteed. Delivered.",
+    "subhead": "iPhone, Samsung, Android and computers — a written warranty, delivery to all 58 wilayas, and you pay when it arrives.",
+    "ctaPrimary": "See the range",
+    "ctaSecondary": "Message us on WhatsApp",
+    "trust": "Over 4 years serving customers across Batna and eastern Algeria."
+  },
+
+  "categories": {
+    "title": "What are you looking for?",
+    "subhead": "Five categories, all in stock at the shop and all under warranty."
+  },
+
+  "featured": {
+    "eyebrow": "Featured device",
+    "title": "Titanium, and a camera that shoots cinema.",
+    "subhead": "The iPhone 16 Pro, with the A18 Pro chip and a three-lens system. One device that does everything, from filming to gaming.",
+    "coloursLabel": "Available colours",
+    "priceLabel": "From",
+    "cta": "Order the iPhone 16 Pro",
+    "ctaSecondary": "See every iPhone"
+  },
+
+  "range": {
+    "title": "The full range",
+    "subhead": "Phones and computers picked one by one, every unit genuine and sealed."
+  },
+
+  "bestsellers": {
+    "title": "Best sellers",
+    "subhead": "What our customers are buying most this month."
+  },
+
+  "accessoriesSection": {
+    "title": "Accessories that hold up",
+    "subhead": "Chargers, earbuds, cases and protection — chosen and tested before they reach the shelf."
+  },
+
+  "why": {
+    "title": "Why buy from JTECH",
+    "subhead": "Four straight reasons, no filler.",
+    "items": {
+      "warranty": {
+        "title": "A written warranty",
+        "body": "You leave the shop with a warranty slip in your hand, not a promise. It states what is covered, and for how many months."
+      },
+      "genuine": {
+        "title": "Genuine, factory-sealed devices",
+        "body": "Every device arrives factory sealed. You can check the IMEI in front of us before you pay a dinar."
+      },
+      "delivery": {
+        "title": "Delivery to all 58 wilayas",
+        "body": "We ship anywhere in Algeria — carrier desk or your door, your choice. And you pay when it arrives."
+      },
+      "aftersales": {
+        "title": "We don’t vanish after the sale",
+        "body": "Something wrong? Come back to the shop and we handle it: repair, exchange, or a hand with the software."
+      }
+    }
+  },
+
+  "services": {
+    "title": "In-store services",
+    "subhead": "We don’t only sell. We repair, we unlock, and we fix the things that go wrong.",
+    "durationLabel": "Turnaround",
+    "cta": "Book on WhatsApp"
+  },
+
+  "delivery": {
+    "title": "We deliver wherever you are",
+    "subhead": "58 wilayas, cash on delivery, and your order confirmed in under 24 hours.",
+    "stats": {
+      "wilayas": "wilayas covered",
+      "desk": "to the carrier desk",
+      "home": "to your door",
+      "confirm": "hours to confirm"
+    },
+    "note": "The prices shown are the standard grid. Deep-south wilayas cost a little more depending on the carrier — we tell you at confirmation, before you pay anything.",
+    "cta": "Order on WhatsApp"
+  },
+
+  "instagram": {
+    "title": "Follow us on Instagram",
+    "subhead": "New arrivals, offers and tips worth knowing — every day at {handle}.",
+    "cta": "Visit the account",
+    "posts": {
+      "p1": "The iPhone 16 Pro has landed, every colour",
+      "p2": "Accessory offer: buy two, third at half price",
+      "p3": "Same-day screen replacement",
+      "p4": "Galaxy Z Flip 8 — come try it in store",
+      "p5": "Why a written warranty actually matters",
+      "p6": "58-wilaya delivery, pay on arrival"
+    }
+  },
+
+  "contact": {
+    "title": "Come by the shop, or message us",
+    "subhead": "We’re in the centre of Batna, and we answer on WhatsApp from morning to evening.",
+    "phone": "Phone",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "address": "Address",
+    "hours": "Opening hours",
+    "follow": "Follow us",
+    "mapCta": "Open in maps",
+    "placeholderNotice": "The contact details shown are placeholders and will be replaced with the shop’s real details before launch."
+  },
+
+  "footer": {
+    "about": "A phone, accessory and computer shop in Batna. Genuine devices with a written warranty, repair and unlocking on site, and delivery anywhere in Algeria.",
+    "shopTitle": "Shop",
+    "servicesTitle": "Services",
+    "helpTitle": "Help",
+    "contactTitle": "Contact",
+    "links": {
+      "iphone": "iPhone",
+      "samsung": "Samsung",
+      "android": "Android",
+      "pc": "Computers",
+      "accessories": "Accessories",
+      "repair": "Repair",
+      "unlock": "Unlocking",
+      "software": "Software",
+      "aftersales": "After-sales",
+      "delivery": "Delivery and payment",
+      "warranty": "Warranty",
+      "faq": "Frequently asked",
+      "why": "Why JTECH"
+    },
+    "rights": "All rights reserved.",
+    "legal": {
+      "terms": "Terms of sale",
+      "privacy": "Privacy policy",
+      "returns": "Returns and exchanges"
+    },
+    "madeIn": "Made in Batna, Algeria."
+  },
+
+  "product": {
+    "order": "Order this",
+    "quickView": "Quick view",
+    "quickViewOpen": "Quick view of {product}",
+    "colours": "Colours",
+    "storage": "Capacity",
+    "specs": "Specifications",
+    "save": "Save {percent}%",
+    "orderMessage": "Hi, I’m interested in the {product}. What’s the price and availability?",
+    "serviceMessage": "Hi, I’d like to book an appointment for: {service}.",
+    "deliveryMessage": "Hi, I’d like to order and find out the delivery cost for my wilaya.",
+    "generalMessage": "Hi JTECH, I have a question about a product."
+  },
+
+  "locale": {
+    "label": "Language"
+  }
+}

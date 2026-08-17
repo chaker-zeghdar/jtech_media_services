@@ -1,0 +1,232 @@
+{
+  "meta": {
+    "title": "JTECH Media Services — Téléphones, accessoires et ordinateurs à Batna",
+    "description": "iPhone, Samsung, Android et ordinateurs authentiques avec garantie écrite. Livraison dans les 58 wilayas, paiement à la réception, réparation et déblocage en magasin à Batna."
+  },
+
+  "common": {
+    "currency": "DA",
+    "priceFrom": "À partir de",
+    "viewAll": "Tout voir",
+    "close": "Fermer",
+    "free": "Gratuit"
+  },
+
+  "a11y": {
+    "skipToContent": "Aller au contenu",
+    "mainContent": "Contenu principal",
+    "primaryNav": "Navigation principale",
+    "sectionNav": "Sections de la page",
+    "footerNav": "Liens de bas de page",
+    "socialLinks": "Réseaux sociaux",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "localeSwitcher": "Changer de langue",
+    "carouselPrev": "Produits précédents",
+    "carouselNext": "Produits suivants",
+    "carouselProgress": "Progression du défilement",
+    "readingProgress": "Progression de lecture de la page",
+    "imagePending": "Photo de {product} — le visuel définitif arrive bientôt",
+    "colourSwatch": "Coloris {colour}",
+    "logo": "JTECH Media Services — page d’accueil",
+    "logoMark": "Logo JTECH",
+    "mapTitle": "Carte de localisation du magasin JTECH à Batna",
+    "callPhone": "Appeler le {phone}",
+    "openWhatsapp": "Nous écrire sur WhatsApp",
+    "sendEmail": "Envoyer un e-mail à {email}",
+    "openInstagram": "Compte Instagram de JTECH",
+    "openFacebook": "Page Facebook de JTECH",
+    "openTiktok": "Compte TikTok de JTECH",
+    "expandSection": "Ouvrir la section"
+  },
+
+  "badges": {
+    "new": "Nouveau",
+    "bestseller": "Meilleure vente",
+    "promo": "Promo",
+    "lastUnits": "Dernières pièces",
+    "warranty": "Sous garantie"
+  },
+
+  "stock": {
+    "inStock": "En stock",
+    "lowStock": "Dernières pièces",
+    "outOfStock": "Épuisé"
+  },
+
+  "announcement": {
+    "delivery": "Livraison dans les 58 wilayas",
+    "cod": "Paiement à la réception",
+    "call": "Appelez-nous"
+  },
+
+  "nav": {
+    "categories": "Catégories",
+    "featured": "En vedette",
+    "range": "La gamme",
+    "bestsellers": "Meilleures ventes",
+    "accessories": "Accessoires",
+    "why": "Pourquoi JTECH",
+    "services": "Services",
+    "delivery": "Livraison",
+    "contact": "Contact",
+    "order": "Commander"
+  },
+
+  "hero": {
+    "eyebrow": "Téléphonie et informatique à Batna",
+    "title": "Authentique. Garanti. Livré.",
+    "subhead": "iPhone, Samsung, Android et ordinateurs — garantie écrite, livraison dans les 58 wilayas, et vous payez à la réception.",
+    "ctaPrimary": "Voir la gamme",
+    "ctaSecondary": "Nous écrire sur WhatsApp",
+    "trust": "Plus de 4 ans au service des clients de Batna et de l’Est algérien."
+  },
+
+  "categories": {
+    "title": "Qu’est-ce que vous cherchez ?",
+    "subhead": "Cinq catégories, toutes disponibles en magasin et sous garantie."
+  },
+
+  "featured": {
+    "eyebrow": "L’appareil en vedette",
+    "title": "Le titane, et une caméra de cinéma.",
+    "subhead": "L’iPhone 16 Pro, puce A18 Pro et système à trois objectifs. Un seul appareil pour tout faire, de la photo au jeu.",
+    "coloursLabel": "Coloris disponibles",
+    "priceLabel": "À partir de",
+    "cta": "Commander l’iPhone 16 Pro",
+    "ctaSecondary": "Voir tous les iPhone"
+  },
+
+  "range": {
+    "title": "La gamme complète",
+    "subhead": "Téléphones et ordinateurs choisis un par un, tous authentiques et scellés."
+  },
+
+  "bestsellers": {
+    "title": "Meilleures ventes",
+    "subhead": "Ce que nos clients achètent le plus ce mois-ci."
+  },
+
+  "accessoriesSection": {
+    "title": "Des accessoires qui tiennent",
+    "subhead": "Chargeurs, écouteurs, coques et protections — sélectionnés et testés avant d’être mis en rayon."
+  },
+
+  "why": {
+    "title": "Pourquoi acheter chez JTECH",
+    "subhead": "Quatre raisons claires, sans discours superflu.",
+    "items": {
+      "warranty": {
+        "title": "Garantie écrite",
+        "body": "Vous repartez du magasin avec un bon de garantie en main, pas une promesse. Ce qui est couvert y est écrit, et pour combien de mois."
+      },
+      "genuine": {
+        "title": "Appareils authentiques et scellés",
+        "body": "Chaque appareil arrive scellé d’usine. Vous pouvez vérifier le numéro IMEI devant nous avant de payer."
+      },
+      "delivery": {
+        "title": "Livraison dans les 58 wilayas",
+        "body": "Nous livrons partout en Algérie, au bureau du transporteur ou à domicile, à vous de choisir. Et vous payez à la réception."
+      },
+      "aftersales": {
+        "title": "On ne disparaît pas après la vente",
+        "body": "Un problème ? Vous revenez au magasin et on s’en occupe : réparation, échange ou coup de main côté logiciel."
+      }
+    }
+  },
+
+  "services": {
+    "title": "Nos services en magasin",
+    "subhead": "On ne fait pas que vendre. On répare, on débloque, et on règle les problèmes qui arrivent.",
+    "durationLabel": "Délai",
+    "cta": "Prendre rendez-vous sur WhatsApp"
+  },
+
+  "delivery": {
+    "title": "On livre où que vous soyez",
+    "subhead": "58 wilayas, paiement à la réception, et commande confirmée en moins de 24 heures.",
+    "stats": {
+      "wilayas": "wilayas couvertes",
+      "desk": "au bureau du transporteur",
+      "home": "à domicile",
+      "confirm": "heures pour confirmer"
+    },
+    "note": "Les tarifs affichés sont la grille standard. Les wilayas du Grand Sud coûtent un peu plus selon le transporteur — nous vous le disons à la confirmation, avant tout paiement.",
+    "cta": "Commander sur WhatsApp"
+  },
+
+  "instagram": {
+    "title": "Suivez-nous sur Instagram",
+    "subhead": "Les nouveautés, les offres et des conseils utiles — chaque jour sur {handle}.",
+    "cta": "Voir le compte",
+    "posts": {
+      "p1": "L’iPhone 16 Pro est arrivé, tous coloris",
+      "p2": "Offre accessoires : deux achetés, le troisième à moitié prix",
+      "p3": "Remplacement d’écran le jour même",
+      "p4": "Galaxy Z Flip 8 — venez l’essayer en magasin",
+      "p5": "Pourquoi la garantie écrite change tout",
+      "p6": "Livraison 58 wilayas, paiement à la réception"
+    }
+  },
+
+  "contact": {
+    "title": "Passez au magasin ou écrivez-nous",
+    "subhead": "Nous sommes au centre-ville de Batna, et nous répondons sur WhatsApp du matin au soir.",
+    "phone": "Téléphone",
+    "whatsapp": "WhatsApp",
+    "email": "E-mail",
+    "address": "Adresse",
+    "hours": "Horaires",
+    "follow": "Suivez-nous",
+    "mapCta": "Ouvrir dans la carte",
+    "placeholderNotice": "Les coordonnées affichées sont provisoires et seront remplacées par celles du magasin avant la mise en ligne."
+  },
+
+  "footer": {
+    "about": "Magasin de téléphonie, d’accessoires et d’informatique à Batna. Appareils authentiques avec garantie écrite, réparation et déblocage sur place, livraison partout en Algérie.",
+    "shopTitle": "Boutique",
+    "servicesTitle": "Services",
+    "helpTitle": "Aide",
+    "contactTitle": "Contact",
+    "links": {
+      "iphone": "iPhone",
+      "samsung": "Samsung",
+      "android": "Android",
+      "pc": "Ordinateurs",
+      "accessories": "Accessoires",
+      "repair": "Réparation",
+      "unlock": "Déblocage",
+      "software": "Logiciel",
+      "aftersales": "Après-vente",
+      "delivery": "Livraison et paiement",
+      "warranty": "Garantie",
+      "faq": "Questions fréquentes",
+      "why": "Pourquoi JTECH"
+    },
+    "rights": "Tous droits réservés.",
+    "legal": {
+      "terms": "Conditions de vente",
+      "privacy": "Politique de confidentialité",
+      "returns": "Retours et échanges"
+    },
+    "madeIn": "Fait à Batna, Algérie."
+  },
+
+  "product": {
+    "order": "Commander",
+    "quickView": "Aperçu rapide",
+    "quickViewOpen": "Aperçu rapide de {product}",
+    "colours": "Coloris",
+    "storage": "Capacité",
+    "specs": "Caractéristiques",
+    "save": "{percent} % d’économie",
+    "orderMessage": "Bonjour, je suis intéressé par le {product}. Quel est le prix et la disponibilité ?",
+    "serviceMessage": "Bonjour, je souhaite prendre rendez-vous pour : {service}.",
+    "deliveryMessage": "Bonjour, je voudrais commander et connaître les frais de livraison pour ma wilaya.",
+    "generalMessage": "Bonjour JTECH, j’aurais une question sur un produit."
+  },
+
+  "locale": {
+    "label": "Langue"
+  }
+}
