@@ -58,6 +58,11 @@ One further trap: where a `CornerBlob` tints a gray section (`#F5F5F7` + 8% gold
 can sit over a tint — the product card's brand line — use `text-ink/70` (~5.8:1
 on white, gray and tinted beds alike).
 
+The same trap applies to *surfaces*, not just text: `<ProductCard>`'s image bed is
+`gray-50` by design, which disappears entirely on a `gray-50` section and leaves
+the cards looking like images floating with no container. Sections with a gray
+background pass `bed="white"`. Check this whenever a section's surface changes.
+
 And `--color-green` is an **in-stock dot colour, not a text colour**: `#2FBF6B`
 on white is 2.4:1. `StockDot` is correct because the dot is green while the label
 beside it is gray-700.
@@ -168,6 +173,26 @@ Arabic is the default locale and it is RTL. The AR and FR/EN layouts mirror from
 
 ---
 
+## 2b. Anchored sections
+
+`--nav-offset` (in `globals.css`) is how far an anchored section clears the top
+of the viewport, and it is applied as `scroll-margin-top` on `section[id]`.
+
+**Do not also set `scroll-padding-top` on `html`.** `scroll-padding` on the
+scrollport and `scroll-margin` on the target both apply and they *add* — carrying
+both offset every anchor by twice `--nav-offset` (measured: 176px instead of 88px)
+and dropped each section well below the nav. The per-target margin is the precise
+mechanism, so it is the only one.
+
+A deep link also needs `<HashAnchorFix />` (mounted in the locale layout): the
+browser scrolls the moment it parses the target, before fonts swap, before lazy
+images decode and before `content-visibility` sections above it render for the
+first time. All of that grows the document underneath the landing position. The
+component re-lands the target on the next paint and again on `load`, and abandons
+the second correction if the reader has already scrolled.
+
+---
+
 ## 3. Brand devices
 
 JTECH's graphic language, taken from the client's Instagram. All pure CSS/SVG —
@@ -204,20 +229,26 @@ This is enforced structurally, not by convention:
 so it's allowed to fill its section. Everything else stays well under, which is
 what makes that one section land.
 
-| Section              | Device                        |
-| -------------------- | ----------------------------- |
-| Hero                 | `GoldRibbon` #1 of 2          |
-| Categories           | — (gold icon chips)           |
-| Featured (ink block) | `GoldRibbon` #2 of 2 — spent  |
-| Full range           | `Halftone`                    |
-| Best sellers         | `CornerBlob` @ `.08`          |
-| Accessories          | `Halftone`                    |
-| Why JTECH            | `NumberedSquare` ×4           |
-| Services             | `CornerBlob` @ `.08`          |
-| Delivery             | `GoldPanel` — the one moment  |
-| Instagram            | `Halftone`                    |
-| Contact              | — (deliberately none)         |
-| Footer               | `Halftone` @ `.2`             |
+| Section              | Surface | Device                        |
+| -------------------- | ------- | ----------------------------- |
+| Hero                 | white   | `GoldRibbon` #1 of 2          |
+| Categories           | gray    | — (gold icon chips)           |
+| Featured (ink block) | ink     | `GoldRibbon` #2 of 2 — spent  |
+| Feature mosaic       | white   | — (colour blocking is the interest) |
+| Full range           | gray    | `Halftone`                    |
+| Best sellers         | white   | `CornerBlob` @ `.08`          |
+| Accessories          | gray    | `Halftone`                    |
+| Why JTECH            | white   | `NumberedSquare` ×4           |
+| Services             | gray    | `CornerBlob` @ `.08`          |
+| Delivery             | gold    | `GoldPanel` — the one moment  |
+| Brand marquee        | gray    | `Halftone`                    |
+| Contact              | white   | — (deliberately none)         |
+| Footer               | ink     | `Halftone` @ `.2`             |
+
+**No two adjacent sections share a surface.** That alternation is what gives the
+page its rhythm, and it is easy to break by inserting a section without checking
+its neighbours — the table above is duplicated as a comment in
+`app/[locale]/page.tsx` for exactly that reason.
 
 Hard caps: **two ribbons per page**, **two full-saturation blobs per page**
 (both currently spent on the panel and the hero), **one gold panel per page**.
@@ -249,6 +280,7 @@ Brand easing is `cubic-bezier(.28, .11, .32, 1)` — `ease-brand`.
 | `<Reveal />`     | Same as `Enter`, triggered on scroll            | ~0.5 KB   |
 | `<Parallax />`   | Scroll drift, capped at 5% of element height    | ~0.6 KB   |
 | `<GoldRibbon />` | `stroke-dashoffset` draw over 1.2s, CSS only    | 0 KB JS   |
+| `BrandMarquee`   | 45s linear conveyor, CSS only                   | 0 KB JS   |
 
 ### Above the fold uses `Enter`, below the fold uses `Reveal`
 
@@ -261,10 +293,27 @@ pure CSS animation, and the hero ships no client JS for its own motion.
 
 `<Reveal />` renders with **no** `.reveal` class on the server, so the HTML is
 visible as delivered. It adds the class (and therefore `opacity: 0`) on mount,
-and only if the element is still offscreen — where hiding it is imperceptible.
+and only if the element is still below the fold — where hiding it is
+imperceptible.
 
-A reveal that is `opacity: 0` by default blanks every section on a JS error, a
-failed hydration, or a scripting-disabled browser. Don't reintroduce that.
+There are four separate ways a scroll reveal can strand content permanently
+invisible, and all four are handled:
+
+1. **JS never runs** (error, failed hydration, scripting disabled) → the class is
+   never added, so the content is simply visible.
+2. **No `IntersectionObserver`** → shown immediately.
+3. **The reader lands mid-page** — a deep link, or a restored scroll position — so
+   sections *above* them never intersect and never fire. `Reveal` checks for
+   `rect.bottom <= 0` on mount and shows those without animating. This is the one
+   that is easy to miss, because it only reproduces on a deep link.
+4. **`prefers-reduced-motion`** → shown immediately; nothing is hidden at all.
+
+The observer also uses `rootMargin: '0px 0px -10% 0px'` so elements commit
+slightly *before* entering, which stops a fast scroll outrunning it and leaving a
+band of the page blank.
+
+Verified by scrolling top→bottom in 1.5-viewport jumps and back: zero elements
+left at `opacity: 0`. Don't reintroduce an `opacity: 0` default.
 
 ### Framer Motion is per-component, never global
 
@@ -349,7 +398,9 @@ Non-negotiable, and mostly free if you don't fight it.
    plain sections reading as one family.
 3. Pick **one** device from the table in §3, and check the per-page budget above
    before reaching for a ribbon or a full-saturation blob.
-4. Alternate the background (`white` / `gray`) against the neighbouring sections.
+4. Alternate the background against BOTH neighbours — no two adjacent sections
+   share a surface. Then check any `<ProductCard>` inside it still has a bed that
+   contrasts (`bed="white"` on a gray section).
 5. Use `<Reveal>` for entrance motion, not `<Enter>` — `Enter` is for above the
    fold only.
 6. If it appears in the sticky nav, add its id to `LOCAL_NAV_IDS` **in document
