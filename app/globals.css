@@ -16,11 +16,14 @@
   --color-gray-700: #6e6e73;
   --color-ink: #1d1d1f;
 
-  --color-gold: #f2a52f;
-  --color-gold-light: #ffc93c;
-  --color-gold-deep: #de8f12;
-  --color-gold-tint: #fef8ec;
-  --color-gold-text: #9a6200;
+  /* Brand gold. The rest of the family is derived from it — see DESIGN.md. */
+  --color-gold: #e1aa4d;
+  --color-gold-light: #f0c46f; /* hover, light gradient stop */
+  --color-gold-deep: #c48f35; /* deep gradient stop */
+  --color-gold-tint: #fcf7eb; /* hover beds */
+  /* The only gold permitted as text on light surfaces: 5.3:1 on white and
+     4.9:1 on --color-gold-tint. The brand gold itself is 2.1:1 on white. */
+  --color-gold-text: #8a6524;
   --color-green: #2fbf6b;
   /* "آخر قطع" / low-stock. Darkened from the gold so it reads as a state, not
      as brand fill, and clears 4.5:1 on white for the accompanying label. */

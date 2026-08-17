@@ -56,7 +56,7 @@ export async function Delivery() {
             </h2>
             {/* On gold the swash needs to be ink, not gold-on-gold. */}
             <Swash tone="ink" />
-            <p className="mt-6 max-w-[52ch] text-subhead text-ink/75">{t('subhead')}</p>
+            <p className="mt-6 max-w-[52ch] text-subhead text-ink">{t('subhead')}</p>
           </Reveal>
 
           {/* ---- Stats ---------------------------------------------------- */}
@@ -67,7 +67,7 @@ export async function Delivery() {
                 // keeps the numeral visually above its label without lying about
                 // the order in the markup.
                 <div key={stat.key} className="flex flex-col-reverse gap-2">
-                  <dt className="text-caption text-ink/70">{t(`stats.${stat.key}`)}</dt>
+                  <dt className="text-caption font-medium text-ink">{t(`stats.${stat.key}`)}</dt>
                   <dd className="flex items-baseline gap-1.5 text-numeral-sm font-semibold text-ink">
                     {/* `.num` goes on the numeral only. On the parent it would
                         also force the Arabic currency word into the Latin font
@@ -112,7 +112,7 @@ export async function Delivery() {
               ))}
             </Accordion>
 
-            <p className="mt-8 max-w-[60ch] text-caption text-ink/70">{t('note')}</p>
+            <p className="mt-8 max-w-[60ch] text-caption text-ink">{t('note')}</p>
 
             <div className="mt-8">
               <Button

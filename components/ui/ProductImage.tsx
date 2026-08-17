@@ -51,7 +51,7 @@ export function ProductImage({
         role="img"
         aria-label={t('imagePending', { product: name })}
       >
-        <LogoMark size={28} className="text-ink opacity-[0.12]" />
+        <LogoMark height={26} tone="current" className="text-ink opacity-[0.12]" />
         <span className="max-w-[18ch] text-caption font-medium text-gray-700">{name}</span>
       </div>
     );

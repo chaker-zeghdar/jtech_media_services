@@ -34,17 +34,17 @@ type AccordionItemProps = {
 
 const SUMMARY: Record<Tone, string> = {
   light: 'hover:text-gold-text',
-  gold: 'hover:text-ink/70',
+  gold: 'hover:underline',
 };
 
 const META: Record<Tone, string> = {
   light: 'text-gray-700',
-  gold: 'text-ink/70',
+  gold: 'text-ink',
 };
 
 const BODY: Record<Tone, string> = {
   light: 'text-gray-700',
-  gold: 'text-ink/80',
+  gold: 'text-ink',
 };
 
 /**

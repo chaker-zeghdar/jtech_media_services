@@ -65,7 +65,9 @@ const PILL_TONE: Record<Variant, Record<Surface, string>> = {
   link: {
     light: 'text-gold-text hover:text-ink',
     ink: 'text-gold hover:text-white',
-    gold: 'text-ink hover:text-gray-700',
+    // Nothing is darker than ink, so the hover cue is an underline rather than
+    // a colour change that could only reduce contrast on the gradient.
+    gold: 'text-ink hover:underline',
   },
 };
 

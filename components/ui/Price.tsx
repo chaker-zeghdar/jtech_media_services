@@ -28,7 +28,7 @@ const SIZE: Record<NonNullable<PriceProps['size']>, string> = {
 const MUTED: Record<NonNullable<PriceProps['surface']>, string> = {
   light: 'text-gray-700',
   ink: 'text-gray-500',
-  gold: 'text-ink/60',
+  gold: 'text-ink',
 };
 
 /**

@@ -19,13 +19,13 @@ type SectionHeaderProps = {
 const SUBHEAD_TONE: Record<NonNullable<SectionHeaderProps['surface']>, string> = {
   light: 'text-gray-700',
   ink: 'text-gray-300',
-  gold: 'text-ink/75',
+  gold: 'text-ink',
 };
 
 const EYEBROW_TONE: Record<NonNullable<SectionHeaderProps['surface']>, string> = {
   light: 'text-gray-700',
   ink: 'text-gold',
-  gold: 'text-ink/70',
+  gold: 'text-ink',
 };
 
 /**

@@ -211,6 +211,24 @@ Then flip `placeholderContacts: false` in `settings.ts`. That removes the amber
 
 No component hardcodes a phone number, an address or a social handle.
 
+### Brand assets
+
+- **The logo** is drawn as vector paths in
+  [`components/brand/LogoMark.tsx`](components/brand/LogoMark.tsx) — the "JT"
+  monogram, four italic strokes. Not a raster, so it stays crisp from the 16px
+  favicon to the hero watermark and recolours from a single `fill`. It appears in
+  the header, the footer, the mobile menu, the `<ProductImage />` empty-state
+  watermark (at 12% ink) and the favicon (`app/icon.svg`, which carries its own
+  copy of the paths because Next reads that file directly).
+- **The brand colour** is `--color-gold` in
+  [`app/globals.css`](app/globals.css). Change that one line and it propagates
+  everywhere. The rest of the gold family (`light`, `deep`, `tint`, `text`) is
+  derived from it — if you change the base, re-derive them, and re-check
+  `--color-gold-text` against white: it is the only gold allowed as text on a
+  light surface and it must stay above 4.5:1. The `gold-panel` gradient in
+  `tailwind.config.ts` also carries literal stops. DESIGN.md § "Colour" has the
+  measured numbers.
+
 ### Delivery fees
 
 `content/wilayas.ts` holds all 58 wilayas grouped into four fee bands (`local`,

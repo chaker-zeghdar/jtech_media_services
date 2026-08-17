@@ -9,8 +9,8 @@ import type { Config } from 'tailwindcss';
  *
  * Accessibility contract baked into the names:
  *   gold      — fill / shape colour on light surfaces. NEVER text on white (~2:1).
- *   gold-text — the only gold permitted for text on white (#9A6200, ~5:1).
- *   gold      — fine as TEXT on the ink surface (#F2A52F on #1D1D1F, ~8:1).
+ *   gold-text — the only gold permitted for text on white (#8A6524, ~5.3:1).
+ *   gold      — fine as TEXT on the ink surface (#E1AA4D on #1D1D1F, ~7.9:1).
  *
  * See DESIGN.md for the one-brand-device-per-section rule.
  */
@@ -119,8 +119,10 @@ const config: Config = {
         modal: '0 40px 80px -20px rgba(0,0,0,.28)',
       },
       backgroundImage: {
+        // Diagonal light rays over the brand gradient. Ink text clears AA across
+        // every stop: 12.0:1 on the lightest, 5.3:1 on the deepest.
         'gold-panel':
-          'linear-gradient(105deg, rgba(255,255,255,.30) 8%, transparent 19%, rgba(255,255,255,.20) 35%, transparent 47%), linear-gradient(135deg, #FFD666, #F2A52F 45%, #E09600)',
+          'linear-gradient(105deg, rgba(255,255,255,.30) 8%, transparent 19%, rgba(255,255,255,.20) 35%, transparent 47%), linear-gradient(135deg, #F7D98F, #E1AA4D 45%, #C1862C)',
         'gold-ribbon': 'linear-gradient(135deg, var(--color-gold-light), var(--color-gold-deep))',
       },
       zIndex: {

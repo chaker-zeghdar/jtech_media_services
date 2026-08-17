@@ -27,11 +27,11 @@ brand colour is a one-line edit that propagates everywhere.
 | `--color-gray-500`   | `#86868B` | Footnotes, muted labels                    |
 | `--color-gray-700`   | `#6E6E73` | Subheads, secondary body                   |
 | `--color-ink`        | `#1D1D1F` | All primary text; dark surfaces            |
-| `--color-gold`       | `#F2A52F` | Fills, shapes, badges                      |
-| `--color-gold-light` | `#FFC93C` | Hover, gradient stop                       |
-| `--color-gold-deep`  | `#DE8F12` | Gradient stop                              |
-| `--color-gold-tint`  | `#FEF8EC` | Hover beds                                 |
-| `--color-gold-text`  | `#9A6200` | Gold **text** on light backgrounds         |
+| `--color-gold`       | `#E1AA4D` | Fills, shapes, badges                      |
+| `--color-gold-light` | `#F0C46F` | Hover, gradient stop                       |
+| `--color-gold-deep`  | `#C48F35` | Gradient stop                              |
+| `--color-gold-tint`  | `#FCF7EB` | Hover beds                                 |
+| `--color-gold-text`  | `#8A6524` | Gold **text** on light backgrounds         |
 | `--color-green`      | `#2FBF6B` | In-stock dot only                          |
 | `--color-amber`      | `#96590A` | Low-stock label, form errors                |
 
@@ -54,7 +54,7 @@ ink.** The brief's own note calls gray-500 "footnotes, muted", which is a role,
 not a contrast guarantee — used as 12px text on white it fails AA.
 
 One further trap: where a `CornerBlob` tints a gray section (`#F5F5F7` + 8% gold
-= `#F5EFE7`), `gray-700` drops to 4.43:1 and misses AA at 12px. Micro-labels that
+= `#F3EFE9`), `gray-700` drops to 4.43:1 and misses AA at 12px. Micro-labels that
 can sit over a tint — the product card's brand line — use `text-ink/70` (~5.8:1
 on white, gray and tinted beds alike).
 
@@ -64,17 +64,30 @@ beside it is gray-700.
 
 ### The gold contrast rule — the one that gets broken
 
-`#F2A52F` on white is roughly **2:1**. That fails WCAG AA for text by a wide
-margin. So:
+`#E1AA4D` on white is **2.09:1**. That fails WCAG AA for text by a wide margin.
+So:
 
 - **Gold is a fill and shape colour on light backgrounds. Never a text colour.**
-- Gold text on white uses `--color-gold-text` (`#9A6200`, ~5:1) → `text-gold-text`.
-- On the ink surface (`#1D1D1F`), `#F2A52F` text measures ~8:1 and is correct —
+- Gold text on white uses `--color-gold-text` (`#8A6524`, 5.3:1) → `text-gold-text`.
+  It also clears AA on `gray-50` (4.9:1) and on `gold-tint` (5.0:1).
+- On the ink surface (`#1D1D1F`), `#E1AA4D` text measures 8.1:1 and is correct —
   `text-gold` is right there and nowhere else.
 
 `Button` encodes this in its `surface` prop (`light` | `ink` | `gold`) rather
 than leaving it to the call site: the `link` tier resolves to `text-gold-text` on
 light and `text-gold` on ink. Use the prop instead of hand-picking a colour.
+
+### Text on the gold panel is solid ink — no alpha
+
+The panel is a gradient, and its deepest stop is `#C1862C`. Solid `#1D1D1F` on
+that measures 5.4:1, but `text-ink/70` measures **3.3:1** — so any alpha at all
+fails somewhere along the gradient. Hierarchy on the panel comes from size and
+weight, never from opacity. (This is also what the brief asked for: "Text on it
+is always `#1D1D1F`".)
+
+Worth knowing: axe and Lighthouse **cannot** evaluate contrast over a CSS
+gradient — they report it as incomplete and skip it. A 100 accessibility score
+does not mean the gold panel was checked. It was checked by hand.
 
 `--color-amber` exists because low-stock ("آخر قطع") needs a *label* colour, and
 gold would fail at 12px. The dot beside it can be gold; the words cannot.
@@ -163,9 +176,9 @@ JTECH's graphic language, taken from the client's Instagram. All pure CSS/SVG �
 | Component          | What it is                                                                |
 | ------------------ | ------------------------------------------------------------------------- |
 | `<Halftone />`     | Gold dot field, `11px` grid, masked to fade bottom-left, bleeding off a corner. 160–220px. **Never behind text.** |
-| `<GoldRibbon />`   | SVG stroke sweeping behind a product and re-emerging. 14–18px, round caps, `#FFC93C → #DE8F12`, draws over 1.2s. No shadow. |
+| `<GoldRibbon />`   | SVG stroke sweeping behind a product and re-emerging. 14–18px, round caps, `gold-light → gold-deep`, draws over 1.2s. No shadow. |
 | `<CornerBlob />`   | Flat gold organic shape bleeding off a corner, 30–45vw. No blur, no shadow — the client's shapes are flat. |
-| `<GoldPanel />`    | Full-bleed gold gradient with diagonal light rays. Text on it is always ink. |
+| `<GoldPanel />`    | Full-bleed gold gradient (`#F7D98F → #E1AA4D → #C1862C`) with diagonal light rays. Text on it is always **solid** ink — see below. |
 | `<Swash />`        | 56×4px bar, radius 2px, 20px under every section headline.                 |
 | `<NumberedSquare/>`| 40×40px, radius 12px, gold fill, ink numeral 15px/700.                     |
 | `<Pill />`         | `ink` (black bed, white text) or `gold` (gold bed, ink text). 12px/600.    |
