@@ -97,6 +97,12 @@ const config: Config = {
       maxWidth: {
         prose: '980px', // centred content column
         shell: '1680px', // page shell
+        hero: '620px', // the hero product stage
+      },
+      minHeight: {
+        // The hero owns the viewport. A token rather than an arbitrary value so
+        // it stays inside the scale the rest of the system uses.
+        hero: '88vh',
       },
       spacing: {
         section: '7.5rem', // 120px desktop section padding
