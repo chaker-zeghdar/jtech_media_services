@@ -5,23 +5,31 @@ import { type CategorySlug, type Product, parseContent, productSchema } from './
  * Mirrors tables `products` + `product_variants`.
  *
  * ── Product images ────────────────────────────────────────────────────────────
- * `variants[].images` is intentionally EMPTY for every product until the client
- * sends real cutouts. An empty array is a valid state: <ProductImage /> renders
- * the branded empty state (gray bed + JTECH mark + product name) rather than a
- * broken <img> or a gray rectangle.
+ * Six products carry photos; everything else has `images: []`, which is a valid
+ * state — <ProductImage /> renders the branded empty state (gray bed + JTECH mark
+ * + product name) rather than a broken <img> or a gray rectangle.
  *
- * To add a photo: drop a transparent PNG into `public/products/` and list its
- * path here. Nothing else changes. The six cutouts the design was composed
- * around, and the filenames they should get:
+ * ⚠️ THE SUPPLIED CUTOUTS ARE LOW RESOLUTION. They were extracted from the
+ * client's Instagram posts:
  *
- *   /products/iphone-16-pro.png          → iphone-16-pro        (hero + featured)
- *   /products/galaxy-z-fold-8.png        → galaxy-z-fold-8
- *   /products/galaxy-z-fold-8-ultra.png  → galaxy-z-fold-8-ultra
- *   /products/galaxy-z-flip-8.png        → galaxy-z-flip-8
- *   /products/galaxy-watch-ultra-2.png   → galaxy-watch-ultra-2
- *   /products/galaxy-watch-9.png         → galaxy-watch-9
+ *   iphone-16-pro.png          520×677   ← the only one usable above ~250px
+ *   galaxy-z-fold-8-ultra.png  173×261
+ *   galaxy-z-fold-8.png        150×256
+ *   galaxy-z-flip-8.png        186×201
+ *   galaxy-watch-ultra-2.png   157×185
+ *   galaxy-watch-9.png         111×179
  *
- * See README.md § "Adding product photos".
+ * They prove the layout and are fine to show the client; they are NOT launch
+ * assets and must not be upscaled — upscaling adds artefacts, not detail. The
+ * hero deliberately stays on the empty state for this reason (see Hero.tsx), and
+ * the mosaic renders them well below their intrinsic size.
+ *
+ * One known compromise: only one shot exists per product, so every colour variant
+ * of the iPhone 16 Pro points at the same white-titanium photo. Per-colour shots
+ * replace them when the client's photographs arrive.
+ *
+ * To add a photo: drop a PNG into `public/products/` and list its path on the
+ * matching variant. Nothing else changes. See README.md § "Adding product photos".
  * ─────────────────────────────────────────────────────────────────────────────
  *
  * Prices are DZD integers reflecting Batna market rates.
@@ -90,7 +98,7 @@ const PRODUCTS_INPUT = [
         price: 289000,
         compareAt: 305000,
         stock: 'in-stock',
-        images: [],
+        images: ['/products/iphone-16-pro.png'],
       },
       {
         id: 'iphone-16-pro-natural-256',
@@ -103,7 +111,7 @@ const PRODUCTS_INPUT = [
         price: 289000,
         compareAt: null,
         stock: 'in-stock',
-        images: [],
+        images: ['/products/iphone-16-pro.png'],
       },
       {
         id: 'iphone-16-pro-black-512',
@@ -116,7 +124,7 @@ const PRODUCTS_INPUT = [
         price: 329000,
         compareAt: null,
         stock: 'low-stock',
-        images: [],
+        images: ['/products/iphone-16-pro.png'],
       },
       {
         id: 'iphone-16-pro-white-256',
@@ -129,7 +137,7 @@ const PRODUCTS_INPUT = [
         price: 289000,
         compareAt: null,
         stock: 'in-stock',
-        images: [],
+        images: ['/products/iphone-16-pro.png'],
       },
     ],
   },
@@ -372,7 +380,7 @@ const PRODUCTS_INPUT = [
         price: 425000,
         compareAt: null,
         stock: 'in-stock',
-        images: [],
+        images: ['/products/galaxy-z-fold-8.png'],
       },
       {
         id: 'galaxy-z-fold-8-navy-512',
@@ -385,7 +393,7 @@ const PRODUCTS_INPUT = [
         price: 468000,
         compareAt: null,
         stock: 'low-stock',
-        images: [],
+        images: ['/products/galaxy-z-fold-8.png'],
       },
     ],
   },
@@ -432,7 +440,7 @@ const PRODUCTS_INPUT = [
         price: 498000,
         compareAt: null,
         stock: 'low-stock',
-        images: [],
+        images: ['/products/galaxy-z-fold-8-ultra.png'],
       },
     ],
   },
@@ -471,7 +479,7 @@ const PRODUCTS_INPUT = [
         price: 235000,
         compareAt: 249000,
         stock: 'in-stock',
-        images: [],
+        images: ['/products/galaxy-z-flip-8.png'],
       },
       {
         id: 'galaxy-z-flip-8-coral-256',
@@ -484,7 +492,7 @@ const PRODUCTS_INPUT = [
         price: 235000,
         compareAt: null,
         stock: 'in-stock',
-        images: [],
+        images: ['/products/galaxy-z-flip-8.png'],
       },
       {
         id: 'galaxy-z-flip-8-mint-512',
@@ -497,7 +505,7 @@ const PRODUCTS_INPUT = [
         price: 268000,
         compareAt: null,
         stock: 'low-stock',
-        images: [],
+        images: ['/products/galaxy-z-flip-8.png'],
       },
     ],
   },
@@ -580,7 +588,7 @@ const PRODUCTS_INPUT = [
         price: 86000,
         compareAt: null,
         stock: 'in-stock',
-        images: [],
+        images: ['/products/galaxy-watch-ultra-2.png'],
       },
       {
         id: 'galaxy-watch-ultra-2-white-47',
@@ -593,7 +601,7 @@ const PRODUCTS_INPUT = [
         price: 86000,
         compareAt: null,
         stock: 'low-stock',
-        images: [],
+        images: ['/products/galaxy-watch-ultra-2.png'],
       },
     ],
   },
@@ -628,7 +636,7 @@ const PRODUCTS_INPUT = [
         price: 52000,
         compareAt: 58000,
         stock: 'in-stock',
-        images: [],
+        images: ['/products/galaxy-watch-9.png'],
       },
       {
         id: 'galaxy-watch-9-graphite-40',
@@ -641,7 +649,7 @@ const PRODUCTS_INPUT = [
         price: 48000,
         compareAt: null,
         stock: 'in-stock',
-        images: [],
+        images: ['/products/galaxy-watch-9.png'],
       },
     ],
   },
