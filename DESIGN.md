@@ -39,6 +39,29 @@ The Tailwind default palette is **replaced**, not extended — `theme.colors` si
 at the top level of the config. `bg-red-500` and `text-slate-700` do not exist.
 If a colour isn't in the table above, it isn't in the system.
 
+### The gray rule — the one that surprised us
+
+The two grays are **not** interchangeable, and which is correct depends on the
+surface:
+
+| Text colour           | on white | on `#F5F5F7` | on ink `#1D1D1F` |
+| --------------------- | -------- | ------------ | ---------------- |
+| `gray-500` `#86868B`  | 3.6:1 ✗  | 3.5:1 ✗      | **4.6:1 ✓**      |
+| `gray-700` `#6E6E73`  | **5.0:1 ✓** | **4.8:1 ✓** | 3.3:1 ✗          |
+
+So: **`gray-700` for muted text on light surfaces, `gray-500` for muted text on
+ink.** The brief's own note calls gray-500 "footnotes, muted", which is a role,
+not a contrast guarantee — used as 12px text on white it fails AA.
+
+One further trap: where a `CornerBlob` tints a gray section (`#F5F5F7` + 8% gold
+= `#F5EFE7`), `gray-700` drops to 4.43:1 and misses AA at 12px. Micro-labels that
+can sit over a tint — the product card's brand line — use `text-ink/70` (~5.8:1
+on white, gray and tinted beds alike).
+
+And `--color-green` is an **in-stock dot colour, not a text colour**: `#2FBF6B`
+on white is 2.4:1. `StockDot` is correct because the dot is green while the label
+beside it is gray-700.
+
 ### The gold contrast rule — the one that gets broken
 
 `#F2A52F` on white is roughly **2:1**. That fails WCAG AA for text by a wide
@@ -244,6 +267,25 @@ it on a 4G connection.
 `@media (prefers-reduced-motion: reduce)` collapses every duration to `0.01ms`
 and forces `.reveal` / `.enter` / `.enter-word` to their visible end state. The
 light sweep is removed outright. No animation survives it.
+
+### Rendering budget
+
+The homepage is long, and on a throttled mobile CPU its dominant cost is Style &
+Layout, not network. Three decisions keep that in check — change them knowingly:
+
+- **`<ProductCard />` is a server component.** All of its hover choreography is
+  CSS on the card's `group`, so a card needs no JavaScript. Only
+  `<QuickViewTrigger />` is a client island, and only the best-sellers grid
+  enables it (the brief scopes quick view to that section). Making the whole card
+  a client component cost ~80ms of Total Blocking Time for one boolean per card.
+- **Sections carry `content-visibility: auto`** via `.defer-offscreen`, so the
+  browser skips style, layout and paint for sections still below the fold. This
+  moved First Contentful Paint 2.3s → 1.7s and Speed Index 3.1s → 1.7s under
+  simulated mobile throttling. `contain-intrinsic-size: auto 900px` keeps the
+  scrollbar stable, and CLS stayed at 0.003.
+- **The rails are capped** (`RAIL_LIMIT`, and `.slice()` in the best-sellers and
+  accessories sections). The content layer holds the full catalogue; the homepage
+  shows a subset, because every extra card is ~35 DOM nodes of layout work.
 
 ### Keyframes live in `globals.css`, not in the Tailwind config
 

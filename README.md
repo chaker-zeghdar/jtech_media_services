@@ -266,15 +266,55 @@ The schemas are the contract. Anything that validates against
 
 ## Verified
 
-Checked against the production build, all three locales:
+Measured against the production build (`next start`), not asserted.
+
+### Build and structure
 
 - `npm run build` clean, `tsc --noEmit` clean, ESLint clean, zero `any`
 - All three locales prerender as static HTML; `/ar` correctly redirects (the
   Arabic canonical is `/`)
-- **First Load JS: 132 KB** (budget: 150 KB)
+- **First Load JS: 129 KB** (budget: 150 KB)
 - No horizontal overflow at 390 / 768 / 1440 / 1920px, in both directions
 - Latin digits only — no Arabic-Indic digits leak into any locale
 - Every section carries `aria-labelledby` pointing at its own heading
 - No physical `left`/`right` layout classes in the rendered HTML
 - Message files: 150 keys, identical across `ar`/`fr`/`en`, placeholders matched
 - Content renders with JavaScript disabled — no section is `opacity: 0` by default
+
+### Lighthouse
+
+|                | Perf    | A11y    | Best Practices | SEO |
+| -------------- | ------- | ------- | -------------- | --- |
+| Desktop (ar)   | **100** | **100** | **100**        | 91  |
+| Mobile (ar)    | 82–88   | **100** | **100**        | 91  |
+| Mobile (fr)    | 93      | **100** | **100**        | 91  |
+| Mobile (en)    | 89      | **100** | **100**        | 91  |
+
+- **Accessibility and Best Practices are 100** on every locale and both form
+  factors, with zero failing audits.
+- **SEO 91** is a local-testing artifact: the only failing audit is `canonical`,
+  because the canonical URL points at the production origin while the page is
+  served from `127.0.0.1`. Set `NEXT_PUBLIC_SITE_URL` and it scores 100.
+- **CLS 0.003** — effectively zero. Every image and the map iframe have explicit
+  dimensions.
+- **Mobile performance misses the ≥95 bar** (median ~85). See below.
+
+### On mobile performance
+
+Real, unthrottled: **FCP ~200ms, LCP ~380ms**. Lighthouse's mobile score comes
+from a *simulated* mid-tier Android on 4G with a 4× CPU multiplier, and under
+that model the remaining cost is almost entirely Style & Layout across ~1,850 DOM
+elements — not network, not JavaScript.
+
+What was already done to close the gap: CSS inlined (removed the only
+render-blocking request), product cards converted to server components (TBT
+250ms → 160ms), quick view scoped to the best-sellers grid, `content-visibility`
+on sections (FCP 2.3s → 1.7s), rails capped, `text-wrap: balance` scoped to
+headlines, per-locale font loading, and the Arabic font reduced to its Arabic
+subset.
+
+What would close the rest is content volume, which is a client decision rather
+than an engineering one: fewer product cards per rail (`RAIL_LIMIT` in
+`components/sections/FullRange.tsx`), or moving a section such as the Instagram
+strip or the 58-wilaya accordion off the homepage. Each rail item is ~35 DOM
+nodes; dropping the three rails to four cards each is worth roughly 8 points.
