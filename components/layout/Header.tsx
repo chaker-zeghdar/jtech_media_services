@@ -4,19 +4,29 @@ import { categories } from '@/content/categories';
 import { Link } from '@/i18n/navigation';
 import { pickLocale } from '@/lib/format';
 import { Container } from './Container';
+import { LocaleSwitcher } from './LocaleSwitcher';
 import { MobileMenu } from './MobileMenu';
 import { categoryHref } from './navigation';
 
 /**
  * Global header: brand plus the five category entries.
  *
- * Deliberately does NOT repeat the phone number or the locale switcher — both
- * live in the <AnnouncementBar /> directly above, and showing them twice on
- * desktop reads as a bug rather than as emphasis.
+ * STICKY. The categories and the language switcher are controls, and a shop
+ * where people compare five phones down a long page needs them reachable without
+ * scrolling back to the top. <AnnouncementBar /> above is delivery/COD/phone
+ * facts rather than controls, so it is left to scroll away.
  *
- * A server component; the only client JS it pulls in is <MobileMenu />, which
- * needs state. Category names are resolved here and passed down as plain strings
- * so the menu never touches the content layer on the client.
+ * Worth recording, since apple.com/store is this project's reference: Apple's own
+ * #globalnav is `position: absolute` and scrolls away permanently — the same
+ * failure this fixes. What is worth taking from Apple is the visual language, not
+ * the scroll behaviour.
+ *
+ * It still does NOT repeat the phone number, which stays in the announcement bar.
+ *
+ * A server component; the only client JS it pulls in is <LocaleSwitcher /> and
+ * <MobileMenu />, both of which need state. Category names are resolved here and
+ * passed down as plain strings so the menu never touches the content layer on the
+ * client.
  */
 export async function Header() {
   const locale = await getLocale();
@@ -31,7 +41,7 @@ export async function Header() {
     }));
 
   return (
-    <header className="hairline-b bg-white">
+    <header className="sticky top-0 z-nav hairline-b bg-white">
       <Container className="flex h-16 items-center justify-between gap-6">
         <Link href="/" aria-label={t('logo')} className="shrink-0">
           <Logo />
@@ -52,7 +62,13 @@ export async function Header() {
           </ul>
         </nav>
 
-        <MobileMenu categories={items} />
+        <div className="flex shrink-0 items-center gap-2">
+          {/* Same breakpoint as the category nav above. Under lg the switcher
+              lives inside <MobileMenu />, which the sticky header keeps
+              reachable. */}
+          <LocaleSwitcher className="hidden lg:block" />
+          <MobileMenu categories={items} />
+        </div>
       </Container>
     </header>
   );

@@ -1,12 +1,16 @@
 import { useTranslations } from 'next-intl';
 import { settings, telLink } from '@/content/settings';
 import { Icon } from '@/components/ui/Icon';
-import { LocaleSwitcher } from './LocaleSwitcher';
 import { Container } from './Container';
 
 /**
  * The three facts that decide whether an Algerian visitor keeps reading: we ship
  * to your wilaya, you pay on arrival, and here's a number you can call.
+ *
+ * Deliberately NOT sticky, and deliberately no longer carrying the locale
+ * switcher — that moved to the sticky <Header />. These are facts, not controls,
+ * so scrolling them away costs nothing; scrolling the language switcher away cost
+ * the reader the only way to change language.
  */
 export function AnnouncementBar() {
   const t = useTranslations('announcement');
@@ -39,8 +43,6 @@ export function AnnouncementBar() {
             </a>
           </li>
         </ul>
-
-        <LocaleSwitcher tone="ink" className="shrink-0" />
       </Container>
     </div>
   );

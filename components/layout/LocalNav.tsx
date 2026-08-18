@@ -71,6 +71,10 @@ export function LocalNav() {
 
     const visible = new Set<string>();
 
+    const rootStyle = getComputedStyle(document.documentElement);
+    const px = (name: string) => Number.parseFloat(rootStyle.getPropertyValue(name)) || 0;
+    const chromeHeight = px('--header-height') + px('--nav-height');
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -82,7 +86,9 @@ export function LocalNav() {
         const current = [...documentOrder].reverse().find((id) => visible.has(id)) ?? null;
         setActive(current as SectionId | null);
       },
-      { rootMargin: '-64px 0px -68% 0px', threshold: 0 },
+      // Top band starts below BOTH sticky bars, read from the same custom
+      // property rather than a second hardcoded pixel value.
+      { rootMargin: `-${chromeHeight}px 0px -68% 0px`, threshold: 0 },
     );
 
     for (const section of sections) observer.observe(section);
@@ -91,8 +97,12 @@ export function LocalNav() {
 
   return (
     <div
+      style={{ top: 'var(--header-height)' }}
       className={cn(
-        'sticky top-0 z-nav border-b border-gray-300',
+        // Stacks directly under the now-sticky Header. `top` comes from the
+        // same custom property that drives --nav-offset, so the sticky stacking
+        // and the anchor offset cannot drift apart.
+        'sticky z-nav border-b border-gray-300',
         // Blurred translucent bed, with a solid fallback where backdrop-filter
         // isn't supported so the nav is never unreadable over content.
         'bg-white/85 supports-[backdrop-filter]:bg-white/70 supports-[backdrop-filter]:backdrop-blur-xl',

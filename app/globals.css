@@ -39,18 +39,25 @@
   /* Resolved per-locale below; `font-sans` maps to this. */
   --font-ui: var(--font-stack-latin);
 
+  /* Sticky chrome, measured off the components that render it:
+     Header is h-16, LocalNav is h-12. Both stick; AnnouncementBar does not. */
+  --header-height: 64px;
   --nav-height: 48px;
   --announce-height: 34px;
 
   /**
    * How far an anchored section must clear the top of the viewport.
    *
-   * Only the LocalNav is `position: sticky`, so it is the only chrome still
-   * overlapping content once the page has scrolled. 16px keeps the section edge
-   * off the nav without adding a gap — each section already opens with 72/120px
-   * of its own padding above the heading, which is the breathing room.
+   * BOTH the Header and the LocalNav are sticky, so an anchor has to clear the
+   * pair of them — 112px of chrome — plus 16px so the section edge doesn't graze
+   * the nav. Each section already opens with 72/120px of its own padding above
+   * the heading, which is the real breathing room.
+   *
+   * Derived from the same two primitives that position the bars themselves
+   * (LocalNav sticks at `top: var(--header-height)`), so the anchor offset and
+   * the sticky stacking cannot drift apart.
    */
-  --nav-offset: calc(var(--nav-height) + 16px);
+  --nav-offset: calc(var(--header-height) + var(--nav-height) + 16px);
 }
 
 /* Arabic locale picks up the Arabic stack from the same `font-sans` class, so
