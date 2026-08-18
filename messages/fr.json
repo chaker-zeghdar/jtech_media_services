@@ -21,8 +21,8 @@
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
     "localeSwitcher": "Changer de langue",
-    "carouselPrev": "Produits précédents",
-    "carouselNext": "Produits suivants",
+    "carouselPrev": "Précédent",
+    "carouselNext": "Suivant",
     "carouselProgress": "Progression du défilement",
     "readingProgress": "Progression de lecture de la page",
     "imagePending": "Photo de {product} — le visuel définitif arrive bientôt",
@@ -105,23 +105,24 @@
     "subhead": "Quatre raisons claires, sans discours superflu.",
     "items": {
       "warranty": {
-        "title": "Garantie écrite",
-        "body": "Vous repartez du magasin avec un bon de garantie en main, pas une promesse. Ce qui est couvert y est écrit, et pour combien de mois."
+        "title": "Vous repartez avec une <em>garantie écrite</em> en main.",
+        "body": "Elle précise ce qui est couvert et pour combien de mois."
       },
       "genuine": {
-        "title": "Appareils authentiques et scellés",
-        "body": "Chaque appareil arrive scellé d’usine. Vous pouvez vérifier le numéro IMEI devant nous avant de payer."
+        "title": "Chaque appareil est <em>authentique et scellé</em> d’usine.",
+        "body": "Vous vérifiez l’IMEI devant nous avant de payer."
       },
       "delivery": {
-        "title": "Livraison dans les 58 wilayas",
-        "body": "Nous livrons partout en Algérie, au bureau du transporteur ou à domicile, à vous de choisir. Et vous payez à la réception."
+        "title": "On livre dans les <em>58 wilayas</em>, payées à la réception.",
+        "body": "Bureau du transporteur ou domicile, à vous de choisir."
       },
       "aftersales": {
-        "title": "On ne disparaît pas après la vente",
-        "body": "Un problème ? Vous revenez au magasin et on s’en occupe : réparation, échange ou coup de main côté logiciel."
+        "title": "On ne <em>disparaît pas</em> après la vente.",
+        "body": "Plus de 7 ans à vendre, acheter et réparer à Batna."
       }
     },
-    "socialProof": "Plus de 160 000 abonnés sur Instagram, 56 000 sur TikTok et 50 000 sur Facebook."
+    "socialProof": "Plus de 160 000 abonnés sur Instagram, 56 000 sur TikTok et 50 000 sur Facebook.",
+    "railLabel": "Raisons d’acheter chez JTECH"
   },
   "services": {
     "title": "Nos services en magasin",
@@ -197,7 +198,9 @@
     "serviceMessage": "Bonjour, je souhaite prendre rendez-vous pour : {service}.",
     "deliveryMessage": "Bonjour, je voudrais commander et connaître les frais de livraison pour ma wilaya.",
     "generalMessage": "Bonjour JTECH, j’aurais une question sur un produit.",
-    "learnMore": "En savoir plus"
+    "learnMore": "En savoir plus",
+    "colourCount": "Disponible en {count, plural, one {# coloris} other {# coloris}}",
+    "moreColours": "+{count}"
   },
   "locale": {
     "label": "Langue"

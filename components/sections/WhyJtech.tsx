@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { getTranslations } from 'next-intl/server';
 import { NumberedSquare } from '@/components/brand/NumberedSquare';
 import { Container } from '@/components/layout/Container';
@@ -5,52 +6,83 @@ import { Section } from '@/components/layout/Section';
 import { SectionHeader } from '@/components/layout/SectionHeader';
 import { Reveal } from '@/components/motion/Reveal';
 import { Card } from '@/components/ui/Card';
-import { cn } from '@/lib/cn';
+import { Carousel } from '@/components/ui/Carousel';
 
 /** Order matters — the written warranty is the strongest claim, so it leads. */
 const REASONS = ['warranty', 'genuine', 'delivery', 'aftersales'] as const;
 
 /**
- * Section 7 — علاش تشري من JTECH. Brand device: NumberedSquare ×4, one per card.
+ * Section — علاش تشري من JTECH, as a rail of compact reason cards.
  *
- * Four instances of the same device is still one device, which is why this
- * section doesn't also get a blob or a halftone.
+ * Modelled on "The Apple Store difference" on apple.com/store: a plain horizontal
+ * rail of borderless cards, each a small device, a short bold headline with ONE
+ * phrase picked out in colour, and a single line of supporting copy. No product
+ * photo, no button, no border.
+ *
+ * Brand device: NumberedSquare ×4, unchanged. Four instances of one device is
+ * still one device — this pass changes the layout, not the device budget, and the
+ * section keeps its place in the surface alternation.
+ *
+ * The cards are `gray` on this section's white bed. Apple's are white on a gray
+ * bed; the relationship (plain borderless card, contrasting with the section) is
+ * what carries over, not the literal colour. White cards here would disappear —
+ * the same trap DESIGN.md records for the ProductCard image bed.
+ *
+ * The headline emphasis comes through `t.rich`, so the phrase to highlight is
+ * marked up inside the message (`<em>…</em>`) and a translator moves it with the
+ * sentence instead of it being positional.
  */
 export async function WhyJtech() {
   const t = await getTranslations('why');
+
+  const goldPhrase = (chunks: ReactNode) => (
+    // gold-text, never bare gold: #E1AA4D is 2.1:1 on a light surface.
+    <span className="font-semibold text-gold-text">{chunks}</span>
+  );
 
   return (
     <Section id="why" background="white">
       <Container>
         <SectionHeader id="why" title={t('title')} subhead={t('subhead')} />
 
-        <ul className="mt-14 grid gap-5 md:grid-cols-2">
+        <Carousel label={t('railLabel')} className="mt-14">
           {REASONS.map((reason, index) => (
-            <Reveal key={reason} as="li" delayMs={index * 80} className="h-full">
-              <Card
-                surface={reason === 'warranty' ? 'gray' : 'white'}
-                bordered={reason !== 'warranty'}
-                className={cn(
-                  'flex h-full flex-col gap-5 p-7 sm:p-9',
-                  // The warranty card is the section's anchor claim: gray bed and
-                  // a gold hairline instead of the standard gray one.
-                  reason === 'warranty' && 'border border-gold',
-                )}
-              >
-                <NumberedSquare value={index + 1} />
-                <div className="flex flex-col gap-3">
-                  <h3 className="text-h3 font-semibold">{t(`items.${reason}.title`)}</h3>
-                  <p className="max-w-[46ch] text-base text-gray-700">
-                    {t(`items.${reason}.body`)}
-                  </p>
-                </div>
-              </Card>
-            </Reveal>
-          ))}
-        </ul>
+            <div
+              key={reason}
+              /**
+               * ~280px up to lg, where four cards genuinely overflow and the rail
+               * scrolls. At xl they fill the row instead: four fixed 280px cards
+               * in a 1616px shell leave ~440px of dead space at the end, which
+               * reads as a layout hole rather than as a rail. The card language
+               * (radius, padding, type scale) is what has to match the other
+               * rails, not the exact pixel width.
+               */
+              className="w-[74vw] sm:w-[46vw] md:w-[34vw] lg:w-[26vw] xl:w-[calc((100%-3.75rem)/4)]"
+            >
+              <Reveal delayMs={index * 80} className="h-full">
+                <Card
+                  surface="gray"
+                  bordered={false}
+                  className="flex h-full flex-col gap-5 p-7"
+                >
+                  <NumberedSquare value={index + 1} />
 
-        {/* Social proof as a plain sentence. DESIGN.md bans animated counters —
-            the numbers are facts, not a scoreboard. */}
+                  <div className="flex flex-col gap-3">
+                    <h3 className="text-h3 font-semibold leading-tight">
+                      {t.rich(`items.${reason}.title`, { em: goldPhrase })}
+                    </h3>
+                    <p className="text-base text-gray-700">{t(`items.${reason}.body`)}</p>
+                  </div>
+                </Card>
+              </Reveal>
+            </div>
+          ))}
+        </Carousel>
+
+        {/* Social proof as a plain sentence, deliberately NOT a fifth card: the
+            device budget is four NumberedSquares, and a card without one would
+            read as a mismatched afterthought. DESIGN.md also bans animated
+            counters — these are facts, not a scoreboard. */}
         <Reveal delayMs={320}>
           <p className="mt-10 text-caption text-gray-700">{t('socialProof')}</p>
         </Reveal>

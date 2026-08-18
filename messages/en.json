@@ -21,8 +21,8 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "localeSwitcher": "Change language",
-    "carouselPrev": "Previous products",
-    "carouselNext": "Next products",
+    "carouselPrev": "Previous",
+    "carouselNext": "Next",
     "carouselProgress": "Scroll progress",
     "readingProgress": "Page reading progress",
     "imagePending": "Photo of {product} — the final image is coming soon",
@@ -105,23 +105,24 @@
     "subhead": "Four straight reasons, no filler.",
     "items": {
       "warranty": {
-        "title": "A written warranty",
-        "body": "You leave the shop with a warranty slip in your hand, not a promise. It states what is covered, and for how many months."
+        "title": "You leave with a <em>written warranty</em> in hand.",
+        "body": "It states what is covered, and for how many months."
       },
       "genuine": {
-        "title": "Genuine, factory-sealed devices",
-        "body": "Every device arrives factory sealed. You can check the IMEI in front of us before you pay a dinar."
+        "title": "Every device is <em>genuine and factory-sealed</em>.",
+        "body": "Check the IMEI in front of us before you pay a dinar."
       },
       "delivery": {
-        "title": "Delivery to all 58 wilayas",
-        "body": "We ship anywhere in Algeria — carrier desk or your door, your choice. And you pay when it arrives."
+        "title": "We deliver to <em>all 58 wilayas</em>, paid on arrival.",
+        "body": "Carrier desk or your door — your choice."
       },
       "aftersales": {
-        "title": "We don’t vanish after the sale",
-        "body": "Something wrong? Come back to the shop and we handle it: repair, exchange, or a hand with the software."
+        "title": "We <em>don’t vanish</em> after the sale.",
+        "body": "Over 7 years buying, selling and repairing in Batna."
       }
     },
-    "socialProof": "Over 160,000 followers on Instagram, 56,000 on TikTok and 50,000 on Facebook."
+    "socialProof": "Over 160,000 followers on Instagram, 56,000 on TikTok and 50,000 on Facebook.",
+    "railLabel": "Reasons to buy from JTECH"
   },
   "services": {
     "title": "In-store services",
@@ -197,7 +198,9 @@
     "serviceMessage": "Hi, I’d like to book an appointment for: {service}.",
     "deliveryMessage": "Hi, I’d like to order and find out the delivery cost for my wilaya.",
     "generalMessage": "Hi JTECH, I have a question about a product.",
-    "learnMore": "Learn more"
+    "learnMore": "Learn more",
+    "colourCount": "Available in {count, plural, one {# colour} other {# colours}}",
+    "moreColours": "+{count}"
   },
   "locale": {
     "label": "Language"
