@@ -1,12 +1,11 @@
-import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
 import { Halftone } from '@/components/brand/Halftone';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { SectionHeader } from '@/components/layout/SectionHeader';
 import { Button } from '@/components/ui/Button';
+import { SlideBanner } from '@/components/ui/SlideBanner';
 import { settings } from '@/content/settings';
-import { SLIDES, SLIDE_SOURCE } from '@/content/slides';
 
 /**
  * The client's own marketing posts, on a conveyor.
@@ -20,24 +19,15 @@ import { SLIDES, SLIDE_SOURCE } from '@/content/slides';
  * `settings.departments` already reflect the agency side, so the business really
  * does offer it — the website just doesn't say so yet.
  *
- * Deliberately CONTAINED, not full-bleed. The posts use a pale blue/cyan palette
- * with orange accents and glossy 3D shapes — a different visual language from the
- * site's gold/ink/white. Framed inside consistent rounded cards on a neutral
- * band, they read as "our social feed" and the clash is intentional quoting. Bled
- * edge to edge as page chrome, they would fight every other section and the page
- * would look like two different sites stitched together.
+ * The four panels run flush as ONE banner rather than as four bordered cards.
+ * They are a single wide design cut into squares for Instagram's carousel — the
+ * gold wave continues from panel 1 into panel 2 — so the gap-and-border treatment
+ * this section originally shipped was cutting a line drawn to be continuous. The
+ * layout and motion now live in <SlideBanner />, shared with the hero strip.
  *
- * Motion is pure CSS (see `.marquee-*` in globals.css): one keyframe translating
- * the track by -50%, with the set rendered twice so the loop is seamless. No JS
- * timer, no rAF, no library, and only `transform` animates so there is no layout
- * thrash. Pauses on hover and on focus-within; under `prefers-reduced-motion` the
- * animation stops entirely and the band becomes an ordinary scrollable rail.
+ * A hover lift is deliberately NOT applied per panel: lifting one panel of a
+ * flush-edge graphic tears the seam open, which is worse than no hover at all.
  */
-/** Rendered ~200px mobile / ~280px desktop from the 1170px square sources. */
-const SLIDE_SIZES = '(max-width: 767px) 200px, 280px';
-
-const SLIDE_BOX = 'w-[200px] md:w-[280px]';
-
 export async function BrandMarquee() {
   const t = await getTranslations('social');
   const handle = settings.socials.instagram.handle;
@@ -61,56 +51,18 @@ export async function BrandMarquee() {
         />
       </Container>
 
-      {/* Full-width viewport so slides travel the whole band, but each slide stays
-          inside its own contained card — see the note above. */}
-      <div className="marquee-viewport mt-14" role="group" aria-label={t('marqueeLabel')}>
-        <div className="marquee-track gap-5 px-2.5">
-          {/* The real set — announced once, focusable. */}
-          <ul className="flex gap-5">
-            {SLIDES.map((slide) => (
-              <li key={slide.key} className={SLIDE_BOX}>
-                <a
-                  href={settings.socials.instagram.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block overflow-hidden rounded-card border border-gray-300 bg-white transition-[transform,border-color] duration-300 ease-brand hover:-translate-y-0.5 hover:border-gold"
-                >
-                  <Image
-                    src={slide.src}
-                    alt={t(`slides.${slide.key}`)}
-                    width={SLIDE_SOURCE}
-                    height={SLIDE_SOURCE}
-                    sizes={SLIDE_SIZES}
-                    loading="lazy"
-                    className="aspect-square h-auto w-full object-cover"
-                  />
-                </a>
-              </li>
-            ))}
-          </ul>
-
-          {/* The duplicate that makes the loop seamless. aria-hidden, and
-              deliberately NOT links — focusable content inside aria-hidden is an
-              accessibility violation, so the clone is inert markup only. */}
-          <div aria-hidden="true" className="marquee-clone flex gap-5 ps-5">
-            {SLIDES.map((slide) => (
-              <div key={`clone-${slide.key}`} className={SLIDE_BOX}>
-                <div className="overflow-hidden rounded-card border border-gray-300 bg-white">
-                  <Image
-                    src={slide.src}
-                    alt=""
-                    width={SLIDE_SOURCE}
-                    height={SLIDE_SOURCE}
-                    sizes={SLIDE_SIZES}
-                    loading="lazy"
-                    className="aspect-square h-auto w-full object-cover"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      {/* Full-bleed so the banner travels the whole band. Two passes of four
+          panels per half (8 × 280px = 2240px) so a half always covers the widest
+          viewport — one pass would leave a bare patch at 1440px and above. */}
+      <SlideBanner
+        className="mt-14"
+        panelClassName="w-[200px] md:w-[280px]"
+        sizes="(max-width: 767px) 200px, 280px"
+        reps={2}
+        label={t('marqueeLabel')}
+        href={settings.socials.instagram.url}
+        external
+      />
     </Section>
   );
 }
