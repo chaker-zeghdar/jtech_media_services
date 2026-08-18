@@ -76,5 +76,85 @@ export function HashAnchorFix() {
     };
   }, []);
 
+  /**
+   * The same correction, for in-page anchor clicks.
+   *
+   * A long jump drifts for the same reason a deep link does: the browser picks a
+   * scroll target using the ESTIMATED heights that `content-visibility: auto`
+   * reports for sections it hasn't rendered yet, then those sections render at
+   * their real heights while the smooth scroll is still in flight and the target
+   * moves out from under it. Measured on the hero's link to #social — the longest
+   * jump on the page — it landed 472px short.
+   *
+   * It self-corrects after one full pass of the page, because
+   * `contain-intrinsic-size: auto` remembers real heights once measured. That is
+   * exactly why it only bites the first time and is easy to miss.
+   *
+   * So: wait for the scroll to actually stop, then re-land once if it drifted.
+   * Aborts if the reader takes over.
+   */
+  useEffect(() => {
+    let frame = 0;
+
+    const onHashChange = () => {
+      const raw = window.location.hash;
+      if (raw.length < 2) return;
+
+      let target: HTMLElement | null = null;
+      try {
+        target = document.getElementById(decodeURIComponent(raw.slice(1)));
+      } catch {
+        return;
+      }
+      if (!target) return;
+
+      let taken = false;
+      const takeOver = () => {
+        taken = true;
+      };
+      window.addEventListener('wheel', takeOver, { passive: true, once: true });
+      window.addEventListener('touchstart', takeOver, { passive: true, once: true });
+
+      let lastY = Number.NaN;
+      let stillFor = 0;
+
+      const settle = () => {
+        if (taken) return;
+
+        const y = window.scrollY;
+        if (y === lastY) stillFor += 1;
+        else {
+          stillFor = 0;
+          lastY = y;
+        }
+
+        // ~6 frames of no movement means the smooth scroll has finished.
+        if (stillFor < 6) {
+          frame = window.requestAnimationFrame(settle);
+          return;
+        }
+
+        // `scrollIntoView({ block: 'start' })` honours scroll-margin-top, so a
+        // correct landing puts the element exactly that far from the top.
+        const expected = Number.parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+        if (Math.abs(target.getBoundingClientRect().top - expected) > 8) {
+          target.scrollIntoView({ behavior: 'auto', block: 'start' });
+        }
+
+        window.removeEventListener('wheel', takeOver);
+        window.removeEventListener('touchstart', takeOver);
+      };
+
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(settle);
+    };
+
+    window.addEventListener('hashchange', onHashChange);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('hashchange', onHashChange);
+    };
+  }, []);
+
   return null;
 }
