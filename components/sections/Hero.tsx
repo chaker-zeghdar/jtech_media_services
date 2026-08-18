@@ -5,7 +5,7 @@ import { Enter } from '@/components/motion/Enter';
 import { StaggerText } from '@/components/motion/StaggerText';
 import { Button } from '@/components/ui/Button';
 import { ProductImage } from '@/components/ui/ProductImage';
-import { featuredProduct } from '@/content/products';
+import { featuredProduct, primaryVariant } from '@/content/products';
 import { whatsappLink } from '@/content/settings';
 import { pickLocale } from '@/lib/format';
 
@@ -31,6 +31,7 @@ export async function Hero() {
   const tProduct = await getTranslations('product');
 
   const product = featuredProduct();
+  const variant = primaryVariant(product);
   const name = pickLocale(product.name, locale);
 
   return (
@@ -68,11 +69,10 @@ export async function Hero() {
         </Enter>
 
         {/* ---- Product stage ----------------------------------------------
-            16:10 rather than a taller crop on purpose. The stage currently holds
-            the branded empty state (see the note on `src` below), and at 5:4 it
-            pushed the whole composition past 88vh and left a tall blank band
-            below the fold. This keeps the ribbon and the plate inside the first
-            screen; a real hero shot can afford a taller frame later. */}
+            16:10 rather than a taller crop on purpose: at 5:4 the composition ran
+            past 88vh and left a blank band below the fold. It also caps the
+            product's rendered height, which is what keeps the cutout inside its
+            own resolution — see the note on `src`. */}
         <Enter delayMs={160} className="relative mt-10 w-full max-w-hero">
           <div className="relative aspect-[16/10]">
             {/* No bed and no glow: the product sits on the page's own white, and
@@ -83,20 +83,23 @@ export async function Hero() {
             <div className="absolute inset-0 z-20 flex items-center justify-center">
               <ProductImage
                 /**
-                 * Deliberately NOT `variant.images[0]`.
+                 * A client-supplied cutout (520×677), not a hero-resolution
+                 * photograph — swap it when the client sends real product
+                 * photography.
                  *
-                 * The supplied iphone-16-pro.png is 520×677 — fine in a 290px card
-                 * and in the featured block, visibly soft blown up to 620px here.
-                 * Upscaling adds artefacts, not detail. The hero holds the branded
-                 * empty state until the client sends a real hero shot; swap this
-                 * to `primaryVariant(product).images[0]` when one arrives.
+                 * It holds up here because the stage is 16:10 and the image is
+                 * `object-contain`, so HEIGHT is the binding constraint: 388px
+                 * tall → ~298px wide, well inside the 520px source. The 620px
+                 * stage width is never the rendered width. `sizes` reflects the
+                 * ~298px it actually paints at, so next/image doesn't fetch a
+                 * larger variant than the source can supply.
                  */
-                src={undefined}
+                src={variant.images[0]}
                 name={name}
-                width={620}
-                height={388}
+                width={520}
+                height={677}
                 priority
-                sizes="(max-width: 767px) 88vw, 620px"
+                sizes="(max-width: 767px) 45vw, 300px"
                 className="drop-shadow-product"
               />
             </div>
