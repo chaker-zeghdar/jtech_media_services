@@ -208,6 +208,22 @@ JTECH's graphic language, taken from the client's Instagram. All pure CSS/SVG �
 | `<NumberedSquare/>`| 40×40px, radius 12px, gold fill, ink numeral 15px/700.                     |
 | `<Pill />`         | `ink` (black bed, white text) or `gold` (gold bed, ink text). 12px/600.    |
 
+### Colour swatches are a summary, not a picker
+
+`<ColourSwatches>` on a product card answers "what colours does this come in?"
+before a click. It has **no state and no click handler** — the card grid has no
+variant switching, and `<QuickView>` already lists colours, so adding one here
+would be a second mechanism for the same job.
+
+The dots are `aria-hidden`; the accessible content is the list around them — an
+`aria-label` carrying the count and one `<li>` per colour with a visually-hidden
+label. Colours past the fifth still get their `<li>` and their name, only the dot
+is dropped, so the spoken list matches the count instead of stopping at five.
+Colour is never the only signal, exactly as for `StockDot`.
+
+Every `background-color` reads from `variant.colour.hex`. The component defines no
+colour literal, and neither should anything else outside `content/products.ts`.
+
 ### The governing rule
 
 > **One brand device per section. Never two. Gold and gold-tinted pixels stay
