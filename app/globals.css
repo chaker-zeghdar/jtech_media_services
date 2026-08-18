@@ -250,12 +250,27 @@ html[lang^='ar'] {
   }
 }
 
+/**
+ * Ribbon draw — a wipe, not a stroke-dash.
+ *
+ * The dash version was subtly broken and only showed once a product sat in front
+ * of the ribbon: `vector-effect: non-scaling-stroke` measures dash lengths in
+ * SCREEN space while `pathLength="1"` normalises them in USER space, so the two
+ * disagree by exactly the SVG's scale factor. At the hero's 1.458× that meant a
+ * dash of "1" covered only 69% of the painted stroke — the ribbon disappeared
+ * behind the product and never re-emerged, which is the one thing the device
+ * exists to do (DESIGN.md § "The ribbon's three-layer stack").
+ *
+ * A clip wipe needs no length measurement, so it is correct at every scale and
+ * still costs no JavaScript. The negative insets matter: the path deliberately
+ * overhangs its own SVG box, and `inset(0)` would shear that overhang off.
+ */
 @keyframes draw-ribbon {
   from {
-    stroke-dashoffset: var(--ribbon-length);
+    clip-path: inset(-50% 100% -50% -50%);
   }
   to {
-    stroke-dashoffset: 0;
+    clip-path: inset(-50% -50% -50% -50%);
   }
 }
 

@@ -30,20 +30,20 @@ type GoldRibbonProps = {
  * The signature JTECH device. **Two per page maximum** — hero and the dark
  * featured block. See DESIGN.md.
  *
- * Draws itself via stroke-dashoffset over 1.2s. The animation is a pure CSS
- * keyframe with `both` fill, which matters twice over:
+ * Draws itself over 1.2s via a clip wipe (see the `draw-ribbon` keyframes in
+ * globals.css for why it is a wipe and not a stroke-dash). The animation is a
+ * pure CSS keyframe with `both` fill, which matters twice over:
  *
  *  - it fails safe. An earlier version armed the draw from an
- *    IntersectionObserver, which meant the inline `stroke-dashoffset: 1` left the
- *    ribbon completely invisible if hydration never happened. `both` fill lands
- *    on offset 0 (fully drawn) no matter what, and `prefers-reduced-motion`
- *    collapses the duration so it simply appears.
+ *    IntersectionObserver, which left the ribbon completely invisible if
+ *    hydration never happened. `both` fill lands on the fully-revealed state no
+ *    matter what, and `prefers-reduced-motion` collapses the duration so it
+ *    simply appears.
  *  - it needs no `'use client'`. Both ribbons are in the top third of the page,
  *    so scroll-gating bought nothing and cost client JS on the LCP path.
  *
  * `preserveAspectRatio="none"` + `vector-effect="non-scaling-stroke"` lets the
  * curve span any container aspect while the stroke stays exactly strokeWidth px.
- * `pathLength={1}` normalises the dash maths so nothing needs measuring.
  */
 export function GoldRibbon({
   id,
@@ -66,7 +66,11 @@ export function GoldRibbon({
       fill="none"
       aria-hidden="true"
       focusable="false"
-      className={cn('pointer-events-none absolute overflow-visible', className)}
+      className={cn(
+        'pointer-events-none absolute overflow-visible animate-draw-ribbon',
+        className,
+      )}
+      style={{ animationDelay: `${delayMs}ms` }}
     >
       <defs>
         <linearGradient id={gradientId} x1="0" y1="1" x2="1" y2="0">
@@ -76,18 +80,10 @@ export function GoldRibbon({
       </defs>
       <path
         d={path}
-        pathLength={1}
         stroke={`url(#${gradientId})`}
         strokeWidth={strokeWidth}
         strokeLinecap="round"
         vectorEffect="non-scaling-stroke"
-        className="animate-draw-ribbon"
-        style={{
-          // Consumed by the `draw-ribbon` keyframes in globals.css.
-          ['--ribbon-length' as string]: '1',
-          strokeDasharray: 1,
-          animationDelay: `${delayMs}ms`,
-        }}
       />
     </svg>
   );
