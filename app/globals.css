@@ -24,6 +24,28 @@
   /* The only gold permitted as text on light surfaces: 5.3:1 on white and
      4.9:1 on --color-gold-tint. The brand gold itself is 2.1:1 on white. */
   --color-gold-text: #8a6524;
+  /**
+   * The hero card's bed.
+   *
+   * Deliberately NOT a second <GoldPanel />. DESIGN.md allows exactly one
+   * full-saturation gold panel per page and that budget is spent on Delivery, so
+   * this uses only the PALE end of the scale — tint through gold-light, never the
+   * saturated gold/gold-deep stops the panel and the ribbon use. It reads as a
+   * soft wash rather than a brand moment, which also keeps the section inside the
+   * ~12% gold-pixel guideline.
+   *
+   * Text on it is solid ink for the same reason it is on the gold panel: at the
+   * gold-light end, gray-700 measures 3.1:1 and fails, while ink measures 10.1:1.
+   * A gradient makes the backdrop under any given line unpredictable, so
+   * hierarchy here comes from size and weight, never from a lighter grey.
+   */
+  --gradient-hero-card: linear-gradient(
+    135deg,
+    var(--color-gold-tint) 0%,
+    var(--color-gold-tint) 42%,
+    var(--color-gold-light) 100%
+  );
+
   --color-green: #2fbf6b;
   /* "آخر قطع" / low-stock. Darkened from the gold so it reads as a state, not
      as brand fill, and clears 4.5:1 on white for the accompanying label. */

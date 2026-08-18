@@ -241,25 +241,37 @@ This is enforced structurally, not by convention:
 
 ### Per-page budget
 
-`GoldPanel` is the single exception to the 12% rule — it *is* the brand moment,
-so it's allowed to fill its section. Everything else stays well under, which is
-what makes that one section land.
+`GoldPanel` and the hero card are the two exceptions to the 12% rule. Everything
+else stays well under, which is what makes those two moments land.
 
-| Section              | Surface | Device                        |
-| -------------------- | ------- | ----------------------------- |
-| Hero                 | white   | `GoldRibbon` #1 of 2          |
-| Categories           | gray    | — (gold icon chips)           |
-| Featured (ink block) | ink     | `GoldRibbon` #2 of 2 — spent  |
-| Feature mosaic       | white   | — (colour blocking is the interest) |
-| Full range           | gray    | `Halftone`                    |
-| Best sellers         | white   | `CornerBlob` @ `.08`          |
-| Accessories          | gray    | `Halftone`                    |
-| Why JTECH            | white   | `NumberedSquare` ×4           |
-| Services             | gray    | `CornerBlob` @ `.08`          |
-| Delivery             | gold    | `GoldPanel` — the one moment  |
-| Brand marquee        | gray    | `Halftone`                    |
-| Contact              | white   | — (deliberately none)         |
-| Footer               | ink     | `Halftone` @ `.2`             |
+The hero card is a **surface, not a device** — `--gradient-hero-card`, a tint-to-
+gold-light wash on an inset `rounded-tile` bed. It reads as a stage for the
+product rather than as a brand shape, and it is deliberately *paler* than
+`GoldPanel`: the panel's deepest stop is `#C1862C`, the hero card's is
+`--color-gold-light`, so the delivery panel is still the page's one saturated
+gold moment. The hero section element underneath stays `bg-white`, which is what
+keeps the card floating rather than bleeding to the page edges.
+
+Because it is a surface, it does not spend the hero's device budget — the hero
+still carries exactly one `GoldRibbon` and nothing else. All hero text on it is
+solid ink for the same reason the panel's is (see "Text on the gold panel is
+solid ink"); the worst pair, ink on `gold-light`, measures 10.28:1.
+
+| Section              | Surface      | Device                        |
+| -------------------- | ------------ | ----------------------------- |
+| Hero                 | tinted card  | `GoldRibbon` #1 of 2          |
+| Categories           | gray         | — (gold icon chips)           |
+| Featured (ink block) | ink          | `GoldRibbon` #2 of 2 — spent  |
+| Feature mosaic       | white        | — (colour blocking is the interest) |
+| Full range           | gray         | `Halftone`                    |
+| Best sellers         | white        | `CornerBlob` @ `.08`          |
+| Accessories          | gray         | `Halftone`                    |
+| Why JTECH            | white        | `NumberedSquare` ×4           |
+| Services             | gray         | `CornerBlob` @ `.08`          |
+| Delivery             | gold         | `GoldPanel` — the one moment  |
+| Brand marquee        | gray         | `Halftone`                    |
+| Contact              | white        | — (deliberately none)         |
+| Footer               | ink          | `Halftone` @ `.2`             |
 
 **No two adjacent sections share a surface.** That alternation is what gives the
 page its rhythm, and it is easy to break by inserting a section without checking

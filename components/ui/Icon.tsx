@@ -2,7 +2,7 @@ import type { IconKey } from '@/content/schemas';
 import { cn } from '@/lib/cn';
 
 /** Keys used purely for UI chrome, on top of the content-driven IconKey set. */
-export type UiIconKey = 'chevron' | 'close' | 'check' | 'menu' | 'external';
+export type UiIconKey = 'chevron' | 'close' | 'check' | 'menu' | 'external' | 'expand';
 
 export type AnyIconKey = IconKey | UiIconKey;
 
@@ -69,6 +69,9 @@ const PATHS: Record<AnyIconKey, { d: string; fill?: boolean }[]> = {
   close: [{ d: 'M6 6l12 12M18 6 6 18' }],
   check: [{ d: 'm5 12.5 4.5 4.5L19 7.5' }],
   menu: [{ d: 'M4 7.5h16M4 12h16M4 16.5h16' }],
+  // Opposing corner brackets — reads as "open larger" at 16px, where the
+  // `external` arrow-out-of-a-box glyph turns to mush.
+  expand: [{ d: 'M9.5 4.5H4.5V9.5' }, { d: 'M14.5 19.5h5v-5' }, { d: 'M4.5 4.5l6 6' }, { d: 'M19.5 19.5l-6-6' }],
   external: [{ d: 'M14 4.5h5.5V10' }, { d: 'M19.5 4.5 11 13' }, { d: 'M17 14v4.5a1 1 0 0 1-1 1H5.5a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1H10' }],
 };
 
