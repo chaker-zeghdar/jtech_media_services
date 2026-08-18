@@ -75,6 +75,28 @@ const config: Config = {
       h2: ['clamp(1.75rem, 1.2rem + 2.4vw, 2.25rem)', { lineHeight: '1.15', letterSpacing: '-0.012em' }],
       section: ['clamp(2rem, 1.1rem + 4vw, 3.5rem)', { lineHeight: '1.07', letterSpacing: '-0.015em' }],
       hero: ['clamp(2.5rem, 1.1rem + 6.2vw, 5rem)', { lineHeight: '1.05', letterSpacing: '-0.02em' }],
+      /**
+       * The hero headline ONLY — the one documented exception to "no display
+       * face" in DESIGN.md §1. It is still Inter, not a fourth family; what
+       * makes it a display step is the weight (900, the top of Inter's variable
+       * range), the tight leading and the heavy negative tracking, which the
+       * text steps above deliberately never go near.
+       *
+       * Arabic overrides the weight, tracking and leading at the call site:
+       * IBM Plex Sans Arabic tops out at 700, and negative tracking on a joined
+       * script pulls the letterforms apart rather than tightening them.
+       *
+       * The fluid line is bounded by the longest single word, not by taste. The
+       * card clips (`overflow-hidden`), and an unbreakable word wider than the
+       * card's inner width gets cut mid-letter — the French "Garanti." is the
+       * binding case at 6.3em. The slope keeps the size under inner/6.3 from
+       * 320px up; the 2rem floor is there only so the value can't collapse on a
+       * hypothetical narrower viewport, and never binds in practice.
+       */
+      'hero-display': [
+        'clamp(2rem, -0.47rem + 12.2vw, 10.5rem)',
+        { lineHeight: '0.94', letterSpacing: '-0.035em', fontWeight: '900' },
+      ],
       numeral: ['clamp(2.75rem, 1.4rem + 5.4vw, 5rem)', { lineHeight: '1', letterSpacing: '-0.02em' }],
       'numeral-sm': ['clamp(2rem, 1.4rem + 2.6vw, 3rem)', { lineHeight: '1', letterSpacing: '-0.02em' }],
     },

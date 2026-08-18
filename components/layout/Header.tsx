@@ -1,15 +1,19 @@
 import { getLocale, getTranslations } from 'next-intl/server';
 import { Logo } from '@/components/brand/LogoMark';
+import { Icon } from '@/components/ui/Icon';
 import { categories } from '@/content/categories';
+import { settings, telLink, whatsappLink } from '@/content/settings';
 import { Link } from '@/i18n/navigation';
 import { pickLocale } from '@/lib/format';
 import { Container } from './Container';
+import { HeaderShell } from './HeaderShell';
 import { LocaleSwitcher } from './LocaleSwitcher';
 import { MobileMenu } from './MobileMenu';
 import { categoryHref } from './navigation';
 
 /**
- * Global header: brand plus the five category entries.
+ * Global header: brand, the five category entries, and two real contact
+ * affordances.
  *
  * STICKY. The categories and the language switcher are controls, and a shop
  * where people compare five phones down a long page needs them reachable without
@@ -21,16 +25,34 @@ import { categoryHref } from './navigation';
  * failure this fixes. What is worth taking from Apple is the visual language, not
  * the scroll behaviour.
  *
- * It still does NOT repeat the phone number, which stays in the announcement bar.
+ * ── Transparent over the hero ───────────────────────────────────────────────
  *
- * A server component; the only client JS it pulls in is <LocaleSwitcher /> and
- * <MobileMenu />, both of which need state. Category names are resolved here and
- * passed down as plain strings so the menu never touches the content layer on the
- * client.
+ * <HeaderShell /> paints this bar transparent while it is sitting on the hero
+ * card and solid white once the page scrolls past it. The reference design puts
+ * its nav inside the hero card with no bar at all; it also lets that nav scroll
+ * away for good, which is the part not worth copying. Transparent-until-scrolled
+ * is how the page gets the reference's opening without giving up a reachable nav
+ * on a page this long.
+ *
+ * The shell is the only client code here. This component stays a server
+ * component: category names are resolved here and passed down as plain strings,
+ * so neither the menu nor the shell ever touches the content layer on the client.
+ *
+ * ── The right-hand cluster ──────────────────────────────────────────────────
+ *
+ * The reference fills this slot with search, account, wishlist and bag. None of
+ * those exist here — JTECH is a WhatsApp-driven catalog with no accounts, no
+ * cart and no site search — so inventing them would put four controls in the
+ * header that lead nowhere. It carries the two contact routes the business
+ * actually runs on instead. Sparser than the reference, but every icon works.
+ *
+ * It still does NOT repeat the phone number as text, which stays in the
+ * announcement bar.
  */
 export async function Header() {
   const locale = await getLocale();
   const t = await getTranslations('a11y');
+  const tProduct = await getTranslations('product');
 
   const items = [...categories]
     .sort((a, b) => a.position - b.position)
@@ -40,10 +62,28 @@ export async function Header() {
       href: categoryHref(category.slug),
     }));
 
+  /**
+   * A white disc on the gold card, a grey one once the bar itself is white — in
+   * both states the glyph is ink, so this only ever changes the disc behind it.
+   * White rather than a translucent white on purpose: every colour in this
+   * palette is a bare `var()` with no `<alpha-value>` placeholder, so Tailwind
+   * silently drops `bg-white/70` and the disc would have come out with no
+   * background at all. Solid white also matches the hero's own social chips
+   * directly below, which is the effect that was wanted anyway.
+   */
+  const iconButton =
+    'inline-flex h-9 w-9 items-center justify-center rounded-full text-ink transition-colors duration-200 ' +
+    'bg-gray-50 hover:bg-gray-100 group-data-[over-hero]:bg-white group-data-[over-hero]:hover:bg-gray-50';
+
   return (
-    <header className="sticky top-0 z-nav hairline-b bg-white">
-      <Container className="flex h-16 items-center justify-between gap-6">
-        <Link href="/" aria-label={t('logo')} className="shrink-0">
+    <HeaderShell>
+      {/* Three tracks rather than `justify-between`: the reference centres its
+          nav on the page, and centring on the container only looks right if the
+          two flanks are forced to equal width. `1fr auto 1fr` does that no
+          matter how wide the logo or the cluster get. Under lg the nav is inside
+          <MobileMenu />, so the row collapses back to a simple flex. */}
+      <Container className="flex h-16 items-center justify-between gap-6 lg:grid lg:grid-cols-[1fr_auto_1fr]">
+        <Link href="/" aria-label={t('logo')} className="shrink-0 justify-self-start">
           <Logo />
         </Link>
 
@@ -53,7 +93,7 @@ export async function Header() {
               <li key={item.slug}>
                 <a
                   href={item.href}
-                  className="block rounded-full px-3.5 py-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-ink"
+                  className="block whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-ink"
                 >
                   {item.name}
                 </a>
@@ -62,7 +102,28 @@ export async function Header() {
           </ul>
         </nav>
 
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2 justify-self-end">
+          {/* The two contact routes, as icon buttons. Both are external and both
+              already have their own accessible names in `a11y`, so no new
+              message keys. */}
+          <a
+            href={whatsappLink(tProduct('generalMessage'))}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={t('openWhatsapp')}
+            className={`hidden sm:inline-flex ${iconButton}`}
+          >
+            <Icon name="whatsapp" size={17} />
+          </a>
+
+          <a
+            href={telLink}
+            aria-label={t('callPhone', { phone: settings.phone })}
+            className={`hidden sm:inline-flex ${iconButton}`}
+          >
+            <Icon name="phone" size={17} />
+          </a>
+
           {/* Same breakpoint as the category nav above. Under lg the switcher
               lives inside <MobileMenu />, which the sticky header keeps
               reachable. */}
@@ -70,6 +131,6 @@ export async function Header() {
           <MobileMenu categories={items} />
         </div>
       </Container>
-    </header>
+    </HeaderShell>
   );
 }

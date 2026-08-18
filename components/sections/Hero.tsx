@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { GoldRibbon } from '@/components/brand/GoldRibbon';
 import { Container } from '@/components/layout/Container';
+import { HERO_CHROME_SENTINEL_ID } from '@/components/layout/navigation';
 import { Enter } from '@/components/motion/Enter';
 import { StaggerText } from '@/components/motion/StaggerText';
 import { Button } from '@/components/ui/Button';
@@ -86,51 +87,93 @@ export async function Hero() {
     <section
       id="hero"
       aria-labelledby="hero-title"
-      className="relative flex min-h-hero flex-col justify-center overflow-hidden bg-white py-10 md:py-14"
+      /**
+       * The negative top margin is what puts the sticky chrome ON the card
+       * rather than in a bar above it: the card starts directly under
+       * <AnnouncementBar /> and <Header /> + <LocalNav /> float over its blank
+       * top band. Both offsets come from the same custom properties the sticky
+       * tops are built from, so the card and the chrome cannot drift apart. The
+       * +2px is the two 1px hairlines under <Header /> and <LocalNav />: the
+       * height tokens describe those bars' content boxes and so don't count
+       * their borders, and without it the card starts two pixels low and a white
+       * sliver shows under the black announcement bar.
+       *
+       * Only the paint order changes — neither bar is repositioned, and neither
+       * stops being sticky. The section is `relative` with no z-index, which
+       * creates no stacking context, so the chrome's `z-nav` still wins over the
+       * card's internal z-20/z-30 layers.
+       */
+      className="relative mt-[calc(-1*(var(--header-height)+var(--nav-height)+2px))] flex min-h-hero flex-col justify-center overflow-hidden bg-white pb-10 md:pb-14"
     >
       <Container>
         {/* The inset card. <Container>'s own px-6/px-8 is what floats it off the
             page edges; `rounded-tile` is the largest radius the system has. */}
         <div
-          className="relative overflow-hidden rounded-tile px-6 py-12 sm:px-10 md:px-14 md:py-16"
+          /* Top padding is the chrome the card now sits under, plus a much
+             smaller breathing gap than the bottom's — the 112px of nav above the
+             copy is already the breathing room, so repeating the full 3rem/4rem
+             would push the product below the fold for no reason. */
+          className="relative overflow-hidden rounded-tile px-6 pb-12 pt-[calc(1rem+var(--header-height)+var(--nav-height))] sm:px-10 md:px-14 md:pb-16 md:pt-[calc(1.5rem+var(--header-height)+var(--nav-height))]"
           style={{ background: 'var(--gradient-hero-card)' }}
         >
+          {/* The blank strip the header floats over. <HeaderShell /> watches it
+              to decide when to stop being transparent — see the note there for
+              why the threshold is expressed as geometry rather than a scroll
+              number. Purely a measuring device: no paint, no hit area. */}
+          <div
+            id={HERO_CHROME_SENTINEL_ID}
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0"
+            style={{ height: 'calc(var(--header-height) + var(--nav-height))' }}
+          />
+
           {/* ---- Copy ----------------------------------------------------- */}
           <Enter>
             <p className="text-eyebrow uppercase text-ink">{t('eyebrow')}</p>
           </Enter>
 
-          {/* The two width/height caps here are a CLS fix, not spacing taste.
+          {/* ── The headline is the one documented display-face exception ──
+              `text-hero-display` (tailwind.config.ts) is Inter at 900 with tight
+              leading and heavy negative tracking — the deliberate bend of
+              DESIGN.md §1's "no display face", recorded there too. Arabic opts
+              out of all three parts of that: Plex Arabic tops out at 700, and
+              negative tracking on a joined script pulls the letterforms apart
+              instead of tightening them, so RTL takes bold, normal tracking and
+              looser leading for the taller ascenders.
+
+              `mt-[0.3em]` rather than a fixed step because leading below 1 lets
+              the ink overflow the line box by ~0.15em; at a fixed 16px the
+              ascenders touched the eyebrow from 1024px up.
+
+              ── The width caps are a CLS fix, not spacing taste ──
               Both families load with `display: swap`, and IBM Plex Sans Arabic
-              is markedly wider than the Arabic system fallback, so at this size
-              the Arabic headline set on ONE line pre-swap and two lines after.
-              The swap then dropped the product stage and everything under it by
-              a full line — 0.035 measured against a 0.004 baseline.
+              is markedly wider than the Arabic system fallback, so the Arabic
+              headline used to set on ONE line pre-swap and two lines after. The
+              swap then dropped the product stage and everything under it by a
+              full line — 0.035 measured against a 0.004 baseline.
 
               `rtl:max-w-[7em]` fixes the cause: it makes the line count
-              font-independent. The old `max-w-[15ch]` could not, because `ch` is
-              itself font-relative — it resolved to 720px under Plex but 675px
-              under the fallback, which is exactly what let the narrower fallback
-              fit on one line. 7em sits inside the window where BOTH faces wrap
-              to two lines (the fallback's natural single-line width is ~8.2em,
-              the loaded face's longest wrapped line ~6.3em), and `em` keeps that
-              true as `text-hero` scales fluidly. Verified 390–1920px.
+              font-independent. The original `max-w-[15ch]` could not, because
+              `ch` is itself font-relative — it resolved 45px wider under Plex
+              than under the fallback, which is exactly what let the narrower
+              fallback fit on one line. 7em sits inside the window where BOTH
+              faces wrap to two lines, and `em` keeps that true as the display
+              step scales fluidly. Re-verified at this size, 320–1920px.
 
-              `min-h-[2.1em]` is the belt to that braces: two lines' worth of
-              line-height (a 1.05 ratio) reserved so any future rewrap still
-              cannot move the stage. It costs nothing visually — Arabic and
-              French both set to exactly two lines, English to three, so the
-              floor is either exact or inert.
+              `rtl:min-h-[2.24em]` is the belt to that braces: two lines of the
+              1.12 RTL leading, reserved so any future rewrap still cannot move
+              the stage.
 
-              Latin keeps `ltr:max-w-[15ch]`: Inter's fallback metrics already
-              agree closely enough that English and French measured 0.000 and
-              0.006, and a fixed em cap there would only narrow the column. */}
+              `ltr:max-w-[9em]` only binds past ~1620px, where the card's inner
+              width would otherwise let a single line run to an unreadable
+              measure. Below that the card is the narrower constraint, and the
+              Latin wrap is font-stable at every width checked. */}
           <StaggerText
             as="h1"
             id="hero-title"
             text={t('title')}
             delayMs={120}
-            className="mt-4 min-h-[2.1em] text-balance text-hero font-semibold text-ink ltr:max-w-[15ch] rtl:max-w-[7em]"
+            className="mt-[0.3em] text-balance text-hero-display text-ink ltr:max-w-[9em] rtl:min-h-[2.24em] rtl:max-w-[7em] rtl:font-bold rtl:leading-[1.12] rtl:tracking-normal"
           />
 
           <Enter delayMs={260}>

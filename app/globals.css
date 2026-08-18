@@ -212,6 +212,22 @@ html[lang^='ar'] {
   .hairline-t {
     border-top: 1px solid var(--color-gray-300);
   }
+  /**
+   * <HeaderShell /> renders the transparent-over-the-hero state on the server,
+   * because that is the correct state for a load at scroll 0 and rendering the
+   * solid bar first would flash a white band across the top of the hero card.
+   * The trade is that without JavaScript the header would never leave that
+   * state, and page content would scroll under an unbacked bar. This puts it
+   * back to solid in exactly that case. Higher specificity than the utility
+   * classes it overrides, so no !important.
+   */
+  @media (scripting: none) {
+    header[data-over-hero] {
+      background-color: #fff;
+      border-bottom-color: var(--color-gray-300);
+    }
+  }
+
   .hairline-b {
     border-bottom: 1px solid var(--color-gray-300);
   }

@@ -1,6 +1,16 @@
 import type { CategorySlug } from '@/content/schemas';
 
 /**
+ * The blank strip at the top of the hero card that the sticky chrome floats over.
+ *
+ * <Hero /> renders it; <HeaderShell /> observes it to decide whether the header
+ * is still sitting on the card (transparent) or has scrolled past it (solid).
+ * It lives here rather than in either component so neither owns the other, and
+ * so the id can't drift between the element and the observer.
+ */
+export const HERO_CHROME_SENTINEL_ID = 'hero-chrome-band';
+
+/**
  * Homepage section anchors. `id` matches the <Section id> and the messages key
  * under `nav.*`, so a section, its nav entry and its label can't drift apart.
  */

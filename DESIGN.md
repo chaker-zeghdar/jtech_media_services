@@ -117,7 +117,8 @@ Five, and only five. Nothing else in the system is rounded.
 
 ### Type
 
-One family per script, many sizes. No display face, no mono.
+One family per script, many sizes. No mono, and no display face — with exactly
+one recorded exception, the hero headline (below).
 
 The system stack is listed **first** on purpose: on the client's Mac and iPhone
 the page renders in real SF Pro / SF Arabic with zero font requests, which is
@@ -129,6 +130,7 @@ needs to know which script it's rendering — `font-sans` is always correct.
 
 | Role               | Utility            | Size        | Weight | Tracking  | Leading |
 | ------------------ | ------------------ | ----------- | ------ | --------- | ------- |
+| Hero display       | `text-hero-display`| 32–168px    | 900†   | `-0.035em`| 0.94    |
 | Hero               | `text-hero`        | 40–80px     | 600    | `-0.02em` | 1.05    |
 | Section headline   | `text-section`     | 32–56px     | 600    | `-0.015em`| 1.07    |
 | Big spec numeral   | `text-numeral`     | 44–80px     | 600    | `-0.02em` | 1       |
@@ -138,6 +140,31 @@ needs to know which script it's rendering — `font-sans` is always correct.
 
 Headline steps are fluid (`clamp()`), so there are no per-breakpoint font-size
 overrides anywhere in the codebase.
+
+**† The one display-face exception.** `text-hero-display` is used by a single
+element — the hero headline — and nothing else may adopt it. It is still Inter,
+not a fourth family; what makes it a display step is the combination the text
+steps deliberately never reach for: weight 900 (the top of Inter's variable
+range), leading below 1, and tracking nearly double the next-heaviest step's.
+That is a deliberate bend of the rule above, taken so the hero can carry the
+reference design's oversized opening, and it is confined to one element so the
+rest of the page still holds the line.
+
+Arabic opts out of all three parts of it at the call site, and this is not a
+detail to "tidy up" later:
+
+- **Weight** — IBM Plex Sans Arabic ships up to 700. Asking for 900 gets a
+  synthesised faux-bold that smears the joins, so RTL takes 700.
+- **Tracking** — Arabic is a joined script. Negative tracking pulls the
+  letterforms *apart* at the connections rather than tightening the line, so RTL
+  takes normal tracking.
+- **Leading** — 0.94 clips the taller Arabic ascenders, so RTL takes 1.12.
+
+The Latin treatment also stops short of the reference's mid-word clip. The size
+is bounded by the longest single unbreakable word (French "Garanti.", 6.3em)
+against the card's inner width, because the card clips: sized any larger, a
+narrow viewport cuts a word in half. Approaching the edge is a consequence of the
+scale; cutting into it would be a contrivance.
 
 Arabic at the same nominal px reads optically smaller than Latin, so
 `html[lang^='ar'] body` nudges body copy from 17px to 18px. That is the only
@@ -256,6 +283,39 @@ Because it is a surface, it does not spend the hero's device budget — the hero
 still carries exactly one `GoldRibbon` and nothing else. All hero text on it is
 solid ink for the same reason the panel's is (see "Text on the gold panel is
 solid ink"); the worst pair, ink on `gold-light`, measures 10.28:1.
+
+### The chrome sits on the card, and has two states
+
+The card is pulled up by `--header-height + --nav-height + 2px` so it starts
+directly under `<AnnouncementBar />`, and `<Header />` and `<LocalNav />` float
+over its blank top band. The `+2px` is the two 1px hairlines those bars carry,
+which the height tokens don't count. The card's top padding adds the same two
+tokens back, so the copy still begins below the nav.
+
+`<Header />` therefore has two paint states, driven by `<HeaderShell />` — the
+only client code in the header, a wrapper so `<Header />` itself stays a server
+component:
+
+| State       | When                                    | Paint                          |
+| ----------- | --------------------------------------- | ------------------------------ |
+| `over-hero` | the header has nothing but card behind it | transparent, no hairline       |
+| default     | anything below that                     | white + `--color-gray-300` hairline |
+
+Three things about it are load-bearing:
+
+- **`border-b` is present in both states**; only its *colour* changes. Toggling
+  the border itself moves the whole page by 1px each way.
+- **The threshold is geometry, not a scroll number.** An IntersectionObserver
+  watches the card's blank top band with the header's own height as a negative
+  root margin, so the switch lands exactly where content would slide under an
+  unbacked bar — and survives any change to the announcement bar's height, the
+  card's padding, or the chrome's.
+- **The server renders `over-hero`**, because that is correct at scroll 0 and the
+  alternative flashes a white band across the card. `@media (scripting: none)`
+  in `globals.css` puts it back to solid where that state could never be left.
+
+The header stays `sticky` in both states. The reference design's nav scrolls away
+for good; on a page this long that is the part not worth copying.
 
 | Section              | Surface      | Device                        |
 | -------------------- | ------------ | ----------------------------- |
