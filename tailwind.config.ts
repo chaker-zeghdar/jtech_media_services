@@ -118,9 +118,16 @@ const config: Config = {
         ribbon: '1200ms',
       },
       boxShadow: {
-        // The ONLY shadow in the system: grounds a product cutout on its bed.
+        // Grounds a product cutout on its bed.
         product: '0 24px 28px rgba(0,0,0,.14)',
         'product-hover': '0 30px 36px rgba(0,0,0,.16)',
+        /**
+         * Lifts a card container off the page. Measured off apple.com/store,
+         * where every card casts this exact shadow at every size — a 313px
+         * accessory card and a 400×500 tile share both it and an 18px radius.
+         * One recipe, reused; card-scale surfaces only, never pills or chips.
+         */
+        card: '2px 4px 12px rgba(0,0,0,.08)',
         nav: '0 1px 0 0 var(--color-gray-300)',
         modal: '0 40px 80px -20px rgba(0,0,0,.28)',
       },

@@ -85,6 +85,9 @@ export async function FeatureMosaic() {
                     // `overflow-hidden` is what crops the product at the tile's
                     // bottom edge — the whole point of the composition.
                     'group relative flex h-full min-h-[520px] flex-col overflow-hidden rounded-tile p-8 sm:p-11',
+                    // Same shadow on the ink tiles as the gray ones. Apple's dark
+                    // tiles are not special-cased and neither are these.
+                    'shadow-card',
                     onInk ? 'on-ink bg-ink text-white' : 'bg-gray-50 text-ink',
                   )}
                 >

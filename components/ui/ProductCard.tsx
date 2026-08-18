@@ -70,7 +70,7 @@ export async function ProductCard({
       {/* ---- Image bed --------------------------------------------------- */}
       <div
         className={cn(
-          'light-sweep relative isolate aspect-[4/5] overflow-hidden rounded-card',
+          'light-sweep relative isolate aspect-[4/5] overflow-hidden rounded-card shadow-card',
           bed === 'white' ? 'bg-white' : 'bg-gray-50',
           'transition-colors duration-500 ease-brand',
           'group-hover:bg-gold-tint group-focus-within:bg-gold-tint',
