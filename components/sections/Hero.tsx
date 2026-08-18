@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { GoldRibbon } from '@/components/brand/GoldRibbon';
 import { Container } from '@/components/layout/Container';
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { ProductImage } from '@/components/ui/ProductImage';
 import { featuredProduct, primaryVariant } from '@/content/products';
 import { whatsappLink } from '@/content/settings';
+import { SLIDES } from '@/content/slides';
 import { pickLocale } from '@/lib/format';
 
 /**
@@ -29,6 +31,8 @@ export async function Hero() {
   const locale = await getLocale();
   const t = await getTranslations('hero');
   const tProduct = await getTranslations('product');
+  // Reuses the alt text <BrandMarquee /> already has for these same four photos.
+  const tSocial = await getTranslations('social');
 
   const product = featuredProduct();
   const variant = primaryVariant(product);
@@ -108,6 +112,28 @@ export async function Hero() {
 
         <Enter delayMs={440}>
           <p className="mt-8 max-w-[52ch] text-caption text-gray-700">{t('trust')}</p>
+        </Enter>
+
+        {/* ---- Proof strip -------------------------------------------------
+            A STATIC row of four thumbnails, deliberately not an auto-rotating
+            carousel. A hero's job is one message at a glance, and the site
+            already has its rotating-content pattern one scroll down in
+            <BrandMarquee /> — a second rotation here would compete with it.
+            The strip links into that rail instead. */}
+        <Enter delayMs={480} className="mt-8 flex items-center justify-center gap-3">
+          {SLIDES.map((slide) => (
+            <a key={slide.key} href="#social" className="shrink-0">
+              <Image
+                src={slide.src}
+                alt={tSocial(`slides.${slide.key}`)}
+                width={96}
+                height={96}
+                sizes="96px"
+                loading="lazy"
+                className="aspect-square rounded-card object-cover shadow-card"
+              />
+            </a>
+          ))}
         </Enter>
       </Container>
     </section>

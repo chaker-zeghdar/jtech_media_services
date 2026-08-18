@@ -6,6 +6,7 @@ import { Section } from '@/components/layout/Section';
 import { SectionHeader } from '@/components/layout/SectionHeader';
 import { Button } from '@/components/ui/Button';
 import { settings } from '@/content/settings';
+import { SLIDES, SLIDE_SOURCE } from '@/content/slides';
 
 /**
  * The client's own marketing posts, on a conveyor.
@@ -32,15 +33,7 @@ import { settings } from '@/content/settings';
  * thrash. Pauses on hover and on focus-within; under `prefers-reduced-motion` the
  * animation stops entirely and the band becomes an ordinary scrollable rail.
  */
-const SLIDES = [
-  { key: 's1', src: '/slide/slide-1.jpg' },
-  { key: 's2', src: '/slide/slide-2.jpg' },
-  { key: 's3', src: '/slide/slide-3.jpg' },
-  { key: 's4', src: '/slide/slide-4.jpg' },
-] as const;
-
-/** Source files are 1170×1170. Rendered ~200px mobile / ~280px desktop. */
-const SLIDE_SOURCE = 1170;
+/** Rendered ~200px mobile / ~280px desktop from the 1170px square sources. */
 const SLIDE_SIZES = '(max-width: 767px) 200px, 280px';
 
 const SLIDE_BOX = 'w-[200px] md:w-[280px]';
