@@ -3,9 +3,10 @@ import type { Product } from '@/content/schemas';
 import { whatsappLink } from '@/content/contact';
 import { cn } from '@/lib/cn';
 import { firstClause, pickLocale } from '@/lib/format';
-import { primaryBadge, priceFrom, primaryVariant } from '@/lib/product';
+import { primaryBadge, priceFrom, primaryVariant, productColours } from '@/lib/product';
 import { Badge } from './Badge';
 import { Button } from './Button';
+import { ColourSwatches } from './ColourSwatches';
 import { PriceFrom } from './Price';
 import { ProductImage } from './ProductImage';
 import { QuickViewTrigger } from './QuickViewTrigger';
@@ -61,6 +62,7 @@ export async function ProductCard({
   const tagline = firstClause(pickLocale(product.description, locale));
   const variant = primaryVariant(product);
   const badge = primaryBadge(product);
+  const colours = productColours(product);
   const specPills = product.specs.slice(0, 2);
 
   return (
@@ -113,8 +115,12 @@ export async function ProductCard({
         ) : null}
       </div>
 
-      {/* ---- Info -------------------------------------------------------- */}
+      {/* ---- Info --------------------------------------------------------
+          Order follows apple.com/store's accessory cards: swatches sit directly
+          under the image, then the eyebrow tag, then the name. */}
       <div className="mt-5 flex flex-1 flex-col items-start">
+        <ColourSwatches colours={colours} className="mb-3" />
+
         {badge ? (
           <div className="mb-3">
             <Badge badge={badge} />
