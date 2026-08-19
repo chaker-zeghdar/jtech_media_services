@@ -33,10 +33,14 @@ import { pickLocale } from '@/lib/format';
 const CARD_SIZES =
   '(max-width: 639px) 74vw, (max-width: 767px) 44vw, (max-width: 1023px) 33vw, (max-width: 1279px) 25vw, 300px';
 /**
- * For a card with `imageCrop`, the POST-transform width — roughly 3x the above.
- * A zoom magnifies whatever bitmap next/image hands back, so asking for the
- * card's width and then scaling it 3x is how a cutout ends up visibly soft.
- * Exactly the trap the hero's detail crop hit; same fix.
+ * For a card with `imageCrop`, the POST-transform width. A zoom magnifies
+ * whatever bitmap next/image hands back, so asking for the card's own width and
+ * then scaling it is how a cutout ends up visibly soft — exactly the trap the
+ * hero's detail crop hit, same fix.
+ *
+ * Deliberately generous rather than matched to today's 2x: over-asking costs
+ * nothing (next/image never serves more than the file has), while under-asking
+ * silently softens the card the moment someone raises a `scale`.
  */
 const CARD_SIZES_ZOOMED =
   '(max-width: 639px) 222vw, (max-width: 767px) 132vw, (max-width: 1023px) 99vw, (max-width: 1279px) 75vw, 900px';
