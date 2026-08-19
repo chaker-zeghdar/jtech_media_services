@@ -7,11 +7,25 @@ import { Icon } from '@/components/ui/Icon';
 import { whatsappLink } from '@/content/contact';
 import { cn } from '@/lib/cn';
 import { LOCAL_NAV_IDS, type SectionId } from './navigation';
+import { useOverHero } from './useOverHero';
 import { Container } from './Container';
 
 /**
  * Sticky in-page navigation, 48px tall, with a 2px gold reading-progress bar
  * welded to its bottom edge.
+ *
+ * Hidden while the hero is still under the chrome. This is a secondary jump nav
+ * for a long page, not a permanent fixture: showing it above the fold put a
+ * white band and a hairline between the header and the hero card, which read as
+ * a seam across a design whose whole point is that the nav sits directly on the
+ * gradient. It fades in at the same moment <Header /> goes solid — one shared
+ * rule, `useOverHero`, so the two bars cannot disagree.
+ *
+ * It keeps its 48px of flow height in both states. Collapsing the height would
+ * be the obvious way to hide it and the wrong one: the document would shift by
+ * 48px each way as it came and went. `visibility` also takes it out of the tab
+ * order and the accessibility tree while hidden, so there are no focusable links
+ * behind the hero card.
  *
  * Two scroll signals, both cheap:
  *   progress — rAF-throttled document scroll ratio, written to a CSS variable
@@ -20,6 +34,7 @@ import { Container } from './Container';
  *              actually under the nav rather than whichever is largest on screen
  */
 export function LocalNav() {
+  const overHero = useOverHero();
   const t = useTranslations('nav');
   const tA11y = useTranslations('a11y');
   const tProduct = useTranslations('product');
@@ -98,11 +113,15 @@ export function LocalNav() {
   return (
     <div
       style={{ top: 'var(--header-height)' }}
+      data-over-hero={overHero || undefined}
       className={cn(
         // Stacks directly under the now-sticky Header. `top` comes from the
         // same custom property that drives --nav-offset, so the sticky stacking
         // and the anchor offset cannot drift apart.
         'sticky z-nav border-b border-gray-300',
+        // Paint only — the 48px of flow height is kept either way.
+        'transition-[opacity,visibility] duration-300 ease-brand',
+        overHero ? 'invisible opacity-0' : 'visible opacity-100',
         // Blurred translucent bed, with a solid fallback where backdrop-filter
         // isn't supported so the nav is never unreadable over content.
         'bg-white/85 supports-[backdrop-filter]:bg-white/70 supports-[backdrop-filter]:backdrop-blur-xl',

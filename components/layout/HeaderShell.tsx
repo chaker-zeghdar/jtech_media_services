@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { cn } from '@/lib/cn';
-import { HERO_CHROME_SENTINEL_ID } from './navigation';
+import { useOverHero } from './useOverHero';
 
 /**
  * The <header> element and the single piece of state it needs: whether the page
@@ -17,23 +17,14 @@ import { HERO_CHROME_SENTINEL_ID } from './navigation';
  * ── Two states ──────────────────────────────────────────────────────────────
  *
  * over-hero  transparent, sitting directly on the hero card's gradient, the way
- *            the reference design puts its nav inside the card
+ *            the reference design puts its nav at the very top of the page
  * scrolled   the solid white bar with a hairline — everything the sticky header
  *            already did, unchanged
  *
  * Both states are `sticky top-0`. The stickiness is deliberate and predates this
  * treatment; going transparent must not cost it, so only the paint changes.
  *
- * ── Why an observer and not `scrollY > n` ───────────────────────────────────
- *
- * The switch has to happen at the exact scroll offset where the card's content
- * would slide under a *transparent* bar and become unreadable. That offset is a
- * consequence of the announcement bar's height, the card's top padding and the
- * chrome's own height, so hardcoding it would mean re-deriving a magic number
- * every time any of the three changes. Observing the blank band at the top of
- * the card with the header's own height as a negative root margin expresses the
- * rule directly: transparent for exactly as long as the header has nothing but
- * card behind it.
+ * When the switch happens is `useOverHero`'s business — see the note there.
  *
  * ── Why no layout jump ──────────────────────────────────────────────────────
  *
@@ -42,42 +33,7 @@ import { HERO_CHROME_SENTINEL_ID } from './navigation';
  * the "layout jump when the background swaps" this pattern is prone to.
  */
 export function HeaderShell({ children }: { children: ReactNode }) {
-  /**
-   * Starts transparent because that is the correct state for a load at scroll 0,
-   * which is nearly every load. Rendering solid first and correcting on mount
-   * would flash a white bar across the top of the card.
-   */
-  const [overHero, setOverHero] = useState(true);
-
-  useEffect(() => {
-    const sentinel = document.getElementById(HERO_CHROME_SENTINEL_ID);
-
-    // No hero on this route: the transparent state has nothing to sit on.
-    if (!sentinel) {
-      setOverHero(false);
-      return;
-    }
-
-    if (typeof IntersectionObserver === 'undefined') {
-      setOverHero(false);
-      return;
-    }
-
-    // Read from the same custom property that drives the sticky offsets, so the
-    // threshold can never drift from the bar it is measuring.
-    const headerHeight =
-      Number.parseFloat(
-        getComputedStyle(document.documentElement).getPropertyValue('--header-height'),
-      ) || 64;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => setOverHero(entry?.isIntersecting ?? false),
-      { rootMargin: `-${headerHeight}px 0px 0px 0px`, threshold: 0 },
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, []);
+  const overHero = useOverHero();
 
   return (
     <header

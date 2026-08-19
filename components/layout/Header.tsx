@@ -17,8 +17,9 @@ import { categoryHref } from './navigation';
  *
  * STICKY. The categories and the language switcher are controls, and a shop
  * where people compare five phones down a long page needs them reachable without
- * scrolling back to the top. <AnnouncementBar /> above is delivery/COD/phone
- * facts rather than controls, so it is left to scroll away.
+ * scrolling back to the top. This is now the page's only top chrome: the old
+ * announcement bar's phone, WhatsApp and locale switcher all live here, and its
+ * delivery/cash-on-delivery promise is stated in the hero's own subhead.
  *
  * Worth recording, since apple.com/store is this project's reference: Apple's own
  * #globalnav is `position: absolute` and scrolls away permanently — the same

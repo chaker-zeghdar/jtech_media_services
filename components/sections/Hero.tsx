@@ -89,14 +89,17 @@ export async function Hero() {
       aria-labelledby="hero-title"
       /**
        * The negative top margin is what puts the sticky chrome ON the card
-       * rather than in a bar above it: the card starts directly under
-       * <AnnouncementBar /> and <Header /> + <LocalNav /> float over its blank
-       * top band. Both offsets come from the same custom properties the sticky
-       * tops are built from, so the card and the chrome cannot drift apart. The
-       * +2px is the two 1px hairlines under <Header /> and <LocalNav />: the
-       * height tokens describe those bars' content boxes and so don't count
-       * their borders, and without it the card starts two pixels low and a white
-       * sliver shows under the black announcement bar.
+       * rather than in a bar above it: with <AnnouncementBar /> gone the card
+       * now starts at the very top of the page, and <Header /> floats over its
+       * blank top band exactly as the reference's nav does. It cancels the flow
+       * height of both bars — <LocalNav /> is hidden up here but still occupies
+       * its 48px, because collapsing that would shift the document by 48px every
+       * time it came and went. The offsets come from the same custom properties
+       * the sticky tops are built from, so the card and the chrome cannot drift
+       * apart. The +2px is the two 1px hairlines those bars carry: the height
+       * tokens describe their content boxes and so don't count borders, and
+       * without it the card starts two pixels low and a white sliver shows above
+       * it.
        *
        * Only the paint order changes — neither bar is repositioned, and neither
        * stops being sticky. The section is `relative` with no z-index, which
@@ -109,11 +112,9 @@ export async function Hero() {
         {/* The inset card. <Container>'s own px-6/px-8 is what floats it off the
             page edges; `rounded-tile` is the largest radius the system has. */}
         <div
-          /* Top padding is the chrome the card now sits under, plus a much
-             smaller breathing gap than the bottom's — the 112px of nav above the
-             copy is already the breathing room, so repeating the full 3rem/4rem
-             would push the product below the fold for no reason. */
-          className="relative overflow-hidden rounded-tile px-6 pb-12 pt-[calc(1rem+var(--header-height)+var(--nav-height))] sm:px-10 md:px-14 md:pb-16 md:pt-[calc(1.5rem+var(--header-height)+var(--nav-height))]"
+          /* `--hero-card-top` is the blank band the chrome floats over; the
+             sentinel below is the same height, from the same token. */
+          className="relative overflow-hidden rounded-tile px-6 pb-12 pt-[var(--hero-card-top)] sm:px-10 md:px-14 md:pb-16"
           style={{ background: 'var(--gradient-hero-card)' }}
         >
           {/* The blank strip the header floats over. <HeaderShell /> watches it
@@ -124,7 +125,7 @@ export async function Hero() {
             id={HERO_CHROME_SENTINEL_ID}
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 top-0"
-            style={{ height: 'calc(var(--header-height) + var(--nav-height))' }}
+            style={{ height: 'var(--hero-card-top)' }}
           />
 
           {/* ---- Copy ----------------------------------------------------- */}
@@ -145,35 +146,25 @@ export async function Hero() {
               the ink overflow the line box by ~0.15em; at a fixed 16px the
               ascenders touched the eyebrow from 1024px up.
 
-              ── The width caps are a CLS fix, not spacing taste ──
-              Both families load with `display: swap`, and IBM Plex Sans Arabic
-              is markedly wider than the Arabic system fallback, so the Arabic
-              headline used to set on ONE line pre-swap and two lines after. The
-              swap then dropped the product stage and everything under it by a
-              full line — 0.035 measured against a 0.004 baseline.
+              ── No width caps, deliberately ──
+              Earlier revisions capped this in `em` to keep the line COUNT
+              font-independent, because the headline then ran to two or three
+              lines and IBM Plex Sans Arabic is much wider than the Arabic system
+              fallback: with `display: swap` the count changed under the reader
+              and dropped everything below it by a full line.
 
-              `rtl:max-w-[7em]` fixes the cause: it makes the line count
-              font-independent. The original `max-w-[15ch]` could not, because
-              `ch` is itself font-relative — it resolved 45px wider under Plex
-              than under the fallback, which is exactly what let the narrower
-              fallback fit on one line. 7em sits inside the window where BOTH
-              faces wrap to two lines, and `em` keeps that true as the display
-              step scales fluidly. Re-verified at this size, 320–1920px.
-
-              `rtl:min-h-[2.24em]` is the belt to that braces: two lines of the
-              1.12 RTL leading, reserved so any future rewrap still cannot move
-              the stage.
-
-              `ltr:max-w-[9em]` only binds past ~1620px, where the card's inner
-              width would otherwise let a single line run to an unreadable
-              measure. Below that the card is the narrower constraint, and the
-              Latin wrap is font-stable at every width checked. */}
+              The copy is now short enough to set on one line at every width, and
+              one line is a stronger guarantee than any cap was — there is no
+              second line for either face to disagree about. A cap here would now
+              do the opposite of its old job and force the wrap back. The size
+              that keeps it to one line is enforced in the clamp; see the note
+              there for why 640px is the binding width rather than 390px. */}
           <StaggerText
             as="h1"
             id="hero-title"
             text={t('title')}
             delayMs={120}
-            className="mt-[0.3em] text-balance text-hero-display text-ink ltr:max-w-[9em] rtl:min-h-[2.24em] rtl:max-w-[7em] rtl:font-bold rtl:leading-[1.12] rtl:tracking-normal"
+            className="mt-[0.3em] text-hero-display text-ink rtl:font-bold rtl:leading-[1.12] rtl:tracking-normal"
           />
 
           <Enter delayMs={260}>

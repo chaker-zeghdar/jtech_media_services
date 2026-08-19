@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation';
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import type { ReactNode } from 'react';
-import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Footer } from '@/components/layout/Footer';
 import { HashAnchorFix } from '@/components/layout/HashAnchorFix';
 import { Header } from '@/components/layout/Header';
@@ -140,7 +139,15 @@ export default async function LocaleLayout({
 
           <HashAnchorFix />
 
-          <AnnouncementBar />
+          {/* No <AnnouncementBar />. Everything it carried now has a better
+              home: the phone and WhatsApp are icon buttons in <Header /> (and in
+              <MobileMenu /> + <MobileOrderBar /> below sm, where those buttons
+              are hidden), the locale switcher moved into <Header /> too, and the
+              delivery/cash-on-delivery promise is stated in the hero's own
+              subhead rather than in 12px type above it. The component is still
+              in components/layout/ if it is ever wanted back; this is the only
+              route, so gating it per-page would have been indirection with
+              nothing on the other side. */}
           <Header />
           <LocalNav />
 

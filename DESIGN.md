@@ -130,7 +130,7 @@ needs to know which script it's rendering — `font-sans` is always correct.
 
 | Role               | Utility            | Size        | Weight | Tracking  | Leading |
 | ------------------ | ------------------ | ----------- | ------ | --------- | ------- |
-| Hero display       | `text-hero-display`| 32–168px    | 900†   | `-0.035em`| 0.94    |
+| Hero display       | `text-hero-display`| 24–136px    | 900†   | `-0.035em`| 0.94    |
 | Hero               | `text-hero`        | 40–80px     | 600    | `-0.02em` | 1.05    |
 | Section headline   | `text-section`     | 32–56px     | 600    | `-0.015em`| 1.07    |
 | Big spec numeral   | `text-numeral`     | 44–80px     | 600    | `-0.02em` | 1       |
@@ -160,11 +160,18 @@ detail to "tidy up" later:
   takes normal tracking.
 - **Leading** — 0.94 clips the taller Arabic ascenders, so RTL takes 1.12.
 
-The Latin treatment also stops short of the reference's mid-word clip. The size
-is bounded by the longest single unbreakable word (French "Garanti.", 6.3em)
-against the card's inner width, because the card clips: sized any larger, a
-narrow viewport cuts a word in half. Approaching the edge is a consequence of the
-scale; cutting into it would be a contrivance.
+The size is bounded by a hard requirement, not by taste: **the headline sets on
+one line at every width**, in all three locales. The binding case is the longest
+locale against the card's inner width, and the awkward point is 640px, where the
+container and card paddings both step up and the inner width drops 48px for one
+extra pixel of viewport. Clear that step and nothing wraps from 320px up.
+
+One line is also what makes this step font-swap-proof. Earlier revisions wrapped
+to two or three lines and needed `em` width caps to keep the line *count* stable
+between the fallback and the loaded face; with one line there is no second line
+for the two faces to disagree about, and the caps are gone. The copy is written
+to that constraint — if a future headline is long enough to wrap, the constraint
+is the copy, not the clamp.
 
 Arabic at the same nominal px reads optically smaller than Latin, so
 `html[lang^='ar'] body` nudges body copy from 17px to 18px. That is the only
@@ -286,15 +293,33 @@ solid ink"); the worst pair, ink on `gold-light`, measures 10.28:1.
 
 ### The chrome sits on the card, and has two states
 
-The card is pulled up by `--header-height + --nav-height + 2px` so it starts
-directly under `<AnnouncementBar />`, and `<Header />` and `<LocalNav />` float
-over its blank top band. The `+2px` is the two 1px hairlines those bars carry,
-which the height tokens don't count. The card's top padding adds the same two
-tokens back, so the copy still begins below the nav.
+There is no announcement bar. Everything it carried moved somewhere better —
+phone and WhatsApp into `<Header />` (and `<MobileMenu />` / `<MobileOrderBar />`
+below `sm`), the locale switcher into `<Header />`, and the delivery and
+cash-on-delivery promise into the hero's own subhead, where it is a sentence
+rather than 12px of chrome. The page now opens on the hero card itself.
+
+The card is pulled up by `--header-height + --nav-height + 2px` so it starts at
+the very top of the page, and the chrome floats over its blank top band. The
+`+2px` is the two 1px hairlines those bars carry, which the height tokens don't
+count. That band is `--hero-card-top`, declared once and used twice — as the
+card's top padding and as the height of the sentinel both bars observe. Split
+them and the bars would change state at an offset that no longer matches the
+design.
+
+`<LocalNav />` is **hidden while the chrome is over the hero**. It is a secondary
+jump nav for a long page, not a permanent fixture, and showing it above the fold
+put a white band and a hairline between the header and the card — a seam across
+a design whose whole point is that the nav sits directly on the gradient. It
+keeps its 48px of flow height in both states: collapsing the height is the
+obvious way to hide it and the wrong one, because the document would shift 48px
+each way as it came and went. `visibility` also takes it out of the tab order and
+the accessibility tree while hidden, so no focusable links sit behind the card.
 
 `<Header />` therefore has two paint states, driven by `<HeaderShell />` — the
 only client code in the header, a wrapper so `<Header />` itself stays a server
-component:
+component. Both bars read the same rule, `useOverHero`, so they cannot disagree
+about where the hero ends:
 
 | State       | When                                    | Paint                          |
 | ----------- | --------------------------------------- | ------------------------------ |
@@ -312,7 +337,8 @@ Three things about it are load-bearing:
   card's padding, or the chrome's.
 - **The server renders `over-hero`**, because that is correct at scroll 0 and the
   alternative flashes a white band across the card. `@media (scripting: none)`
-  in `globals.css` puts it back to solid where that state could never be left.
+  in `globals.css` puts both bars into their scrolled appearance where that state
+  could never be left.
 
 The header stays `sticky` in both states. The reference design's nav scrolls away
 for good; on a page this long that is the part not worth copying.

@@ -86,15 +86,19 @@ const config: Config = {
        * IBM Plex Sans Arabic tops out at 700, and negative tracking on a joined
        * script pulls the letterforms apart rather than tightening them.
        *
-       * The fluid line is bounded by the longest single word, not by taste. The
-       * card clips (`overflow-hidden`), and an unbreakable word wider than the
-       * card's inner width gets cut mid-letter — the French "Garanti." is the
-       * binding case at 6.3em. The slope keeps the size under inner/6.3 from
-       * 320px up; the 2rem floor is there only so the value can't collapse on a
-       * hypothetical narrower viewport, and never binds in practice.
+       * The fluid line is bounded by the requirement that the headline sets on
+       * ONE line, not by taste. The binding case is the longest locale — French
+       * at 8.45em — against the card's inner width, and the awkward point is
+       * 640px, where the container and card paddings both step up and the inner
+       * width drops 48px for one extra pixel of viewport. The slope clears that
+       * step and every other from 320px up, so nothing wraps at any width.
+       *
+       * That single line is also what makes the headline font-swap-proof: both
+       * faces set it on one line, so there is no rewrap to shift the page — the
+       * width caps this step used to need are gone with it.
        */
       'hero-display': [
-        'clamp(2rem, -0.47rem + 12.2vw, 10.5rem)',
+        'clamp(1.5rem, -0.5rem + 10vw, 8.5rem)',
         { lineHeight: '0.94', letterSpacing: '-0.035em', fontWeight: '900' },
       ],
       numeral: ['clamp(2.75rem, 1.4rem + 5.4vw, 5rem)', { lineHeight: '1', letterSpacing: '-0.02em' }],

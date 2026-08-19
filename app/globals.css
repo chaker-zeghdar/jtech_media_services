@@ -62,10 +62,23 @@
   --font-ui: var(--font-stack-latin);
 
   /* Sticky chrome, measured off the components that render it:
-     Header is h-16, LocalNav is h-12. Both stick; AnnouncementBar does not. */
+     Header is h-16, LocalNav is h-12. Both stick, and both now sit ON the hero
+     card rather than in bars above it. */
   --header-height: 64px;
   --nav-height: 48px;
-  --announce-height: 34px;
+
+  /**
+   * The hero card's blank top band — the strip the chrome floats over before any
+   * copy starts. Declared once because two things must agree on it exactly: the
+   * card's top padding, and the height of the sentinel <HeaderShell /> and
+   * <LocalNav /> observe to decide when they have left the hero. Split them and
+   * the bars change state at an offset that no longer matches the design.
+   *
+   * It reserves the header only, not the header plus the nav: the nav is hidden
+   * at this scroll position, so reserving room for it would put back the gap
+   * above the hero that removing <AnnouncementBar /> was meant to close.
+   */
+  --hero-card-top: calc(2.5rem + var(--header-height));
 
   /**
    * How far an anchored section must clear the top of the viewport.
