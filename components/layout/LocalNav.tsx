@@ -7,19 +7,26 @@ import { Icon } from '@/components/ui/Icon';
 import { whatsappLink } from '@/content/contact';
 import { cn } from '@/lib/cn';
 import { LOCAL_NAV_IDS, type SectionId } from './navigation';
-import { useOverHero } from './useOverHero';
+import { usePathname } from '@/i18n/navigation';
+import { useHeroPassed } from './useOverHero';
 import { Container } from './Container';
 
 /**
  * Sticky in-page navigation, 48px tall, with a 2px gold reading-progress bar
  * welded to its bottom edge.
  *
- * Hidden while the hero is still under the chrome. This is a secondary jump nav
- * for a long page, not a permanent fixture: showing it above the fold put a
- * white band and a hairline between the header and the hero card, which read as
- * a seam across a design whose whole point is that the nav sits directly on the
- * gradient. It fades in at the same moment <Header /> goes solid — one shared
- * rule, `useOverHero`, so the two bars cannot disagree.
+ * Hidden for the whole hero. This is a secondary jump nav for a long page, not a
+ * permanent fixture, and it must not compete with <Header /> for the "first
+ * thing you see" role: the reference this hero follows has a single nav row on
+ * the gradient, and a second bar pinned under the first is exactly what reads as
+ * two navbars.
+ *
+ * It is deliberately NOT tied to the header's own threshold. The header only has
+ * to stop being transparent once copy reaches it — about 40px of scroll — and
+ * revealing this there meant a second bar appeared almost immediately and then
+ * sat under the header for the entire rest of the hero. `useHeroPassed` watches
+ * #hero itself, so this appears exactly when the next section begins, which is
+ * also the first moment its jump links are of any use.
  *
  * It keeps its 48px of flow height in both states. Collapsing the height would
  * be the obvious way to hide it and the wrong one: the document would shift by
@@ -34,7 +41,15 @@ import { Container } from './Container';
  *              actually under the nav rather than whichever is largest on screen
  */
 export function LocalNav() {
-  const overHero = useOverHero();
+  /**
+   * Homepage only. Every entry here is an in-page anchor into a homepage
+   * section, so on /categories/<slug> the whole bar would be links to elements
+   * that do not exist on the page. `usePathname` from `@/i18n/navigation`
+   * returns the path WITHOUT the locale prefix, so this is one comparison
+   * rather than one per locale.
+   */
+  const pathname = usePathname();
+  const heroPassed = useHeroPassed();
   const t = useTranslations('nav');
   const tA11y = useTranslations('a11y');
   const tProduct = useTranslations('product');
@@ -110,10 +125,12 @@ export function LocalNav() {
     return () => observer.disconnect();
   }, []);
 
+  if (pathname !== '/') return null;
+
   return (
     <div
       style={{ top: 'var(--header-height)' }}
-      data-over-hero={overHero || undefined}
+      data-over-hero={!heroPassed || undefined}
       className={cn(
         // Stacks directly under the now-sticky Header. `top` comes from the
         // same custom property that drives --nav-offset, so the sticky stacking
@@ -121,7 +138,7 @@ export function LocalNav() {
         'sticky z-nav border-b border-gray-300',
         // Paint only — the 48px of flow height is kept either way.
         'transition-[opacity,visibility] duration-300 ease-brand',
-        overHero ? 'invisible opacity-0' : 'visible opacity-100',
+        heroPassed ? 'visible opacity-100' : 'invisible opacity-0',
         // Blurred translucent bed, with a solid fallback where backdrop-filter
         // isn't supported so the nav is never unreadable over content.
         'bg-white/85 supports-[backdrop-filter]:bg-white/70 supports-[backdrop-filter]:backdrop-blur-xl',

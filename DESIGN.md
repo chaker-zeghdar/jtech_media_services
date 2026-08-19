@@ -278,18 +278,43 @@ This is enforced structurally, not by convention:
 `GoldPanel` and the hero card are the two exceptions to the 12% rule. Everything
 else stays well under, which is what makes those two moments land.
 
-The hero card is a **surface, not a device** — `--gradient-hero-card`, a tint-to-
-gold-light wash on an inset `rounded-tile` bed. It reads as a stage for the
-product rather than as a brand shape, and it is deliberately *paler* than
-`GoldPanel`: the panel's deepest stop is `#C1862C`, the hero card's is
-`--color-gold-light`, so the delivery panel is still the page's one saturated
-gold moment. The hero section element underneath stays `bg-white`, which is what
-keeps the card floating rather than bleeding to the page edges.
+The hero is a **surface, not a device** — `--gradient-hero`, full-bleed, running
+`--color-gold` at the top edge through `--color-gold-light` at 45% to
+`--color-gold-tint` at the bottom. Three stops rather than two on purpose: the
+middle one is what makes it descend in visible stages instead of reading as one
+flat blend.
+
+It shares `--color-gold` with `GoldPanel` and stays distinct from it because it
+is a **fade, not a fill**: the saturated end is confined to the top ~15% and is
+gone by halfway, so Delivery still owns the page's one saturated gold moment.
+That is the line to hold if this is ever revisited — a hero that stayed gold all
+the way down would take the panel's job.
 
 Because it is a surface, it does not spend the hero's device budget — the hero
-still carries exactly one `GoldRibbon` and nothing else. All hero text on it is
-solid ink for the same reason the panel's is (see "Text on the gold panel is
-solid ink"); the worst pair, ink on `gold-light`, measures 10.28:1.
+still carries exactly one `GoldRibbon` and nothing else.
+
+### Anything sitting on the gold end must be ink — including the chrome
+
+All hero text is solid ink for the same reason the panel's is (see "Text on the
+gold panel is solid ink"). What the full-bleed gradient added is that the
+**header now sits on the most saturated part of it**, so the rule reaches past
+the section and into the chrome:
+
+| On `--color-gold` | Ratio    | Verdict            |
+| ----------------- | -------- | ------------------ |
+| ink               | 8.06:1   | the only safe text |
+| `gray-700`        | 2.46:1   | fails AA outright  |
+
+`<Header />` therefore switches its category links **and** `<LocaleSwitcher />`'s
+inactive labels from `gray-700` to ink in the over-hero state. That is not
+styling polish; without it the nav fails AA on first paint.
+
+The logo mark is the same problem in a different form. It is gold, and gold on
+gold is *invisible* rather than low-contrast — a visibility failure, not a
+contrast one, which is why the "the mark is a shape, so the gold contrast rule
+doesn't apply" note in `LogoMark.tsx` stops being true on a gold surface. The
+header passes `markTone="current"` and drives the fill from the link's own
+colour, rather than overriding it through `className`, which §7 forbids.
 
 ### The chrome sits on the card, and has two states
 
@@ -307,14 +332,27 @@ card's top padding and as the height of the sentinel both bars observe. Split
 them and the bars would change state at an offset that no longer matches the
 design.
 
-`<LocalNav />` is **hidden while the chrome is over the hero**. It is a secondary
-jump nav for a long page, not a permanent fixture, and showing it above the fold
-put a white band and a hairline between the header and the card — a seam across
-a design whose whole point is that the nav sits directly on the gradient. It
-keeps its 48px of flow height in both states: collapsing the height is the
+`<LocalNav />` is **hidden for the whole hero**, and renders nothing at all off
+the homepage. It is a secondary jump nav for a long page, not a permanent
+fixture, and it must not compete with `<Header />` for the "first thing you see"
+role — the reference has a single nav row on the gradient, and a second bar
+pinned under the first is what reads as two navbars.
+
+It is deliberately **not** tied to the header's own threshold. The header only
+has to stop being transparent once copy reaches it, about 40px of scroll;
+revealing the jump nav there meant a second bar appeared almost immediately and
+then sat under the header for the entire rest of the hero. `useHeroPassed()`
+watches `#hero` itself, so it appears exactly when the next section begins —
+which is also the first moment its links are of any use.
+
+It keeps its 48px of flow height in both states: collapsing the height is the
 obvious way to hide it and the wrong one, because the document would shift 48px
 each way as it came and went. `visibility` also takes it out of the tab order and
-the accessibility tree while hidden, so no focusable links sit behind the card.
+the accessibility tree while hidden, so no focusable links sit behind the hero.
+
+Off the homepage it returns `null` outright — every entry is an in-page anchor
+into a homepage section, so on `/categories/<slug>` the whole bar would be links
+to elements that do not exist.
 
 `<Header />` therefore has two paint states, driven by `<HeaderShell />` — the
 only client code in the header, a wrapper so `<Header />` itself stays a server
@@ -345,7 +383,7 @@ for good; on a page this long that is the part not worth copying.
 
 | Section              | Surface      | Device                        |
 | -------------------- | ------------ | ----------------------------- |
-| Hero                 | tinted card  | `GoldRibbon` #1 of 2          |
+| Hero                 | gold fade    | `GoldRibbon` #1 of 2          |
 | Categories           | gray         | — (gold icon chips)           |
 | Featured (ink block) | ink          | `GoldRibbon` #2 of 2 — spent  |
 | Feature mosaic       | white        | — (colour blocking is the interest) |

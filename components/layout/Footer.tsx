@@ -7,6 +7,7 @@ import { services } from '@/content/services';
 import { mailLink, settings, telLink, whatsappLink } from '@/content/settings';
 import { pickLocale } from '@/lib/format';
 import { Container } from './Container';
+import { Link } from '@/i18n/navigation';
 import { categoryHref } from './navigation';
 
 /**
@@ -15,7 +16,8 @@ import { categoryHref } from './navigation';
  *
  * PHASE 2: the three legal labels in the bottom row render as plain text because
  * /legal/terms, /legal/privacy and /legal/returns don't exist yet. A link to a
- * 404 is worse than no link; turn them into <Link>s when those pages land.
+ * The category column now points at the real /categories/<slug> pages, through
+ * next-intl's <Link> so the locale prefix survives.
  */
 export async function Footer() {
   const locale = await getLocale();
@@ -61,12 +63,12 @@ export async function Footer() {
                 .sort((a, b) => a.position - b.position)
                 .map((category) => (
                   <li key={category.slug}>
-                    <a
+                    <Link
                       href={categoryHref(category.slug)}
                       className="text-sm text-gray-300 transition-colors duration-200 hover:text-white"
                     >
                       {pickLocale(category.name, locale)}
-                    </a>
+                    </Link>
                   </li>
                 ))}
             </ul>

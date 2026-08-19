@@ -39,6 +39,14 @@ import { categoryHref } from './navigation';
  * component: category names are resolved here and passed down as plain strings,
  * so neither the menu nor the shell ever touches the content layer on the client.
  *
+ * ── Contrast over the hero ──────────────────────────────────────────────────
+ *
+ * The hero gradient is now full `--color-gold` at its top edge, which is exactly
+ * where this bar sits. The `text-gray-700` these links use on white measures
+ * **2.46:1** there and fails AA outright, so the over-hero state switches them
+ * to ink (8.07:1). This is not a stylistic nicety — it is the reason the state
+ * has a text colour at all, and it must not be "simplified" back to one colour.
+ *
  * ── The right-hand cluster ──────────────────────────────────────────────────
  *
  * The reference fills this slot with search, account, wishlist and bag. None of
@@ -64,7 +72,7 @@ export async function Header() {
     }));
 
   /**
-   * A white disc on the gold card, a grey one once the bar itself is white — in
+   * A white disc on the gold surface, a grey one once the bar itself is white — in
    * both states the glyph is ink, so this only ever changes the disc behind it.
    * White rather than a translucent white on purpose: every colour in this
    * palette is a bare `var()` with no `<alpha-value>` placeholder, so Tailwind
@@ -84,20 +92,30 @@ export async function Header() {
           matter how wide the logo or the cluster get. Under lg the nav is inside
           <MobileMenu />, so the row collapses back to a simple flex. */}
       <Container className="flex h-16 items-center justify-between gap-6 lg:grid lg:grid-cols-[1fr_auto_1fr]">
-        <Link href="/" aria-label={t('logo')} className="shrink-0 justify-self-start">
-          <Logo />
+        {/* Gold on the gradient's gold top edge is invisible, not merely
+            low-contrast, so over the hero the mark takes the link's own colour
+            instead. `markTone="current"` is <Logo />'s API for exactly this —
+            DESIGN.md §7 forbids overriding a component's colour through
+            `className`, and the state that decides it is client-side, so it
+            cannot be a static prop either. The wordmark carries its own ink. */}
+        <Link
+          href="/"
+          aria-label={t('logo')}
+          className="shrink-0 justify-self-start text-gold group-data-[over-hero]:text-ink"
+        >
+          <Logo markTone="current" />
         </Link>
 
         <nav aria-label={t('primaryNav')} className="hidden lg:block">
           <ul className="flex items-center gap-1">
             {items.map((item) => (
               <li key={item.slug}>
-                <a
+                <Link
                   href={item.href}
-                  className="block whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-ink"
+                  className="block whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-ink group-data-[over-hero]:text-ink group-data-[over-hero]:hover:bg-white"
                 >
                   {item.name}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

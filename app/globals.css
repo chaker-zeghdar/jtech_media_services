@@ -25,25 +25,29 @@
      4.9:1 on --color-gold-tint. The brand gold itself is 2.1:1 on white. */
   --color-gold-text: #8a6524;
   /**
-   * The hero card's bed.
+   * The hero's opening surface.
    *
-   * Deliberately NOT a second <GoldPanel />. DESIGN.md allows exactly one
-   * full-saturation gold panel per page and that budget is spent on Delivery, so
-   * this uses only the PALE end of the scale — tint through gold-light, never the
-   * saturated gold/gold-deep stops the panel and the ribbon use. It reads as a
-   * soft wash rather than a brand moment, which also keeps the section inside the
-   * ~12% gold-pixel guideline.
+   * Vertical, and richest at the TOP: full gold at the very top edge, through
+   * gold-light at 45%, down to gold-tint at the bottom. Three stops rather than
+   * two on purpose — the middle one is what makes it descend in visible stages
+   * instead of reading as one flat blend.
    *
-   * Text on it is solid ink for the same reason it is on the gold panel: at the
-   * gold-light end, gray-700 measures 3.1:1 and fails, while ink measures 10.1:1.
-   * A gradient makes the backdrop under any given line unpredictable, so
-   * hierarchy here comes from size and weight, never from a lighter grey.
+   * It does use --color-gold now, which the delivery <GoldPanel /> also does.
+   * The two stay distinct because this one is a fade, not a fill: gold is
+   * concentrated in the top ~15% and is gone by halfway, so the page still has
+   * exactly one saturated gold moment further down. See DESIGN.md §3.
+   *
+   * Contrast is the thing to watch at the top, since that is now the darkest
+   * part of the surface and the header sits directly on it. Ink measures 8.07:1
+   * on full gold; gray-700 measures 2.46:1 and FAILS, which is why <Header />
+   * switches its links to ink while it is over the hero rather than keeping the
+   * gray it uses on white.
    */
-  --gradient-hero-card: linear-gradient(
-    135deg,
-    var(--color-gold-tint) 0%,
-    var(--color-gold-tint) 42%,
-    var(--color-gold-light) 100%
+  --gradient-hero: linear-gradient(
+    to bottom,
+    var(--color-gold) 0%,
+    var(--color-gold-light) 45%,
+    var(--color-gold-tint) 100%
   );
 
   --color-green: #2fbf6b;

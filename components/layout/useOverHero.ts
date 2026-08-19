@@ -29,15 +29,36 @@ import { HERO_CHROME_SENTINEL_ID } from './navigation';
  * appearance in that case.
  */
 export function useOverHero(): boolean {
-  const [overHero, setOverHero] = useState(true);
+  return useScrolledPast(HERO_CHROME_SENTINEL_ID);
+}
+
+/**
+ * True until the whole hero section has scrolled up past the header.
+ *
+ * <LocalNav /> uses this rather than `useOverHero`: the header only needs to
+ * stop being transparent once copy reaches it, which happens within about 40px
+ * of scroll, but the jump nav must stay away for the entire hero. Revealing it
+ * on the header's threshold put a second bar directly under the first for the
+ * whole rest of the hero — the "two navbars" the single-nav reference doesn't
+ * have. Tied to #hero itself, it appears exactly when the next section begins.
+ */
+export function useHeroPassed(): boolean {
+  return !useScrolledPast('hero');
+}
+
+/**
+ * Shared mechanic: true while any part of `id` is still below the header.
+ */
+function useScrolledPast(id: string): boolean {
+  const [inside, setInside] = useState(true);
 
   useEffect(() => {
-    const sentinel = document.getElementById(HERO_CHROME_SENTINEL_ID);
+    const sentinel = document.getElementById(id);
 
     // No hero on this route, or no observer: the over-hero state has nothing to
     // sit on, so fall back to the ordinary chrome.
     if (!sentinel || typeof IntersectionObserver === 'undefined') {
-      setOverHero(false);
+      setInside(false);
       return;
     }
 
@@ -49,13 +70,13 @@ export function useOverHero(): boolean {
       ) || 64;
 
     const observer = new IntersectionObserver(
-      ([entry]) => setOverHero(entry?.isIntersecting ?? false),
+      ([entry]) => setInside(entry?.isIntersecting ?? false),
       { rootMargin: `-${headerHeight}px 0px 0px 0px`, threshold: 0 },
     );
 
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, []);
+  }, [id]);
 
-  return overHero;
+  return inside;
 }

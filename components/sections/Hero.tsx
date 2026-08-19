@@ -20,11 +20,12 @@ import { pickLocale } from '@/lib/format';
  * sweeping behind it, a zoomed detail crop pinned to the stage, the primary CTA
  * overlaid on the product, and the trust line set as a pull quote.
  *
- * ── The card's bed is NOT a second <GoldPanel /> ─────────────────────────────
- * `--gradient-hero-card` (globals.css) is a soft wash built from the PALE end of
- * the gold scale — tint through gold-light — precisely so it does not read as,
- * and must not later be "fixed" into, a duplicate of Delivery's full-saturation
- * panel. DESIGN.md allows exactly one of those per page and Delivery has it.
+ * ── The surface is NOT a second <GoldPanel /> ────────────────────────────────
+ * `--gradient-hero` (globals.css) runs full gold at the top edge down through
+ * gold-light to gold-tint at the bottom. It shares gold with Delivery's panel
+ * but stays distinct from it because it is a fade rather than a fill: the
+ * saturated end is confined to the top ~15% and is gone by halfway. DESIGN.md
+ * allows exactly one full-saturation panel per page and Delivery still has it.
  *
  * All card text is solid ink, for the same reason it is on the gold panel: a
  * gradient makes the backdrop under any given line unpredictable, and at the
@@ -108,29 +109,35 @@ export async function Hero() {
        */
       className="relative mt-[calc(-1*(var(--header-height)+var(--nav-height)+2px))] flex min-h-hero flex-col justify-center overflow-hidden bg-white pb-10 md:pb-14"
     >
-      <Container>
-        {/* The inset card. <Container>'s own px-6/px-8 is what floats it off the
-            page edges; `rounded-tile` is the largest radius the system has. */}
-        <div
-          /* `--hero-card-top` is the blank band the chrome floats over; the
-             sentinel below is the same height, from the same token. */
-          className="relative overflow-hidden rounded-tile px-6 pb-12 pt-[var(--hero-card-top)] sm:px-10 md:px-14 md:pb-16"
-          style={{ background: 'var(--gradient-hero-card)' }}
-        >
-          {/* The blank strip the header floats over. <HeaderShell /> watches it
-              to decide when to stop being transparent — see the note there for
-              why the threshold is expressed as geometry rather than a scroll
-              number. Purely a measuring device: no paint, no hit area. */}
-          <div
-            id={HERO_CHROME_SENTINEL_ID}
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0"
-            style={{ height: 'var(--hero-card-top)' }}
-          />
+      {/* Full bleed, and no radius. The gradient is the page's opening surface
+          now rather than a card floating on white: it runs edge to edge, meets
+          the transparent header at the top and the full-bleed proof strip below,
+          so there is no corner left where a radius would read as anything but a
+          gap. The CONTENT still sits in <Container>, the same column every other
+          section on the page uses — full-bleed background, normal content width.
+          Same split <SlideBanner /> uses further down.
 
+          `--hero-card-top` is the blank band the chrome floats over; the
+          sentinel below is the same height, from the same token. */}
+      <div
+        className="relative overflow-hidden pb-12 pt-[var(--hero-card-top)] md:pb-16"
+        style={{ background: 'var(--gradient-hero)' }}
+      >
+        {/* The blank strip the header floats over. <HeaderShell /> watches it
+            to decide when to stop being transparent — see the note there for
+            why the threshold is expressed as geometry rather than a scroll
+            number. Purely a measuring device: no paint, no hit area. */}
+        <div
+          id={HERO_CHROME_SENTINEL_ID}
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0"
+          style={{ height: 'var(--hero-card-top)' }}
+        />
+
+        <Container>
           {/* ---- Copy ----------------------------------------------------- */}
           <Enter>
-            <p className="text-eyebrow uppercase text-ink">{t('eyebrow')}</p>
+            <p className="text-center text-eyebrow uppercase text-ink">{t('eyebrow')}</p>
           </Enter>
 
           {/* ── The headline is the one documented display-face exception ──
@@ -164,14 +171,26 @@ export async function Hero() {
             id="hero-title"
             text={t('title')}
             delayMs={120}
-            className="mt-[0.3em] text-hero-display text-ink rtl:font-bold rtl:leading-[1.12] rtl:tracking-normal"
+            className="mt-[0.3em] text-center text-hero-display text-ink rtl:font-bold rtl:leading-[1.12] rtl:tracking-normal"
           />
 
+          {/* Centred with the headline, and deliberately heavier than the plain
+              `text-subhead` it was: at 136px the headline was leaving this
+              reading as small print under a billboard. `text-h3` + medium puts
+              it a clear step below the headline in both size and weight while
+              still carrying its own presence, so the pair reads as one block.
+
+              `max-w-[52ch] mx-auto` matters more now than it did left-aligned —
+              centring makes ragged line lengths obvious, and the three locales'
+              subheads differ in length. The measure keeps all three to a similar
+              number of lines instead of one locale running much wider. */}
           <Enter delayMs={260}>
-            <p className="mt-6 max-w-[46ch] text-subhead text-ink">{t('subhead')}</p>
+            <p className="mx-auto mt-6 max-w-[52ch] text-center text-h3 font-medium leading-[1.4] text-ink">
+              {t('subhead')}
+            </p>
           </Enter>
 
-          <Enter delayMs={320} className="mt-6">
+          <Enter delayMs={320} className="mt-6 flex justify-center">
             <Button
               variant="link"
               surface="gold"
@@ -342,8 +361,8 @@ export async function Hero() {
               <blockquote className="text-base text-ink">{t('trust')}</blockquote>
             </figure>
           </Enter>
-        </div>
-      </Container>
+        </Container>
+      </div>
 
       {/* ---- Proof strip -----------------------------------------------------
           Third size pass: stopped nudging the pixel value up inside the centred

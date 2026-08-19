@@ -79,6 +79,14 @@
     "title": "What are you looking for?",
     "subhead": "Five categories, all in stock at the shop and all under warranty."
   },
+  "categoryPage": {
+    "eyebrow": "The range",
+    "count": "{count, plural, one {# product} other {# products}} — all with a written warranty, delivered to all 58 wilayas.",
+    "empty": "Nothing in this category right now. Message us on WhatsApp and we'll source it.",
+    "emptyCta": "Ask about this category",
+    "metaTitle": "{category} — JTECH Media Services",
+    "metaDescription": "Genuine {category} with a written warranty from JTECH Batna. Delivery to all 58 wilayas, cash on delivery."
+  },
   "featured": {
     "eyebrow": "Featured device",
     "title": "Titanium, and a camera that shoots cinema.",

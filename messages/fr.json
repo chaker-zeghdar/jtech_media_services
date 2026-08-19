@@ -79,6 +79,14 @@
     "title": "Qu’est-ce que vous cherchez ?",
     "subhead": "Cinq catégories, toutes disponibles en magasin et sous garantie."
   },
+  "categoryPage": {
+    "eyebrow": "La gamme",
+    "count": "{count, plural, one {# produit} other {# produits}} — tous garantis par écrit, livrés dans les 58 wilayas.",
+    "empty": "Rien dans cette catégorie pour le moment. Écrivez-nous sur WhatsApp et on vous le trouve.",
+    "emptyCta": "Demander cette catégorie",
+    "metaTitle": "{category} — JTECH Media Services",
+    "metaDescription": "{category} authentique avec garantie écrite chez JTECH Batna. Livraison dans les 58 wilayas, paiement à la réception."
+  },
   "featured": {
     "eyebrow": "L’appareil en vedette",
     "title": "Le titane, et une caméra de cinéma.",

@@ -47,12 +47,20 @@ export const LOCAL_NAV_IDS: readonly SectionId[] = [
 ];
 
 /**
- * PHASE 2: return `/categories/${slug}`.
+ * The category page for a slug. Phase 2, now real.
  *
- * Category pages don't exist yet, so every category link resolves to the range
- * section on the homepage. Changing this one function switches the header nav,
- * the category tiles and the footer columns over at once.
+ * The old note here predicted that changing this one function would switch the
+ * header nav, the category tiles and the footer columns over at once. That was
+ * half true: they all read from here, so they all changed — but every one of
+ * them rendered the result in a plain <a href>, which was fine for the "#range"
+ * fragment this used to return and wrong the moment it became a path. A bare
+ * <a href="/categories/iphone"> on /fr navigates to the ARABIC page, because
+ * `as-needed` prefixing lives in next-intl's <Link>, not in the string.
+ *
+ * So all four call sites — <Header />, <MobileMenu />, <Categories />,
+ * <Footer /> — now render this through the <Link> from `@/i18n/navigation`.
+ * Anything new that links a category must do the same.
  */
-export function categoryHref(_slug: CategorySlug): string {
-  return '#range';
+export function categoryHref(slug: CategorySlug): string {
+  return `/categories/${slug}`;
 }

@@ -46,7 +46,10 @@ export function LocaleSwitcher({ tone = 'light', className }: LocaleSwitcherProp
                       : 'bg-gray-100 text-ink'
                     : tone === 'ink'
                       ? 'text-gray-300 hover:text-white'
-                      : 'text-gray-700 hover:text-ink',
+                      : // gray-700 measures 2.46:1 on the hero gradient's gold
+                        // top edge, where this sits while the header is
+                        // transparent. Ink measures 8.07:1.
+                        'text-gray-700 hover:text-ink group-data-[over-hero]:text-ink',
                 )}
               >
                 {locale}

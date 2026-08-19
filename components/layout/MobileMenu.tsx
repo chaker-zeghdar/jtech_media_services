@@ -10,6 +10,7 @@ import { CONTACT, telLink, whatsappLink } from '@/content/contact';
 import { cn } from '@/lib/cn';
 import { LocaleSwitcher } from './LocaleSwitcher';
 import { SECTION_IDS } from './navigation';
+import { Link } from '@/i18n/navigation';
 
 type MobileMenuProps = {
   /** Localized category name + href pairs, resolved by the server parent. */
@@ -124,13 +125,13 @@ export function MobileMenu({ categories }: MobileMenuProps) {
             <ul className="flex flex-col gap-1">
               {categories.map((category) => (
                 <li key={category.slug}>
-                  <a
+                  <Link
                     href={category.href}
                     onClick={close}
                     className="block py-2.5 text-h3 font-semibold transition-colors duration-200 hover:text-gold-text"
                   >
                     {category.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

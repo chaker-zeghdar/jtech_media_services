@@ -50,19 +50,32 @@ export function LogoMark({ height = 24, tone = 'gold', className }: LogoMarkProp
 type LogoProps = {
   /** `ink` for light surfaces, `white` for the ink footer and dark blocks. */
   tone?: 'ink' | 'white';
+  /**
+   * `gold` is the default and correct on white and on ink. `current` hands the
+   * mark's fill to `currentColor` so the caller can drive it — the header needs
+   * that on the hero's gold surface, where a gold shape is invisible rather than
+   * merely low-contrast, and where the state that decides it is client-side and
+   * so can't be passed down as a prop.
+   */
+  markTone?: 'gold' | 'current';
   className?: string;
 };
 
 /**
  * Mark + wordmark. The accessible name is supplied by the parent link.
  *
- * The mark stays gold on both surfaces — it is a shape, not text, so the gold
+ * The mark stays gold on white and on ink — it is a shape, not text, so the gold
  * contrast rule in DESIGN.md doesn't apply to it. The wordmark is what flips.
+ *
+ * The one surface where that breaks down is a GOLD one: on the hero gradient's
+ * top edge the shape disappears entirely, which is a visibility problem rather
+ * than a contrast one. <Header /> passes `markTone="current"` there and drives
+ * the colour from the link's own `color`; see the note at its <Logo /> call.
  */
-export function Logo({ tone = 'ink', className }: LogoProps) {
+export function Logo({ tone = 'ink', markTone = 'gold', className }: LogoProps) {
   return (
     <span className={cn('inline-flex items-center gap-2.5', className)}>
-      <LogoMark height={20} />
+      <LogoMark height={20} tone={markTone} />
       <span
         className={cn(
           'font-latin text-[1.0625rem] font-bold tracking-tight',
