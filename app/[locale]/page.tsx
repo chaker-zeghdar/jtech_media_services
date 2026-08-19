@@ -26,8 +26,8 @@ import { routing } from '@/i18n/routing';
  *
  *   Section          Surface   Device
  *   ───────────────────────────────────────────────────────
- *   Hero             white     GoldRibbon #1 of 2
- *   Categories       gray      — (gold icon chips)
+ *   Hero             gold fade GoldRibbon #1 of 2
+ *   Categories       white     — (gold gradient card faces)
  *   FeaturedProduct  ink       GoldRibbon #2 of 2 — budget spent
  *   FeatureMosaic    white     — (colour blocking is the interest)
  *   FullRange        gray      Halftone
