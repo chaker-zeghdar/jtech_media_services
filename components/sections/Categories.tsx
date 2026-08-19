@@ -6,7 +6,6 @@ import { categoryHref } from '@/components/layout/navigation';
 import { Carousel } from '@/components/ui/Carousel';
 import { CategoryTile } from '@/components/ui/CategoryTile';
 import { categories } from '@/content/categories';
-import { productsByCategory } from '@/content/products';
 import { pickLocale } from '@/lib/format';
 
 /**
@@ -25,9 +24,9 @@ import { pickLocale } from '@/lib/format';
  * deliberately not copied, because this page already has a carousel idiom in
  * three other sections and a second one would be a competing control.
  *
- * Brand device: still none of the named devices. The gold moved from the old
- * icon chips to the count eyebrow on every card — see the note in
- * <CategoryTile /> and the per-page budget in DESIGN.md §3.
+ * Brand device: still none of the named devices. The gold is carried by the
+ * alternating gradient card faces — see the note in <CategoryTile /> and the
+ * per-page budget in DESIGN.md §3.
  */
 
 /** Matches CARD_ITEM below, so next/image never fetches more than it paints. */
@@ -46,24 +45,31 @@ export async function Categories() {
       category,
       name: pickLocale(category.name, locale),
       tagline: pickLocale(category.tagline, locale),
-      count: t('count', { count: productsByCategory(category.slug).length }),
       href: categoryHref(category.slug),
     }));
 
   return (
-    <Section id="categories" background="gray">
+    /* White, not gray — and that is a consequence of the card faces, not a
+       whim. One of the two faces IS gray-50, which is exactly what this section
+       used to be, so gray-on-gray left those cards with no edge at all: they
+       read as loose text and a product floating on the page rather than as
+       cards. The alternation rule still holds either way — hero (gold fade) →
+       this → featured (ink). */
+    <Section id="categories" background="white">
       <Container>
         <SectionHeader id="categories" title={t('title')} subhead={t('subhead')} />
 
         <Carousel label={`${t('title')} — ${tA11y('carouselProgress')}`} className="mt-14">
-          {items.map((item) => (
+          {items.map((item, index) => (
             <div key={item.category.slug} className={CARD_ITEM}>
+              {/* gradient, gray, gradient, gray, gradient. By parity rather than
+                  a hand-picked list, so a sixth category keeps the rhythm. */}
               <CategoryTile
                 category={item.category}
                 name={item.name}
                 tagline={item.tagline}
-                count={item.count}
                 href={item.href}
+                bed={index % 2 === 0 ? 'gradient' : 'gray'}
                 sizes={CARD_SIZES}
               />
             </div>

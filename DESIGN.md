@@ -302,14 +302,35 @@ still carries exactly one `GoldRibbon` and nothing else.
 ### The category rail carries its own gold
 
 `<Categories />` has no named device, and the table above records why: the cards
-carry the brand themselves. That used to be a 48px gold icon chip per tile. The
-cards are now built to the apple.com/store rail — eyebrow, large name, one bold
-line, product filling the lower half — and the gold moved to the **count eyebrow**
-on every card, which is the reference's own coloured-eyebrow slot.
+carry the brand themselves. Where exactly has moved twice, so it is worth being
+explicit about where it lives now.
 
-On white that eyebrow must be `--color-gold-text`; brand gold there measures
-~2:1 and fails. On an `ink` card it must be brand gold instead. Same rule as
-everywhere, just applied per bed.
+The cards are built to the apple.com/store rail — large name, one line of detail,
+product filling the lower half. They alternate two faces by index, **gradient,
+gray, gradient, gray, gradient**, from parity rather than a hand-picked list, so
+a sixth category keeps the rhythm on its own:
+
+| Face       | Fill                        | Text                          |
+| ---------- | --------------------------- | ----------------------------- |
+| `gradient` | `--gradient-category-card`  | solid ink, title and tagline  |
+| `gray`     | `--color-gray-50`           | ink title, `gray-700` tagline |
+
+Those gradient faces **are** the section's gold. Earlier revisions put it in a
+gold icon chip, then in a gold count eyebrow; both are gone, and the card is down
+to name, tagline and product. If the faces ever flatten to plain white, this
+section loses its brand presence entirely — that is the thing to notice before
+changing them.
+
+`--gradient-category-card` is the same three tokens in the same order as
+`--gradient-hero`, deliberately: one gold descent recipe for the site. Only the
+spread differs, because a ~380px card compresses the hero's stops into a hard
+band. Everything on that face is solid ink for the usual reason — `gray-700`
+measures 2.46:1 against the gold end.
+
+**The section is `white`, and that follows from the cards.** One of the two faces
+is `gray-50`, which is what this section's surface used to be; gray-on-gray left
+those cards with no edge and they read as loose text floating on the page. The
+alternation rule still holds: hero (gold fade) → this → featured (ink).
 
 The reference floats its arrows over the cards. That part is deliberately not
 copied: three other sections already use `<Carousel />`'s arrows-below idiom, and
@@ -406,7 +427,7 @@ for good; on a page this long that is the part not worth copying.
 | Section              | Surface      | Device                        |
 | -------------------- | ------------ | ----------------------------- |
 | Hero                 | gold fade    | `GoldRibbon` #1 of 2          |
-| Categories           | gray         | — (gold count eyebrows)       |
+| Categories           | white        | — (gold gradient card faces)  |
 | Featured (ink block) | ink          | `GoldRibbon` #2 of 2 — spent  |
 | Feature mosaic       | white        | — (colour blocking is the interest) |
 | Full range           | gray         | `Halftone`                    |

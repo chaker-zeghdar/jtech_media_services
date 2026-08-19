@@ -8,6 +8,7 @@ export const categories: readonly Category[] = parseContent(
   [
     {
       slug: 'iphone',
+      image: '/categories/iphone.png',
       icon: 'iphone',
       position: 1,
       name: { ar: 'آيفون', fr: 'iPhone', en: 'iPhone' },
@@ -19,6 +20,7 @@ export const categories: readonly Category[] = parseContent(
     },
     {
       slug: 'samsung',
+      image: '/categories/samsung.png',
       icon: 'samsung',
       position: 2,
       name: { ar: 'سامسونغ', fr: 'Samsung', en: 'Samsung' },
@@ -30,6 +32,15 @@ export const categories: readonly Category[] = parseContent(
     },
     {
       slug: 'android',
+      // No `image` on purpose. The cutout supplied for this slot was a full
+      // Xiaomi 15 Ultra marketing plate — the phone plus a baked-in panel of
+      // German spec copy and logos — not a product-on-transparent cutout like
+      // the other four (1.2% transparent pixels against their 33-59%). In a
+      // card that reads "name, tagline, product" at a glance it would look
+      // like a foreign ad pasted into the layout, and cropping the panel off
+      // would be fragile. Until a plain phone-only cutout exists this falls
+      // through to <ProductImage />'s branded empty state, which is the same
+      // thing every product without a photo already shows.
       icon: 'android',
       position: 3,
       name: { ar: 'أندرويد', fr: 'Android', en: 'Android' },
@@ -41,6 +52,7 @@ export const categories: readonly Category[] = parseContent(
     },
     {
       slug: 'pc',
+      image: '/categories/pc.png',
       icon: 'laptop',
       position: 4,
       name: { ar: 'حواسيب', fr: 'Ordinateurs', en: 'Computers' },
@@ -52,6 +64,7 @@ export const categories: readonly Category[] = parseContent(
     },
     {
       slug: 'accessories',
+      image: '/categories/accessories.png',
       icon: 'headphones',
       position: 5,
       name: { ar: 'أكسسوارات', fr: 'Accessoires', en: 'Accessories' },

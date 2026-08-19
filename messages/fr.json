@@ -77,8 +77,7 @@
   },
   "categories": {
     "title": "Qu’est-ce que vous cherchez ?",
-    "subhead": "Cinq catégories, toutes disponibles en magasin et sous garantie.",
-    "count": "{count, plural, one {# produit} other {# produits}}"
+    "subhead": "Cinq catégories, toutes disponibles en magasin et sous garantie."
   },
   "categoryPage": {
     "eyebrow": "La gamme",

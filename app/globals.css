@@ -55,6 +55,28 @@
     var(--color-gold-tint) 50%
   );
 
+  /**
+   * The gradient face of the category browse cards, alternating with flat
+   * gray-50 down the rail.
+   *
+   * Same three tokens and same order as --gradient-hero, deliberately — one gold
+   * descent recipe for the whole site rather than a second one that almost
+   * matches. What differs is the spread: the hero is ~1300px tall and reaches
+   * gold-tint by 50%, which on a ~380px card would compress the whole descent
+   * into 190px and read as a hard band rather than a fade. Stretching it to 72%
+   * gives the card the same softness at its own scale, and leaves the bottom
+   * quarter near-white so the product cutout sits on flat ground.
+   *
+   * Everything on this face is solid ink, for the same reason it is on the hero
+   * and the gold panel: gray-700 measures 2.46:1 on the gold end and fails.
+   */
+  --gradient-category-card: linear-gradient(
+    to bottom,
+    var(--color-gold) 0%,
+    var(--color-gold-light) 30%,
+    var(--color-gold-tint) 72%
+  );
+
   --color-green: #2fbf6b;
   /* "آخر قطع" / low-stock. Darkened from the gold so it reads as a state, not
      as brand fill, and clears 4.5:1 on white for the accompanying label. */

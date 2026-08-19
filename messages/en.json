@@ -77,8 +77,7 @@
   },
   "categories": {
     "title": "What are you looking for?",
-    "subhead": "Five categories, all in stock at the shop and all under warranty.",
-    "count": "{count, plural, one {# product} other {# products}}"
+    "subhead": "Five categories, all in stock at the shop and all under warranty."
   },
   "categoryPage": {
     "eyebrow": "The range",
