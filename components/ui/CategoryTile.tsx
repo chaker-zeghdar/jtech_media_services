@@ -71,9 +71,9 @@ export function CategoryTile({
       style={onGradient ? { background: 'var(--gradient-category-card)' } : undefined}
       className={cn(
         'group relative flex h-full flex-col overflow-hidden rounded-tile p-7 text-ink sm:p-8',
-        // Tall enough that the type block and the product each get their own
-        // half, and no taller: the reference's cards are this shape because the
-        // product FILLS the lower half, so any slack past it reads as a void.
+        // A floor, not a target: the product slot below is now tall enough that
+        // the card usually exceeds this on its own. It only bites if a tagline
+        // is short enough to leave the card stubby.
         'min-h-[21rem] sm:min-h-[24rem]',
         'transition-[transform,box-shadow] duration-300 ease-brand',
         'hover:-translate-y-1 hover:shadow-card',
@@ -95,15 +95,22 @@ export function CategoryTile({
 
       {/* `mt-auto` pins the product to the bottom whatever the tagline's length,
           so the cards in a rail line up on their product rather than drifting
-          with the copy. */}
-      <div className="relative mt-auto h-40 pt-8 sm:h-48">
+          with the copy.
+
+          The negative margins cancel the card's own padding on three sides, so
+          the product gets the full width of the card and sits ON its bottom
+          edge rather than floating in a padded box — the reference's cards do
+          the same, and it is most of why their products read as large. Paired
+          with `object-bottom` below: `object-contain` alone would centre the
+          cutout in the taller slot and give the height back as empty space. */}
+      <div className="relative -mx-7 -mb-7 mt-auto h-56 pt-4 sm:-mx-8 sm:-mb-8 sm:h-64">
         <ProductImage
           src={category.image}
           name={name}
           width={600}
           height={600}
           sizes={sizes}
-          className="transition-transform duration-500 ease-brand group-hover:scale-[1.04]"
+          className="object-bottom transition-transform duration-500 ease-brand group-hover:scale-[1.04]"
         />
       </div>
 
@@ -112,7 +119,7 @@ export function CategoryTile({
       <span
         aria-hidden="true"
         className={cn(
-          'absolute bottom-6 end-6 inline-flex h-9 w-9 items-center justify-center rounded-full',
+          'absolute bottom-5 end-5 inline-flex h-9 w-9 items-center justify-center rounded-full',
           'bg-white text-ink transition-transform duration-300 ease-brand',
           'ltr:group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5',
         )}
