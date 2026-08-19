@@ -279,14 +279,20 @@ This is enforced structurally, not by convention:
 else stays well under, which is what makes those two moments land.
 
 The hero is a **surface, not a device** — `--gradient-hero`, full-bleed, running
-`--color-gold` at the top edge through `--color-gold-light` at 45% to
-`--color-gold-tint` at the bottom. Three stops rather than two on purpose: the
-middle one is what makes it descend in visible stages instead of reading as one
-flat blend.
+`--color-gold` at the top edge through `--color-gold-light` at 25% to
+`--color-gold-tint` at 50%. Three stops rather than two on purpose: the middle
+one is what makes it descend in visible stages instead of reading as one flat
+blend.
+
+The final stop sits at **50%, not 100%** — the pale end arrives at the middle of
+the hero and the bottom half rests on it, rather than the gold thinning out all
+the way to the fold. CSS holds a final stop's colour past its position, so that
+one number is the whole control.
 
 It shares `--color-gold` with `GoldPanel` and stays distinct from it because it
-is a **fade, not a fill**: the saturated end is confined to the top ~15% and is
-gone by halfway, so Delivery still owns the page's one saturated gold moment.
+is a **fade, not a fill**: the saturated end is confined to the top ~10% and is
+gone by a quarter of the way down, so Delivery still owns the page's one
+saturated gold moment.
 That is the line to hold if this is ever revisited — a hero that stayed gold all
 the way down would take the panel's job.
 

@@ -28,14 +28,19 @@
    * The hero's opening surface.
    *
    * Vertical, and richest at the TOP: full gold at the very top edge, through
-   * gold-light at 45%, down to gold-tint at the bottom. Three stops rather than
-   * two on purpose — the middle one is what makes it descend in visible stages
-   * instead of reading as one flat blend.
+   * gold-light at 25%, reaching gold-tint by 50%. Three stops rather than two on
+   * purpose — the middle one is what makes it descend in visible stages instead
+   * of reading as one flat blend.
    *
-   * It does use --color-gold now, which the delivery <GoldPanel /> also does.
-   * The two stay distinct because this one is a fade, not a fill: gold is
-   * concentrated in the top ~15% and is gone by halfway, so the page still has
-   * exactly one saturated gold moment further down. See DESIGN.md §3.
+   * The last stop lands at 50%, not 100%, so the pale end arrives at the middle
+   * of the hero and the bottom half sits on it. CSS holds a final stop's colour
+   * past its position, so there is no fourth stop to keep in sync — moving that
+   * 50% is the one number that decides where the gradient goes pale.
+   *
+   * It does use --color-gold, which the delivery <GoldPanel /> also does. The
+   * two stay distinct because this one is a fade, not a fill: gold is confined
+   * to the top ~10% and is gone by a quarter of the way down, so the page still
+   * has exactly one saturated gold moment further down. See DESIGN.md §3.
    *
    * Contrast is the thing to watch at the top, since that is now the darkest
    * part of the surface and the header sits directly on it. Ink measures 8.07:1
@@ -46,8 +51,8 @@
   --gradient-hero: linear-gradient(
     to bottom,
     var(--color-gold) 0%,
-    var(--color-gold-light) 45%,
-    var(--color-gold-tint) 100%
+    var(--color-gold-light) 25%,
+    var(--color-gold-tint) 50%
   );
 
   --color-green: #2fbf6b;
