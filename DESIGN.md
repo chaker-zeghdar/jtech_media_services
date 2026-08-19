@@ -299,6 +299,22 @@ the way down would take the panel's job.
 Because it is a surface, it does not spend the hero's device budget — the hero
 still carries exactly one `GoldRibbon` and nothing else.
 
+### The category rail carries its own gold
+
+`<Categories />` has no named device, and the table above records why: the cards
+carry the brand themselves. That used to be a 48px gold icon chip per tile. The
+cards are now built to the apple.com/store rail — eyebrow, large name, one bold
+line, product filling the lower half — and the gold moved to the **count eyebrow**
+on every card, which is the reference's own coloured-eyebrow slot.
+
+On white that eyebrow must be `--color-gold-text`; brand gold there measures
+~2:1 and fails. On an `ink` card it must be brand gold instead. Same rule as
+everywhere, just applied per bed.
+
+The reference floats its arrows over the cards. That part is deliberately not
+copied: three other sections already use `<Carousel />`'s arrows-below idiom, and
+a second carousel control on one page would be two answers to one question.
+
 ### Anything sitting on the gold end must be ink — including the chrome
 
 All hero text is solid ink for the same reason the panel's is (see "Text on the
@@ -390,7 +406,7 @@ for good; on a page this long that is the part not worth copying.
 | Section              | Surface      | Device                        |
 | -------------------- | ------------ | ----------------------------- |
 | Hero                 | gold fade    | `GoldRibbon` #1 of 2          |
-| Categories           | gray         | — (gold icon chips)           |
+| Categories           | gray         | — (gold count eyebrows)       |
 | Featured (ink block) | ink          | `GoldRibbon` #2 of 2 — spent  |
 | Feature mosaic       | white        | — (colour blocking is the interest) |
 | Full range           | gray         | `Halftone`                    |

@@ -165,6 +165,13 @@ export const categorySchema = z.object({
   name: localizedTextSchema,
   tagline: localizedTextSchema,
   icon: iconKeySchema,
+  /**
+   * Transparent-background cutout for the browse card, e.g.
+   * `/categories/iphone.png`. Optional: without it the card falls back to the
+   * `icon` above on a gold-tint bed, so a missing asset is a softer visual
+   * rather than a hole. See public/categories/README.md.
+   */
+  image: z.string().startsWith('/').optional(),
   /** Display order in the category strip. */
   position: z.number().int().positive(),
 });
