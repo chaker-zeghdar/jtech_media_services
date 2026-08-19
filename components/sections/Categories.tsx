@@ -32,6 +32,14 @@ import { pickLocale } from '@/lib/format';
 /** Matches CARD_ITEM below, so next/image never fetches more than it paints. */
 const CARD_SIZES =
   '(max-width: 639px) 74vw, (max-width: 767px) 44vw, (max-width: 1023px) 33vw, (max-width: 1279px) 25vw, 300px';
+/**
+ * For a card with `imageCrop`, the POST-transform width — roughly 3x the above.
+ * A zoom magnifies whatever bitmap next/image hands back, so asking for the
+ * card's width and then scaling it 3x is how a cutout ends up visibly soft.
+ * Exactly the trap the hero's detail crop hit; same fix.
+ */
+const CARD_SIZES_ZOOMED =
+  '(max-width: 639px) 222vw, (max-width: 767px) 132vw, (max-width: 1023px) 99vw, (max-width: 1279px) 75vw, 900px';
 const CARD_ITEM = 'w-[74vw] sm:w-[44vw] md:w-[33vw] lg:w-[25vw] xl:w-[300px]';
 
 export async function Categories() {
@@ -70,7 +78,7 @@ export async function Categories() {
                 tagline={item.tagline}
                 href={item.href}
                 bed={index % 2 === 0 ? 'gradient' : 'gray'}
-                sizes={CARD_SIZES}
+                sizes={item.category.imageCrop ? CARD_SIZES_ZOOMED : CARD_SIZES}
               />
             </div>
           ))}

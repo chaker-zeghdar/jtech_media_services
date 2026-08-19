@@ -172,6 +172,18 @@ export const categorySchema = z.object({
    * rather than a hole. See public/categories/README.md.
    */
   image: z.string().startsWith('/').optional(),
+  /**
+   * Optional Apple-style crop for the browse card: zoom into the product so it
+   * bleeds past the card's sides and bottom instead of sitting whole inside it.
+   *
+   * `scale` is the zoom factor, `focusY` the point the zoom happens about as a
+   * percentage down the ARTWORK — a cutout with the product's interesting end at
+   * the top wants a small value. Same two knobs, and the same reasoning, as the
+   * hero's detail crop. Omit it and the cutout renders whole.
+   */
+  imageCrop: z
+    .object({ scale: z.number().positive(), focusY: z.string() })
+    .optional(),
   /** Display order in the category strip. */
   position: z.number().int().positive(),
 });

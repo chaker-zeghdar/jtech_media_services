@@ -9,6 +9,13 @@ export const categories: readonly Category[] = parseContent(
     {
       slug: 'iphone',
       image: '/categories/iphone.png',
+      // Zoomed onto the camera module so it bleeds past the card, the way the
+      // reference's iPhone card does. 3.2 is set against this artwork, not a
+      // general number: the phone occupies only 160px of the 281px-wide file, so
+      // the subject has to be blown up that far before it reaches the card's
+      // edges. `focusY: 3%` sits just above the camera module, which is at the
+      // very top of the subject.
+      imageCrop: { scale: 2.8, focusY: '4%' },
       icon: 'iphone',
       position: 1,
       name: { ar: 'آيفون', fr: 'iPhone', en: 'iPhone' },

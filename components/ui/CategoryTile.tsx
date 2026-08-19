@@ -46,6 +46,15 @@ type CategoryTileProps = {
  * 2.46:1 against the gold end and fails outright, the same trap the hero header
  * hit. `gray` is flat `--color-gray-50`, where gray-700 is fine for the tagline.
  *
+ * ── Whole product, or a crop ────────────────────────────────────────────────
+ *
+ * By default the cutout renders whole, sitting on the card's bottom edge. A
+ * category can opt into the reference's other treatment — zoomed in far enough
+ * that the product bleeds past the card's sides and bottom — by setting
+ * `imageCrop` in content/categories.ts. It is per-category because the right
+ * zoom depends entirely on how much empty margin a given cutout has around its
+ * subject, which is a property of the file, not of the design.
+ *
  * ── No photo yet ────────────────────────────────────────────────────────────
  *
  * <ProductImage /> handles that branch, exactly as it does for every product on
@@ -64,6 +73,7 @@ export function CategoryTile({
   className,
 }: CategoryTileProps) {
   const onGradient = bed === 'gradient';
+  const crop = category.imageCrop;
 
   return (
     <Link
@@ -104,14 +114,31 @@ export function CategoryTile({
           with `object-bottom` below: `object-contain` alone would centre the
           cutout in the taller slot and give the height back as empty space. */}
       <div className="relative -mx-7 -mb-7 mt-auto h-56 pt-4 sm:-mx-8 sm:-mb-8 sm:h-64">
-        <ProductImage
-          src={category.image}
-          name={name}
-          width={600}
-          height={600}
-          sizes={sizes}
-          className="object-bottom transition-transform duration-500 ease-brand group-hover:scale-[1.04]"
-        />
+        {/* The zoom lives on a wrapper rather than on <ProductImage /> so the
+            component keeps one job. `transform` here scales the painted cutout
+            about `focusY`; the card's own `overflow-hidden` is what turns the
+            overspill into a crop. The hover scale stays on the image itself, so
+            the two transforms compose instead of fighting for one property. */}
+        <div
+          className="h-full w-full"
+          style={
+            crop
+              ? { transform: `scale(${crop.scale})`, transformOrigin: `50% ${crop.focusY}` }
+              : undefined
+          }
+        >
+          <ProductImage
+            src={category.image}
+            name={name}
+            width={600}
+            height={600}
+            sizes={sizes}
+            className={cn(
+              'transition-transform duration-500 ease-brand group-hover:scale-[1.04]',
+              !crop && 'object-bottom',
+            )}
+          />
+        </div>
       </div>
 
       {/* The whole card is the control, so this is decoration, not a second
