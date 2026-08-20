@@ -6,7 +6,7 @@ import { SectionHeader } from '@/components/layout/SectionHeader';
 import { Reveal } from '@/components/motion/Reveal';
 import { Button } from '@/components/ui/Button';
 import { ProductCard } from '@/components/ui/ProductCard';
-import { bestsellers } from '@/content/products';
+import { bestsellers, primaryVariant } from '@/content/products';
 
 /**
  * Section 5 — الأكثر مبيعاً, with quick view on every card.
@@ -18,7 +18,29 @@ import { bestsellers } from '@/content/products';
 export async function BestSellers() {
   const t = await getTranslations('bestsellers');
   const tCommon = await getTranslations('common');
-  const products = bestsellers().slice(0, 8);
+  /**
+   * Photo-complete only, then capped at 8.
+   *
+   * A fixed `.slice(0, 8)` took whatever mix of real cutouts and
+   * <ProductImage />'s empty state the first eight bestsellers happened to have,
+   * and interleaved them: 4 photos and 4 JTECH-mark placeholders in one grid.
+   * Side by side in a row that reads as broken rather than as "photos coming
+   * soon" — the empty state is right for a lone card in a rail, wrong next to a
+   * real photograph.
+   *
+   * The grid is deliberately NOT padded back up to eight. A short, complete row
+   * is an honest picture of the catalogue today; a full row half-filled with
+   * placeholders is not. This resolves itself with no code change as cutouts
+   * land in public/products/ — see that folder's README.
+   *
+   * Filtered here rather than inside `bestsellers()`: that list is curated
+   * merchandising and means "these are our bestsellers" regardless of whether a
+   * photo exists yet. This is the one consumer, and it is a presentation
+   * constraint, so it belongs at the call site.
+   */
+  const products = bestsellers()
+    .filter((product) => primaryVariant(product).images[0])
+    .slice(0, 8);
 
   return (
     <Section

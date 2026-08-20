@@ -495,6 +495,27 @@ message, so the accented word travels with the sentence per locale instead of
 being positional. Always carries `box-decoration-clone`, or the pill loses its
 rounding and padding on the second line when the phrase wraps.
 
+### The white feature chip
+
+`<FeatureChip />` — the glassy white capsule the client's posts use for stats and
+feature callouts. A checkmark or icon, optionally one short line, on white with
+`shadow-card`. Not a brand device and not budgeted: it is a card element, the
+same way `<Pill/>` is.
+
+The shadow is **structural, not decoration**. Every call site so far sits on a
+white `<Card/>`, so white-on-white means the shadow is the only thing separating
+the chip from its background — drop it and the chip disappears.
+
+Its icon is `--color-gold-text`, never brand gold (2.1:1 on white). That is also
+the only gold left on a Services card, which is worth knowing before removing it:
+unlike the category cards, the chip there was never the section's brand carrier —
+Services has its own `CornerBlob @ .08` — so the swap from a gold square to a
+white chip cost the section nothing.
+
+`rounded-full` rather than a sixth radius. Icon-only it reads as a disc and
+matches the header's contact buttons and the hero's social chips; labelled it
+reads as a pill.
+
 ### The ribbon's three-layer stack
 
 The ribbon only reads correctly when it sits **on** the product bed and **under**

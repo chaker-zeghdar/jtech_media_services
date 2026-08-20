@@ -6,7 +6,7 @@ import { SectionHeader } from '@/components/layout/SectionHeader';
 import { Reveal } from '@/components/motion/Reveal';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Icon } from '@/components/ui/Icon';
+import { FeatureChip } from '@/components/ui/FeatureChip';
 import { PriceFrom } from '@/components/ui/Price';
 import { services } from '@/content/services';
 import { whatsappLink } from '@/content/settings';
@@ -40,9 +40,11 @@ export async function Services() {
             return (
               <Reveal key={service.slug} as="li" delayMs={index * 70} className="h-full">
                 <Card className="flex h-full flex-col gap-5 p-7">
-                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-chip bg-gold text-ink">
-                    <Icon name={service.icon} size={24} />
-                  </span>
+                  {/* The icon slot only — card shell, <dl> and CTA untouched.
+                      Icon-only rather than <FeatureChip label>: the service name
+                      is the <h3> directly beneath, so a label here would say the
+                      same thing twice. */}
+                  <FeatureChip icon={service.icon} />
 
                   <div className="flex flex-1 flex-col gap-3">
                     <h3 className="text-h3 font-semibold">{name}</h3>
