@@ -436,7 +436,7 @@ for good; on a page this long that is the part not worth copying.
 | Why JTECH            | white        | `NumberedSquare` ×4           |
 | Services             | gray         | `CornerBlob` @ `.08`          |
 | Delivery             | gold         | `GoldPanel` — the one moment  |
-| Brand marquee        | gray         | `Halftone`                    |
+| Brand marquee        | gray         | `GoldOrb` — the one soft shape|
 | Contact              | white        | — (deliberately none)         |
 | Footer               | ink          | `Halftone` @ `.2`             |
 
@@ -446,7 +446,54 @@ its neighbours — the table above is duplicated as a comment in
 `app/[locale]/page.tsx` for exactly that reason.
 
 Hard caps: **two ribbons per page**, **two full-saturation blobs per page**
-(both currently spent on the panel and the hero), **one gold panel per page**.
+(both currently spent on the panel and the hero), **one gold panel per page**,
+**one `GoldOrb` per page** (spent on the brand marquee).
+
+### The one soft shape — `<GoldOrb />`
+
+Every other gold shape in this system is **flat by design**: `CornerBlob`'s own
+comment says so, and it was correct — the client's Instagram shapes were solid
+fills when it was written. Their current posts are not. They are built on soft,
+glossy gold: blurred bokeh circles and a glowing ring. `<GoldOrb />` is the one
+piece of the system that answers that, and it is capped at one per page for the
+same reason the panel is: a soft glow reads as a considered accent exactly once,
+and as atmosphere the second time.
+
+| Prop      | Range / values                 | Note                                  |
+| --------- | ------------------------------ | ------------------------------------- |
+| `corner`  | logical, as `CornerBlob`       | `start`/`end` mirror in RTL           |
+| `size`    | 260–420px                      | diameter                              |
+| `opacity` | .4–.6                          |                                       |
+| `variant` | `circle` \| `ring`             | the bokeh, and Post 3's glowing halo  |
+
+Two rules travel with it:
+
+- **Never behind text**, the same rule `Halftone` follows and for a stronger
+  reason — a blurred gradient makes the backdrop under any line unpredictable,
+  so nothing on top of it can be contrast-checked at all.
+- **Never behind a product.** §7's "no glow or halo behind products" is still the
+  rule; this is scoped beside it, not a repeal of it. In `BrandMarquee` the orb
+  sits in the corner gutter and must not drift under `SlideBanner`'s panels.
+
+It does **not** deprecate the flat devices. `CornerBlob` and `Halftone` remain
+the default everywhere else; this is the one soft shape, in one section.
+
+### The gold pill word-highlight
+
+An inline `bg-gold` + ink pill behind ONE emphasised word or phrase inside a
+headline — the text-highlight the client's posts use. Typography, not a
+positioned shape, so it is **not** subject to the one-device-per-section budget.
+
+It inverts the gold contrast rule, which is worth stating because §1 says the
+opposite for the ordinary case: brand gold is 2.1:1 as *text* on a light surface
+and must be `--color-gold-text`. As a *background* it is fine, and ink on it
+measures 8.06:1 — so the pill is bare `bg-gold` with ink text on it.
+
+Two call sites, and that is the budget: `WhyJtech` (its existing `goldPhrase`)
+and `FeaturedProduct`'s headline. Both go through `t.rich()` with `<em>` in the
+message, so the accented word travels with the sentence per locale instead of
+being positional. Always carries `box-decoration-clone`, or the pill loses its
+rounding and padding on the second line when the phrase wraps.
 
 ### The ribbon's three-layer stack
 
@@ -606,7 +653,11 @@ Non-negotiable, and mostly free if you don't fight it.
 ## 7. Don't
 
 - No component library, no template.
-- No glow or halo behind products — the ribbon replaces it.
+- No glow or halo behind products — the ribbon replaces it. **One scoped
+  exception:** `<GoldOrb />`, once per page, in `BrandMarquee`'s corner gutter.
+  It is never behind a product or behind text. See "The one soft shape" in §3;
+  this is scoped the same way §1 scopes the hero headline's display face, rather
+  than left contradicting the code.
 - No gradient text, no gradient buttons, no animated gradients.
 - No shadows on gold shapes.
 - No gold text on white below 24px — use `text-gold-text`.

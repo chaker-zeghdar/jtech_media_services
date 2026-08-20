@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { Halftone } from '@/components/brand/Halftone';
+import { GoldOrb } from '@/components/brand/GoldOrb';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { SectionHeader } from '@/components/layout/SectionHeader';
@@ -9,6 +9,11 @@ import { settings } from '@/content/settings';
 
 /**
  * The client's own marketing posts, on a conveyor.
+ *
+ * Brand device: <GoldOrb /> — the page's only one. This section had the widest
+ * gap against the client's current Instagram material (see the content note
+ * below: these slides are from an older, flatter graphic era), so the one soft
+ * glow the system allows is spent here, where it does the most work.
  *
  * TODO — CONTENT MISMATCH, needs a decision from the client:
  * Three of these four slides advertise branding, web development, photography and
@@ -36,7 +41,13 @@ export async function BrandMarquee() {
     <Section
       id="social"
       background="gray"
-      device={<Halftone corner="top-start" size={180} opacity={0.35} />}
+      /* The page's ONE <GoldOrb />, and it replaces this section's <Halftone />
+         rather than joining it — `device` takes a single node, which is the
+         one-device-per-section rule doing its job. `top-end` keeps it in the
+         corner gutter above the banner and clear of <SectionHeader />'s text;
+         it must never sit under the <SlideBanner /> panels either, since a glow
+         behind photographs is exactly what DESIGN.md §7 still rules out. */
+      device={<GoldOrb corner="top-end" size={380} opacity={0.5} />}
     >
       <Container>
         <SectionHeader

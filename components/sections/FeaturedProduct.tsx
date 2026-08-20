@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { GoldRibbon } from '@/components/brand/GoldRibbon';
 import { Swash } from '@/components/brand/Swash';
@@ -22,6 +23,17 @@ import { pickLocale } from '@/lib/format';
  * ~8:1, where on white it would be ~2:1 and fail outright.
  */
 export async function FeaturedProduct() {
+  /**
+   * Kept identical to <WhyJtech />'s `goldPhrase` on purpose — two call sites of
+   * one accent, not two treatments that drift. `box-decoration-clone` keeps it a
+   * pill if the word ever lands on a line break.
+   */
+  const goldPill = (chunks: ReactNode) => (
+    <span className="box-decoration-clone rounded-full bg-gold px-2.5 py-1 text-ink">
+      {chunks}
+    </span>
+  );
+
   const locale = await getLocale();
   const t = await getTranslations('featured');
   const tProduct = await getTranslations('product');
@@ -69,8 +81,17 @@ export async function FeaturedProduct() {
         <div>
           <Reveal>
             <p className="text-eyebrow uppercase text-gold">{t('eyebrow')}</p>
+            {/* Second and last call site for the gold pill. Same `t.rich` +
+                `<em>` pattern <WhyJtech /> uses, so the accented word travels
+                with the sentence per locale instead of being positional.
+
+                On this ink surface the pill needs no contrast exception the
+                light surfaces don't already need: the text on it is ink either
+                way, at 8.06:1 on gold. What changes is that the pill is now the
+                brightest thing in a dark section, which is why exactly one word
+                carries it. */}
             <h2 id="featured-title" className="mt-4 text-section font-semibold">
-              {t('title')}
+              {t.rich('title', { em: goldPill })}
             </h2>
             <Swash />
             <p className="mt-6 max-w-[46ch] text-subhead text-gray-300">{t('subhead')}</p>

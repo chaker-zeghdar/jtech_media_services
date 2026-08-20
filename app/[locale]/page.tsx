@@ -36,7 +36,7 @@ import { routing } from '@/i18n/routing';
  *   WhyJtech         white     NumberedSquare ×4
  *   Services         gray      CornerBlob @ .08
  *   Delivery         gold      GoldPanel — the one full-bleed brand moment
- *   BrandMarquee     gray      Halftone
+ *   BrandMarquee     gray      GoldOrb — the one soft shape
  *   Contact          white     — (deliberately none)
  *   Footer           ink       Halftone @ .2
  *

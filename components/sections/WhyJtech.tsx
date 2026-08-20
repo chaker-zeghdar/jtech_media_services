@@ -35,9 +35,25 @@ const REASONS = ['warranty', 'genuine', 'delivery', 'aftersales'] as const;
 export async function WhyJtech() {
   const t = await getTranslations('why');
 
+  /**
+   * The emphasised phrase now sits ON a gold pill rather than being coloured
+   * gold — the text-highlight treatment the client's own posts use behind one
+   * headline word.
+   *
+   * The contrast rule inverts when you do that, and it is worth being explicit
+   * about because the old comment here said the opposite: `text-gold-text` was
+   * required precisely because brand gold measures 2.1:1 as TEXT on a light
+   * surface. As a BACKGROUND it is fine, and ink on it measures 8.06:1 — so the
+   * pill uses bare `bg-gold`, and the text on it goes to ink.
+   *
+   * `box-decoration-clone` is what keeps it a pill when the phrase wraps across
+   * two lines: without it the second line loses its rounding and the padding,
+   * and a two-word phrase in a ~280px card wraps often.
+   */
   const goldPhrase = (chunks: ReactNode) => (
-    // gold-text, never bare gold: #E1AA4D is 2.1:1 on a light surface.
-    <span className="font-semibold text-gold-text">{chunks}</span>
+    <span className="box-decoration-clone rounded-full bg-gold px-2 py-0.5 font-semibold text-ink">
+      {chunks}
+    </span>
   );
 
   return (
