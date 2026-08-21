@@ -78,7 +78,19 @@ export async function OurPhones() {
       device={<GoldOrb corner="top-end" size={380} opacity={0.5} />}
     >
       <Container>
-        <SectionHeader id="phones" title={t('title')} subhead={t('subhead')} />
+        <SectionHeader
+          id="phones"
+          title={t('title')}
+          /* Colour-swap accent, not a pill: this section already carries the
+             page's <GoldOrb />, and a gold pill on top of that would be two
+             loud gold things competing in one viewport. Swapping the three
+             brand names to gold-text lifts the part that actually answers
+             "what do you sell" without adding a second filled shape.
+             gold-text on gray-50 measures ~5.2:1. */
+          subhead={t.rich('subhead', {
+            em: (chunks) => <span className="font-semibold text-gold-text">{chunks}</span>,
+          })}
+        />
       </Container>
 
       <PhoneTabs tabs={tabs} />

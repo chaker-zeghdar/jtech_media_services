@@ -1,7 +1,7 @@
 import { getLocale, getTranslations } from 'next-intl/server';
+import { GoldOrb } from '@/components/brand/GoldOrb';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
-import { DeliveryPanel } from '@/components/sections/DeliveryPanel';
 import { SectionHeader } from '@/components/layout/SectionHeader';
 import { Reveal } from '@/components/motion/Reveal';
 import { Button } from '@/components/ui/Button';
@@ -51,17 +51,21 @@ export async function Contact() {
   ] as const;
 
   return (
-    /* `flush` because the two sub-blocks own their own vertical rhythm: the
-       gold panel brings its own padding, and the details below get theirs from
-       the <Container /> under it. Section padding on top of that would double
-       the gap above the panel. */
-    <Section id="contact" background="white" flush>
-      {/* The old <Delivery /> section, nested rather than dropped. It keeps the
-          page's one full-bleed GoldPanel moment — that moment moved, it wasn't
-          spent. */}
-      <DeliveryPanel />
-
-      <Container className="py-section-sm md:py-section">
+    <Section
+      id="contact"
+      background="white"
+      /* The page's second (and last) <GoldOrb />. Contact was documented as
+         deliberately device-free — "a gold shape competing with a phone number
+         is a shape in the way" — and that reasoning held while this section
+         FOLLOWED the full-bleed gold delivery panel. That panel is gone, and
+         with it the page's one loud gold moment; the closing section now ends a
+         long page on plain white.
+         `bottom-end` puts it in the corner gutter below the map, which is the
+         only part of this section with no text in it. Verified clear of the
+         details list, the map caption and the socials. */
+      device={<GoldOrb corner="bottom-end" size={340} opacity={0.45} />}
+    >
+      <Container>
         <SectionHeader id="contact" title={t('title')} subhead={t('subhead')} />
 
         <div className="mt-14 grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-16">

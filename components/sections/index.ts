@@ -1,7 +1,6 @@
 export { AccessoriesRail } from './AccessoriesRail';
 export { Categories } from './Categories';
 export { Contact } from './Contact';
-export { DeliveryPanel } from './DeliveryPanel';
 export { Featured } from './Featured';
 export { Hero } from './Hero';
 export { OurLaptops } from './OurLaptops';

@@ -28,12 +28,12 @@ import { routing } from '@/i18n/routing';
  *   Featured         gray      GoldRibbon #2 of 2 — budget spent
  *                              (ink spotlight nested inside)
  *   WhyJtech         white     NumberedSquare ×4
- *   OurPhones        gray      GoldOrb — the one per page
+ *   OurPhones        gray      GoldOrb #1 of 3
  *   OurLaptops       white     CornerBlob @ .08
  *   AccessoriesRail  gray      Halftone
  *   Services         white     CornerBlob @ .08
- *   Contact          gold→white GoldPanel — the one full-bleed moment,
- *                              relocated from the old Delivery section
+ *   Contact          white     GoldOrb #2 of 3 — replaces the gold weight
+ *                              lost when the delivery block was removed
  *   Footer           ink       Halftone @ .2
  *
  *   Categories is fixed at white, which forces every parity after it — that is

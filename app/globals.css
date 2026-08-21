@@ -270,6 +270,38 @@ html[lang^='ar'] {
       background-color: #fff;
       border-bottom-color: var(--color-gray-300);
     }
+
+    /* Same reasoning for the jump nav: it renders hidden so a load at scroll 0
+       shows no seam above the hero, and without scripting it would never be
+       shown again. A visible nav on a plain background is the safe end state. */
+    div[data-over-hero] {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  /**
+   * Diagonal section boundary.
+   *
+   * A block that carries this ends on an angle instead of a flat horizontal
+   * line, so the surface below appears to cut into it. `clip-path` rather than
+   * a rotated pseudo-element: it clips the real box, so nothing overflows and
+   * there is no second element to keep in sync with the parent's background.
+   *
+   * The angle is stated in `vw` so it stays a constant SLOPE rather than a
+   * constant height — a fixed px cut looks steep on a phone and almost flat on
+   * a desktop. Anything inside needs bottom padding clear of the cut; the
+   * deepest point is the full 4vw.
+   *
+   * Mirrored under RTL so the cut runs with the reading direction rather than
+   * against it — the same reason every layout utility here is logical.
+   */
+  .diagonal-end {
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 4vw), 0 100%);
+  }
+
+  [dir='rtl'] .diagonal-end {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 4vw));
   }
 
   .hairline-b {

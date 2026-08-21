@@ -29,7 +29,11 @@ export async function Footer() {
   const year = new Date().getFullYear();
 
   const helpLinks = [
-    // The delivery block is now the opening of #contact, not its own section.
+    /* Still points at #contact, and that is now the honest target rather than a
+       redirect: the delivery block and its per-wilaya fee table were removed
+       from the page, so "delivery" means "ask us" — which is what Contact is.
+       If a dedicated /delivery page is ever built, this is the one line that
+       needs to change. */
     { key: 'delivery', href: '#contact' },
     { key: 'warranty', href: '#why' },
     { key: 'faq', href: '#services' },

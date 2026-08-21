@@ -88,7 +88,14 @@ export async function Featured() {
           <FeaturedProduct />, unchanged apart from its heading dropping to an
           h3 (the outer section owns the h2 now) and its secondary CTA, which
           pointed at the deleted #range. */}
-      <div className="on-ink mt-14 rounded-tile bg-ink py-14 text-white md:mt-16 md:py-16">
+      {/* `diagonal-end` cuts the bottom of the ink block on an angle so the
+          rail's surface reads as slicing into it — the one boundary on this
+          page where a surface genuinely becomes another, which is why it is the
+          only place this is used. `rounded-b-none` because a radius and a
+          diagonal cut fight each other at the same corner; the top keeps its
+          radius, the bottom is the cut. Extra bottom padding clears the
+          deepest point of the cut (4vw). */}
+      <div className="diagonal-end on-ink mt-14 rounded-tile rounded-b-none bg-ink py-14 pb-[calc(3.5rem+4vw)] text-white md:mt-16 md:py-16 md:pb-[calc(4rem+4vw)]">
         <Container className="grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
           {/* ---- Product + ribbon ------------------------------------------ */}
           <Reveal className="relative order-1 mx-auto w-full max-w-[520px] lg:order-none">

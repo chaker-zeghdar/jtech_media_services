@@ -5,32 +5,35 @@ import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { SectionHeader } from '@/components/layout/SectionHeader';
 import { Reveal } from '@/components/motion/Reveal';
-import { Card } from '@/components/ui/Card';
-import { Carousel } from '@/components/ui/Carousel';
 
 /** Order matters — the written warranty is the strongest claim, so it leads. */
 const REASONS = ['warranty', 'genuine', 'delivery', 'aftersales'] as const;
 
 /**
- * Section — علاش تشري من JTECH, as a rail of compact reason cards.
+ * علاش تشري من JTECH — an asymmetric two-column list, not a rail.
  *
- * Modelled on "The Apple Store difference" on apple.com/store: a plain horizontal
- * rail of borderless cards, each a small device, a short bold headline with ONE
- * phrase picked out in colour, and a single line of supporting copy. No product
- * photo, no button, no border.
+ * ── Why it stopped being four identical cards ──────────────────────────────
  *
- * Brand device: NumberedSquare ×4, unchanged. Four instances of one device is
- * still one device — this pass changes the layout, not the device budget, and the
- * section keeps its place in the surface alternation.
+ * It was a <Carousel /> of four equal-width cards, which is the same shape as
+ * the three product rails on this page. Four reasons are not a catalogue: they
+ * are an argument, they have an order, and the strongest one leads. A rail said
+ * none of that — it said "here are four interchangeable things, scroll".
  *
- * The cards are `gray` on this section's white bed. Apple's are white on a gray
- * bed; the relationship (plain borderless card, contrasting with the section) is
- * what carries over, not the literal colour. White cards here would disappear —
- * the same trap DESIGN.md records for the ProductCard image bed.
+ * The layout borrowed here is the reference's: a short intro column on one
+ * side, the reasons stacked down the other, threaded by a thin connector line
+ * with a marker at each step. The line is what turns four cards into one
+ * sequence you read top to bottom.
  *
- * The headline emphasis comes through `t.rich`, so the phrase to highlight is
- * marked up inside the message (`<em>…</em>`) and a translator moves it with the
- * sentence instead of it being positional.
+ * ── The connector absorbed the numeral ─────────────────────────────────────
+ *
+ * <NumberedSquare /> is still the section's device and still appears four
+ * times, but it now sits ON the connector line as each step's marker rather
+ * than floating inside a card. That was the choice worth making: keeping both a
+ * square numeral inside the card AND a dot on the line would have been two
+ * markers for one step, which is exactly the kind of decoration this pass is
+ * removing. One device, doing the job the line needs anyway.
+ *
+ * Brand device: NumberedSquare ×4 — unchanged budget, new position.
  */
 export async function WhyJtech() {
   const t = await getTranslations('why');
@@ -59,49 +62,41 @@ export async function WhyJtech() {
   return (
     <Section id="why" background="white">
       <Container>
-        <SectionHeader id="why" title={t('title')} subhead={t('subhead')} />
+        {/* 2fr/3fr rather than a even split: the intro is a paragraph, the list
+            is four of them, so an even grid would leave the left column half
+            empty at lg. Under lg it stacks and the connector still runs. */}
+        <div className="grid gap-14 lg:grid-cols-[2fr_3fr] lg:gap-20">
+          <div className="lg:sticky lg:top-[calc(var(--header-height)+var(--nav-height)+3rem)] lg:self-start">
+            <SectionHeader id="why" title={t('title')} subhead={t('subhead')} />
+            <Reveal delayMs={120}>
+              <p className="mt-10 text-caption text-gray-700">{t('socialProof')}</p>
+            </Reveal>
+          </div>
 
-        <Carousel label={t('railLabel')} className="mt-14">
-          {REASONS.map((reason, index) => (
-            <div
-              key={reason}
-              /**
-               * ~280px up to lg, where four cards genuinely overflow and the rail
-               * scrolls. At xl they fill the row instead: four fixed 280px cards
-               * in a 1616px shell leave ~440px of dead space at the end, which
-               * reads as a layout hole rather than as a rail. The card language
-               * (radius, padding, type scale) is what has to match the other
-               * rails, not the exact pixel width.
-               */
-              className="w-[74vw] sm:w-[46vw] md:w-[34vw] lg:w-[26vw] xl:w-[calc((100%-3.75rem)/4)]"
-            >
-              <Reveal delayMs={index * 80} className="h-full">
-                <Card
-                  surface="gray"
-                  bordered={false}
-                  className="flex h-full flex-col gap-5 p-7"
-                >
+          {/* The connector. `before:` draws one continuous hairline down the
+              whole list, and each item's own marker sits on top of it — one
+              line, not four stacked borders. `start-*` keeps it on the reading
+              edge in both scripts. */}
+          <ol className="relative flex flex-col gap-10 before:absolute before:inset-y-2 before:start-[1.375rem] before:w-px before:bg-gray-300">
+            {REASONS.map((reason, index) => (
+              <Reveal key={reason} as="li" delayMs={index * 90} className="relative flex gap-6">
+                {/* The marker. `bg-white` is load-bearing: it masks the hairline
+                    behind the numeral so the line reads as passing between the
+                    steps rather than through them. */}
+                <span className="relative z-10 shrink-0 bg-white py-1">
                   <NumberedSquare value={index + 1} />
+                </span>
 
-                  <div className="flex flex-col gap-3">
-                    <h3 className="text-h3 font-semibold leading-tight">
-                      {t.rich(`items.${reason}.title`, { em: goldPhrase })}
-                    </h3>
-                    <p className="text-base text-gray-700">{t(`items.${reason}.body`)}</p>
-                  </div>
-                </Card>
+                <div className="flex flex-col gap-3 pt-1">
+                  <h3 className="text-h3 font-semibold leading-tight">
+                    {t.rich(`items.${reason}.title`, { em: goldPhrase })}
+                  </h3>
+                  <p className="text-base text-gray-700">{t(`items.${reason}.body`)}</p>
+                </div>
               </Reveal>
-            </div>
-          ))}
-        </Carousel>
-
-        {/* Social proof as a plain sentence, deliberately NOT a fifth card: the
-            device budget is four NumberedSquares, and a card without one would
-            read as a mismatched afterthought. DESIGN.md also bans animated
-            counters — these are facts, not a scoreboard. */}
-        <Reveal delayMs={320}>
-          <p className="mt-10 text-caption text-gray-700">{t('socialProof')}</p>
-        </Reveal>
+            ))}
+          </ol>
+        </div>
       </Container>
     </Section>
   );

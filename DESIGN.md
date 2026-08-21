@@ -275,6 +275,13 @@ This is enforced structurally, not by convention:
 
 ### Per-page budget
 
+> **`GoldPanel` is currently unused.** It was the delivery section's full-bleed
+> moment; that block was removed from the page, so nothing renders it today. The
+> component, `content/wilayas.ts` and the `delivery` message namespace are all
+> intact — they are the raw material for a `/delivery` page if one is ever built,
+> not dead weight to clear out. The one-panel-per-page cap below still stands and
+> is simply unspent.
+
 `GoldPanel` and the hero card are the two exceptions to the 12% rule. Everything
 else stays well under, which is what makes those two moments land.
 
@@ -430,11 +437,11 @@ for good; on a page this long that is the part not worth copying.
 | Categories           | white        | — (gold gradient card faces)  |
 | Featured             | gray         | `GoldRibbon` #2 of 2 — spent  |
 | Why JTECH            | white        | `NumberedSquare` ×4           |
-| Our phones           | gray         | `GoldOrb` — the one per page  |
+| Our phones           | gray         | `GoldOrb` #1 of 3             |
 | Our laptops          | white        | `CornerBlob` @ `.08`          |
 | Accessories          | gray         | `Halftone`                    |
 | Services             | white        | `CornerBlob` @ `.08`          |
-| Contact              | gold → white | `GoldPanel` — the one moment  |
+| Contact              | white        | `GoldOrb` #2 of 3             |
 | Footer               | ink          | `Halftone` @ `.2`             |
 
 **No two adjacent sections share a surface.** That alternation is what gives the
@@ -444,7 +451,7 @@ its neighbours — the table above is duplicated as a comment in
 
 Hard caps: **two ribbons per page**, **two full-saturation blobs per page**
 (both currently spent on the panel and the hero), **one gold panel per page**,
-**one `GoldOrb` per page** (spent on `OurPhones`).
+**up to three `GoldOrb`s per page** (two spent: `OurPhones`, `Contact`).
 
 ### The one soft shape — `<GoldOrb />`
 
@@ -456,9 +463,16 @@ piece of the system that answers that, and it is capped at one per page for the
 same reason the panel is: a soft glow reads as a considered accent exactly once,
 and as atmosphere the second time.
 
-It lives on `OurPhones`. A phone on a soft gold glow is close to what the posts
-themselves show, and `OurLaptops` two sections later deliberately takes a flat
-`CornerBlob` instead — a second glow that close would read as clutter.
+Two are spent. `OurPhones` — a phone on a soft gold glow is what the posts
+themselves show. `Contact` — which was documented as deliberately device-free,
+and correctly so while it followed the full-bleed gold delivery panel; with that
+panel gone the page ended on plain white, and the orb is what replaces that
+weight. `OurLaptops` between them deliberately keeps a flat `CornerBlob`: a third
+glow that close would read as clutter.
+
+The cap is three, not a target. A section already has exactly one device, so a
+further orb does not get *added* — it displaces whatever that section already
+has, and that trade has to be worth making.
 
 | Prop      | Range / values                 | Note                                  |
 | --------- | ------------------------------ | ------------------------------------- |
@@ -516,6 +530,61 @@ white chip cost the section nothing.
 `rounded-full` rather than a sixth radius. Icon-only it reads as a disc and
 matches the header's contact buttons and the hero's social chips; labelled it
 reads as a pill.
+
+### Diagonal section boundaries — `.diagonal-end`
+
+A block that carries `.diagonal-end` finishes on an angle instead of a flat
+horizontal line, so the surface below reads as cutting into it. `clip-path` on
+the real box, not a rotated pseudo-element: nothing overflows, and there is no
+second element whose background has to be kept in sync with its parent's.
+
+The angle is `4vw`, a constant **slope** rather than a constant height — a fixed
+px cut looks steep on a phone and nearly flat on a desktop. Anything inside needs
+bottom padding clearing the deepest point, and a radius on the cut corner fights
+the cut, so `rounded-b-none` goes with it. Mirrored under `[dir='rtl']` so the
+cut runs with the reading direction.
+
+Used **once**: the `featured` spotlight's ink block, where it meets the rail
+below. That is the only boundary on the page where one surface genuinely becomes
+another — everywhere else, sections simply sit next to each other, and cutting
+those would be decoration.
+
+### The colour-swap accent
+
+The lighter-weight sibling of the gold pill: one phrase inside a headline or
+subhead changes **colour** instead of gaining a filled background. Same `t.rich()`
++ `<em>` call-site pattern, so the accented phrase still travels with the
+sentence per locale.
+
+| Use | When |
+| --- | ---- |
+| gold pill | the phrase is the point of the sentence, and nothing else nearby is competing |
+| colour-swap | the section already carries a loud gold element, or the text is a subhead rather than a headline |
+
+Never both in one headline. `phones` is the worked example: it already carries a
+`GoldOrb`, so its subhead colour-swaps to `--color-gold-text` (~5.2:1 on gray-50)
+rather than adding a second filled gold shape to the same viewport.
+
+`<SectionHeader />`'s `subhead` takes a `ReactNode` for exactly this.
+
+### The connector-line list
+
+Used where a section's items are a **sequence or an argument**, not a catalogue:
+a thin hairline runs down the list with a marker on it at each item, so the eye
+reads top to bottom instead of treating the items as interchangeable.
+
+- `WhyJtech` — asymmetric: a short intro column beside the stacked reasons. The
+  `NumberedSquare` device moved onto the line as each step's marker rather than
+  floating inside a card; a numeral in the card *and* a dot on the line would
+  have been two markers for one step.
+- `Services` — the same pattern in two columns, because each item carries a price
+  row and a CTA and would run very long in one.
+
+Both replaced four equal-width cards in a row. That shape is right for a product
+rail and wrong for four claims: it says "here are four interchangeable things",
+which is the opposite of what an argument needs. The marker needs a solid
+background so it masks the line behind it — otherwise the hairline runs *through*
+the numeral instead of between the steps.
 
 ### The ribbon's three-layer stack
 
@@ -676,7 +745,7 @@ Non-negotiable, and mostly free if you don't fight it.
 
 - No component library, no template.
 - No glow or halo behind products — the ribbon replaces it. **One scoped
-  exception:** `<GoldOrb />`, once per page, in `OurPhones`'s corner gutter.
+  exception:** `<GoldOrb />`, up to three per page, in a section's corner gutter.
   It is never behind a product or behind text. See "The one soft shape" in §3;
   this is scoped the same way §1 scopes the hero headline's display face, rather
   than left contradicting the code.

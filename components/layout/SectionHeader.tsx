@@ -8,7 +8,11 @@ type SectionHeaderProps = {
   id: string;
   eyebrow?: string;
   title: string;
-  subhead?: string;
+  /**
+   * ReactNode, not string, so a caller can pass `t.rich(...)` and colour-swap
+   * one phrase inside it — see the colour-swap accent in DESIGN.md.
+   */
+  subhead?: ReactNode;
   /** Right-hand slot on desktop, e.g. a "view all" link. */
   action?: ReactNode;
   align?: 'start' | 'center';
