@@ -1,12 +1,10 @@
 export { AccessoriesRail } from './AccessoriesRail';
-export { BestSellers } from './BestSellers';
-export { BrandMarquee } from './BrandMarquee';
 export { Categories } from './Categories';
 export { Contact } from './Contact';
-export { Delivery } from './Delivery';
-export { FeatureMosaic } from './FeatureMosaic';
-export { FeaturedProduct } from './FeaturedProduct';
-export { FullRange } from './FullRange';
+export { DeliveryPanel } from './DeliveryPanel';
+export { Featured } from './Featured';
 export { Hero } from './Hero';
+export { OurLaptops } from './OurLaptops';
+export { OurPhones } from './OurPhones';
 export { Services } from './Services';
 export { WhyJtech } from './WhyJtech';

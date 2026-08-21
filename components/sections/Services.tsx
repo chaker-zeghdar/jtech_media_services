@@ -27,7 +27,7 @@ export async function Services() {
   return (
     <Section
       id="services"
-      background="gray"
+      background="white"
       device={<CornerBlob corner="top-end" size={34} opacity={0.08} />}
     >
       <Container>

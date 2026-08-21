@@ -2,15 +2,12 @@ import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { hasLocale } from 'next-intl';
 import { AccessoriesRail } from '@/components/sections/AccessoriesRail';
-import { BestSellers } from '@/components/sections/BestSellers';
-import { BrandMarquee } from '@/components/sections/BrandMarquee';
 import { Categories } from '@/components/sections/Categories';
 import { Contact } from '@/components/sections/Contact';
-import { Delivery } from '@/components/sections/Delivery';
-import { FeatureMosaic } from '@/components/sections/FeatureMosaic';
-import { FeaturedProduct } from '@/components/sections/FeaturedProduct';
-import { FullRange } from '@/components/sections/FullRange';
+import { Featured } from '@/components/sections/Featured';
 import { Hero } from '@/components/sections/Hero';
+import { OurLaptops } from '@/components/sections/OurLaptops';
+import { OurPhones } from '@/components/sections/OurPhones';
 import { Services } from '@/components/sections/Services';
 import { WhyJtech } from '@/components/sections/WhyJtech';
 import { routing } from '@/i18n/routing';
@@ -28,17 +25,19 @@ import { routing } from '@/i18n/routing';
  *   ───────────────────────────────────────────────────────
  *   Hero             gold fade GoldRibbon #1 of 2
  *   Categories       white     — (gold gradient card faces)
- *   FeaturedProduct  ink       GoldRibbon #2 of 2 — budget spent
- *   FeatureMosaic    white     — (colour blocking is the interest)
- *   FullRange        gray      Halftone
- *   BestSellers      white     CornerBlob @ .08
- *   AccessoriesRail  gray      Halftone
+ *   Featured         gray      GoldRibbon #2 of 2 — budget spent
+ *                              (ink spotlight nested inside)
  *   WhyJtech         white     NumberedSquare ×4
- *   Services         gray      CornerBlob @ .08
- *   Delivery         gold      GoldPanel — the one full-bleed brand moment
- *   BrandMarquee     gray      GoldOrb — the one soft shape
- *   Contact          white     — (deliberately none)
+ *   OurPhones        gray      GoldOrb — the one per page
+ *   OurLaptops       white     CornerBlob @ .08
+ *   AccessoriesRail  gray      Halftone
+ *   Services         white     CornerBlob @ .08
+ *   Contact          gold→white GoldPanel — the one full-bleed moment,
+ *                              relocated from the old Delivery section
  *   Footer           ink       Halftone @ .2
+ *
+ *   Categories is fixed at white, which forces every parity after it — that is
+ *   why Featured is gray and Services white rather than the other way round.
  *
  * See DESIGN.md before adding a section.
  */
@@ -52,15 +51,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <>
       <Hero />
       <Categories />
-      <FeaturedProduct />
-      <FeatureMosaic />
-      <FullRange />
-      <BestSellers />
-      <AccessoriesRail />
+      <Featured />
       <WhyJtech />
+      <OurPhones />
+      <OurLaptops />
+      <AccessoriesRail />
       <Services />
-      <Delivery />
-      <BrandMarquee />
       <Contact />
     </>
   );

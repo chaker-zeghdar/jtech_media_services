@@ -17,12 +17,11 @@ export const HERO_CHROME_SENTINEL_ID = 'hero-chrome-band';
 export const SECTION_IDS = [
   'categories',
   'featured',
-  'range',
-  'bestsellers',
-  'accessories',
   'why',
+  'phones',
+  'laptops',
+  'accessories',
   'services',
-  'delivery',
   'contact',
 ] as const;
 
@@ -38,11 +37,11 @@ export type SectionId = (typeof SECTION_IDS)[number];
  */
 export const LOCAL_NAV_IDS: readonly SectionId[] = [
   'featured',
-  'range',
-  'bestsellers',
+  'why',
+  'phones',
+  'laptops',
   'accessories',
   'services',
-  'delivery',
   'contact',
 ];
 

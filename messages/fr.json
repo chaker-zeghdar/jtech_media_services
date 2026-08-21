@@ -58,14 +58,13 @@
   "nav": {
     "categories": "Catégories",
     "featured": "En vedette",
-    "range": "La gamme",
-    "bestsellers": "Meilleures ventes",
     "accessories": "Accessoires",
     "why": "Pourquoi JTECH",
     "services": "Services",
-    "delivery": "Livraison",
     "contact": "Contact",
-    "order": "Commander"
+    "order": "Commander",
+    "phones": "Téléphones",
+    "laptops": "Ordinateurs"
   },
   "hero": {
     "eyebrow": "Téléphonie et informatique à Batna",
@@ -94,15 +93,10 @@
     "coloursLabel": "Coloris disponibles",
     "priceLabel": "À partir de",
     "cta": "Commander l’iPhone 16 Pro",
-    "ctaSecondary": "Voir tous les iPhone"
-  },
-  "range": {
-    "title": "La gamme complète",
-    "subhead": "Téléphones et ordinateurs choisis un par un, tous authentiques et scellés."
-  },
-  "bestsellers": {
-    "title": "Meilleures ventes",
-    "subhead": "Ce que nos clients achètent le plus ce mois-ci."
+    "ctaSecondary": "Voir tous les iPhone",
+    "sectionTitle": "Nos meilleurs téléphones",
+    "sectionSubhead": "Nos meilleurs téléphones, choisis à la main — et les plus demandés ce mois-ci.",
+    "railLabel": "Les plus demandés"
   },
   "accessoriesSection": {
     "title": "Des accessoires qui tiennent",
@@ -110,27 +104,35 @@
   },
   "why": {
     "title": "Pourquoi acheter chez JTECH",
-    "subhead": "Quatre raisons claires, sans discours superflu.",
+    "subhead": "Pas du marketing — voilà ce qu'on fait vraiment, chaque jour.",
     "items": {
       "warranty": {
-        "title": "Vous repartez avec une <em>garantie écrite</em> en main.",
-        "body": "Elle précise ce qui est couvert et pour combien de mois."
+        "title": "Une <em>garantie écrite</em> dans votre main, pas une promesse en l'air.",
+        "body": "La durée et ce qui est couvert sont écrits noir sur blanc — vous lisez avant de payer."
       },
       "genuine": {
-        "title": "Chaque appareil est <em>authentique et scellé</em> d’usine.",
-        "body": "Vous vérifiez l’IMEI devant nous avant de payer."
+        "title": "<em>100% authentique</em>, ou on ne le vend pas.",
+        "body": "Vérifiez l'IMEI devant vous, avant de payer le moindre dinar."
       },
       "delivery": {
-        "title": "On livre dans les <em>58 wilayas</em>, payées à la réception.",
-        "body": "Bureau du transporteur ou domicile, à vous de choisir."
+        "title": "Livraison dans les <em>58 wilayas</em>, payée à la réception.",
+        "body": "Bureau de livraison ou chez vous — vous choisissez, confirmé en moins de 24h."
       },
       "aftersales": {
-        "title": "On ne <em>disparaît pas</em> après la vente.",
-        "body": "Plus de 7 ans à vendre, acheter et réparer à Batna."
+        "title": "Après la vente, <em>on reste là</em> — on ne disparaît pas.",
+        "body": "Plus de 7 ans à Batna : vente, achat et réparation."
       }
     },
     "socialProof": "Plus de 160 000 abonnés sur Instagram, 56 000 sur TikTok et 50 000 sur Facebook.",
     "railLabel": "Raisons d’acheter chez JTECH"
+  },
+  "phones": {
+    "title": "Nos téléphones",
+    "subhead": "iPhone, Samsung ou Android — choisissez une catégorie et parcourez."
+  },
+  "laptops": {
+    "title": "Nos ordinateurs",
+    "subhead": "Pour les études, le travail et le gaming — choisis pour leur qualité."
   },
   "services": {
     "title": "Nos services en magasin",
@@ -212,33 +214,6 @@
   },
   "locale": {
     "label": "Langue"
-  },
-  "mosaic": {
-    "title": "Trois choses sur lesquelles on ne transige pas",
-    "subhead": "Pas des promesses — voilà ce que vous obtenez réellement en achetant chez nous.",
-    "items": {
-      "warranty": {
-        "eyebrow": "Garantie",
-        "title": "Une garantie écrite, en main.",
-        "body": "Un bon qui précise ce qui est couvert et pour combien de mois — pas une parole sur le pas de la porte.",
-        "cta": "Voir les détails",
-        "imageAlt": "iPhone 16 Pro garanti par JTECH"
-      },
-      "repair": {
-        "eyebrow": "Réparation",
-        "title": "On répare sur place.",
-        "body": "Écran, batterie ou logiciel — diagnostic gratuit avant toute intervention.",
-        "cta": "Voir les services",
-        "imageAlt": "Galaxy Z Fold 8 Ultra à l’atelier de réparation"
-      },
-      "delivery": {
-        "eyebrow": "Livraison",
-        "title": "58 wilayas, payées à la réception.",
-        "body": "Bureau du transporteur ou domicile — à vous de choisir, confirmé en moins de 24 heures.",
-        "cta": "Voir les tarifs",
-        "imageAlt": "Galaxy Watch Ultra 2 prête à être expédiée"
-      }
-    }
   },
   "social": {
     "title": "Sur nos réseaux",

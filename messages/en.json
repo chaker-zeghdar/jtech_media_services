@@ -58,14 +58,13 @@
   "nav": {
     "categories": "Categories",
     "featured": "Featured",
-    "range": "The range",
-    "bestsellers": "Best sellers",
     "accessories": "Accessories",
     "why": "Why JTECH",
     "services": "Services",
-    "delivery": "Delivery",
     "contact": "Contact",
-    "order": "Order now"
+    "order": "Order now",
+    "phones": "Phones",
+    "laptops": "Laptops"
   },
   "hero": {
     "eyebrow": "Phones and computers in Batna",
@@ -94,15 +93,10 @@
     "coloursLabel": "Available colours",
     "priceLabel": "From",
     "cta": "Order the iPhone 16 Pro",
-    "ctaSecondary": "See every iPhone"
-  },
-  "range": {
-    "title": "The full range",
-    "subhead": "Phones and computers picked one by one, every unit genuine and sealed."
-  },
-  "bestsellers": {
-    "title": "Best sellers",
-    "subhead": "What our customers are buying most this month."
+    "ctaSecondary": "See every iPhone",
+    "sectionTitle": "Our best phones and deals",
+    "sectionSubhead": "Our best phones, picked by hand — and this month's most requested.",
+    "railLabel": "Most requested"
   },
   "accessoriesSection": {
     "title": "Accessories that hold up",
@@ -110,27 +104,35 @@
   },
   "why": {
     "title": "Why buy from JTECH",
-    "subhead": "Four straight reasons, no filler.",
+    "subhead": "Not marketing talk — this is what we actually do, every day.",
     "items": {
       "warranty": {
-        "title": "You leave with a <em>written warranty</em> in hand.",
-        "body": "It states what is covered, and for how many months."
+        "title": "A <em>written warranty</em> in your hand, not a promise in the air.",
+        "body": "The coverage and the months are written down — read it before you pay."
       },
       "genuine": {
-        "title": "Every device is <em>genuine and factory-sealed</em>.",
-        "body": "Check the IMEI in front of us before you pay a dinar."
+        "title": "<em>100% genuine</em>, or we don't sell it.",
+        "body": "Check the IMEI yourself, in front of us, before a single dinar changes hands."
       },
       "delivery": {
-        "title": "We deliver to <em>all 58 wilayas</em>, paid on arrival.",
-        "body": "Carrier desk or your door — your choice."
+        "title": "Delivery to <em>all 58 wilayas</em>, paid when it arrives.",
+        "body": "Carrier desk or your door — your call, confirmed in under 24 hours."
       },
       "aftersales": {
-        "title": "We <em>don’t vanish</em> after the sale.",
-        "body": "Over 7 years buying, selling and repairing in Batna."
+        "title": "We <em>stick around</em> after the sale — we don't vanish.",
+        "body": "Over 7 years of buying, selling and repairing, right here in Batna."
       }
     },
     "socialProof": "Over 160,000 followers on Instagram, 56,000 on TikTok and 50,000 on Facebook.",
     "railLabel": "Reasons to buy from JTECH"
+  },
+  "phones": {
+    "title": "Our phones",
+    "subhead": "iPhone, Samsung or Android — pick a category and browse."
+  },
+  "laptops": {
+    "title": "Our laptops",
+    "subhead": "For study, work and gaming — picked for real quality."
   },
   "services": {
     "title": "In-store services",
@@ -212,33 +214,6 @@
   },
   "locale": {
     "label": "Language"
-  },
-  "mosaic": {
-    "title": "Three things we don’t compromise on",
-    "subhead": "Not promises — this is what you actually get when you buy from us.",
-    "items": {
-      "warranty": {
-        "eyebrow": "Warranty",
-        "title": "A written warranty, in your hand.",
-        "body": "A slip that states what is covered and for how many months — not a word at the door.",
-        "cta": "See the details",
-        "imageAlt": "iPhone 16 Pro covered by the JTECH warranty"
-      },
-      "repair": {
-        "eyebrow": "Repair",
-        "title": "We repair in the shop.",
-        "body": "Screen, battery or software — a free diagnosis before we start.",
-        "cta": "See the services",
-        "imageAlt": "Galaxy Z Fold 8 Ultra in the repair workshop"
-      },
-      "delivery": {
-        "eyebrow": "Delivery",
-        "title": "58 wilayas, paid on arrival.",
-        "body": "Carrier desk or your door — your choice, confirmed in under 24 hours.",
-        "cta": "See the rates",
-        "imageAlt": "Galaxy Watch Ultra 2 ready to ship"
-      }
-    }
   },
   "social": {
     "title": "From our feed",

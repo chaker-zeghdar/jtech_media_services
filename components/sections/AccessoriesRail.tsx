@@ -6,7 +6,7 @@ import { SectionHeader } from '@/components/layout/SectionHeader';
 import { Carousel } from '@/components/ui/Carousel';
 import { ProductCard } from '@/components/ui/ProductCard';
 import { accessories } from '@/content/products';
-import { RAIL_ITEM, RAIL_SIZES } from './FullRange';
+import { RAIL_ITEM, RAIL_SIZES } from '@/lib/rail';
 
 /**
  * Section 6 — accessories rail. Brand device: Halftone, this time on the

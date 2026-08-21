@@ -428,16 +428,13 @@ for good; on a page this long that is the part not worth copying.
 | -------------------- | ------------ | ----------------------------- |
 | Hero                 | gold fade    | `GoldRibbon` #1 of 2          |
 | Categories           | white        | — (gold gradient card faces)  |
-| Featured (ink block) | ink          | `GoldRibbon` #2 of 2 — spent  |
-| Feature mosaic       | white        | — (colour blocking is the interest) |
-| Full range           | gray         | `Halftone`                    |
-| Best sellers         | white        | `CornerBlob` @ `.08`          |
-| Accessories          | gray         | `Halftone`                    |
+| Featured             | gray         | `GoldRibbon` #2 of 2 — spent  |
 | Why JTECH            | white        | `NumberedSquare` ×4           |
-| Services             | gray         | `CornerBlob` @ `.08`          |
-| Delivery             | gold         | `GoldPanel` — the one moment  |
-| Brand marquee        | gray         | `GoldOrb` — the one soft shape|
-| Contact              | white        | — (deliberately none)         |
+| Our phones           | gray         | `GoldOrb` — the one per page  |
+| Our laptops          | white        | `CornerBlob` @ `.08`          |
+| Accessories          | gray         | `Halftone`                    |
+| Services             | white        | `CornerBlob` @ `.08`          |
+| Contact              | gold → white | `GoldPanel` — the one moment  |
 | Footer               | ink          | `Halftone` @ `.2`             |
 
 **No two adjacent sections share a surface.** That alternation is what gives the
@@ -447,7 +444,7 @@ its neighbours — the table above is duplicated as a comment in
 
 Hard caps: **two ribbons per page**, **two full-saturation blobs per page**
 (both currently spent on the panel and the hero), **one gold panel per page**,
-**one `GoldOrb` per page** (spent on the brand marquee).
+**one `GoldOrb` per page** (spent on `OurPhones`).
 
 ### The one soft shape — `<GoldOrb />`
 
@@ -458,6 +455,10 @@ glossy gold: blurred bokeh circles and a glowing ring. `<GoldOrb />` is the one
 piece of the system that answers that, and it is capped at one per page for the
 same reason the panel is: a soft glow reads as a considered accent exactly once,
 and as atmosphere the second time.
+
+It lives on `OurPhones`. A phone on a soft gold glow is close to what the posts
+themselves show, and `OurLaptops` two sections later deliberately takes a flat
+`CornerBlob` instead — a second glow that close would read as clutter.
 
 | Prop      | Range / values                 | Note                                  |
 | --------- | ------------------------------ | ------------------------------------- |
@@ -675,7 +676,7 @@ Non-negotiable, and mostly free if you don't fight it.
 
 - No component library, no template.
 - No glow or halo behind products — the ribbon replaces it. **One scoped
-  exception:** `<GoldOrb />`, once per page, in `BrandMarquee`'s corner gutter.
+  exception:** `<GoldOrb />`, once per page, in `OurPhones`'s corner gutter.
   It is never behind a product or behind text. See "The one soft shape" in §3;
   this is scoped the same way §1 scopes the hero headline's display face, rather
   than left contradicting the code.

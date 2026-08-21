@@ -29,7 +29,8 @@ export async function Footer() {
   const year = new Date().getFullYear();
 
   const helpLinks = [
-    { key: 'delivery', href: '#delivery' },
+    // The delivery block is now the opening of #contact, not its own section.
+    { key: 'delivery', href: '#contact' },
     { key: 'warranty', href: '#why' },
     { key: 'faq', href: '#services' },
     { key: 'why', href: '#why' },
