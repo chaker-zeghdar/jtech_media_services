@@ -9,6 +9,7 @@ import { Container } from './Container';
 import { HeaderShell } from './HeaderShell';
 import { LocaleSwitcher } from './LocaleSwitcher';
 import { MobileMenu } from './MobileMenu';
+import { NavHighlight } from './NavHighlight';
 import { categoryHref } from './navigation';
 
 /**
@@ -38,6 +39,31 @@ import { categoryHref } from './navigation';
  * The shell is the only client code here. This component stays a server
  * component: category names are resolved here and passed down as plain strings,
  * so neither the menu nor the shell ever touches the content layer on the client.
+ *
+ * ── The category links ──────────────────────────────────────────────────────
+ *
+ * <NavHighlight /> — a highlight pill that slides between the links on hover.
+ * It is a port of the visible effect from a `MotionNavigationMenu` component
+ * that was handed over, NOT that component: it could not be dropped in.
+ *
+ * Four reasons, recorded so nobody re-litigates them from the paste alone:
+ *
+ *   1. It imports `Highlight`/`HighlightItem` from an `unlumen-ui` package that
+ *      does not exist in this repo and was not supplied — the pill itself, i.e.
+ *      the only part worth having, was the missing piece.
+ *   2. It is built on shadcn's semantic palette — `bg-accent`, `bg-background`,
+ *      `text-muted-foreground`, `border`, `ring-ring`, `bg-surface`. This
+ *      project REPLACED Tailwind's palette; none of those eight tokens exist,
+ *      so every one of those classes generates nothing.
+ *   3. It needs `lucide-react` and `class-variance-authority`, and a shadcn
+ *      install. The brief's "no component library" is the first line of
+ *      DESIGN.md §7, and this project ships its own inline icon set precisely
+ *      so there is no icon dependency.
+ *   4. Its trigger/content/viewport machinery is a mega-menu. These five links
+ *      go to real category pages and have no dropdown content — a trigger with
+ *      a chevron that opens nothing would be a worse nav, not a better one.
+ *
+ * What survives is the part that was actually asked for: the moving highlight.
  *
  * ── Contrast over the hero ──────────────────────────────────────────────────
  *
@@ -106,20 +132,12 @@ export async function Header() {
           <Logo markTone="current" />
         </Link>
 
-        <nav aria-label={t('primaryNav')} className="hidden lg:block">
-          <ul className="flex items-center gap-1">
-            {items.map((item) => (
-              <li key={item.slug}>
-                <Link
-                  href={item.href}
-                  className="block whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-50 hover:text-ink group-data-[over-hero]:text-ink group-data-[over-hero]:hover:bg-white"
-                >
-                  {item.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {/* The links moved into <NavHighlight /> to gain the sliding highlight
+            pill. Same five items, same hrefs, same labels — the names are still
+            resolved here on the server and passed down as plain strings, so the
+            content layer stays off the client exactly as it does for
+            <MobileMenu />. */}
+        <NavHighlight items={items} label={t('primaryNav')} />
 
         <div className="flex shrink-0 items-center gap-2 justify-self-end">
           {/* The two contact routes, as icon buttons. Both are external and both
