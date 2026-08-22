@@ -66,7 +66,7 @@ export const settings: Settings = parseContent('content/settings.ts', settingsSc
     url: 'https://www.jtechmediaservice.com',
   },
 
-  yearsExperience: 7,
+  foundedYear: 2013,
 
   socialProof: {
     facebook: 50000,

@@ -129,9 +129,21 @@ export async function ProductCard({
 
         <h3 className="text-h3 font-semibold leading-tight">{name}</h3>
 
-        <p className="mt-2 max-w-[34ch] text-sm text-gray-700">{tagline}</p>
+        {/* Clamped to two lines AND floored at two lines' height. Both halves
+            matter: the clamp stops a long tagline pushing the price row down,
+            the floor stops a short one pulling it up. Without the pair, cards in
+            the same rail landed their price at different heights purely because
+            their descriptions differed in length. 2.625rem = 2 x the measured 21px line box
+            line-height `text-sm` computes to here. */}
+        <p className="mt-2 line-clamp-2 min-h-[2.625rem] max-w-[34ch] text-sm text-gray-700">
+          {tagline}
+        </p>
 
-        <div className="mt-4">
+        {/* `mt-auto` is the other half of the fix. The column is already
+            `flex-1`, so any height the rail's stretch gives this card beyond its
+            content collects here instead of trailing under the links — which
+            pins price and CTAs to a shared baseline across the row. */}
+        <div className="mt-auto pt-4">
           <PriceFrom value={priceFrom(product)} />
         </div>
 

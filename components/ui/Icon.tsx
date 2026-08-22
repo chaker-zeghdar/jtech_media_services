@@ -2,7 +2,14 @@ import type { IconKey } from '@/content/schemas';
 import { cn } from '@/lib/cn';
 
 /** Keys used purely for UI chrome, on top of the content-driven IconKey set. */
-export type UiIconKey = 'chevron' | 'close' | 'check' | 'menu' | 'external' | 'expand';
+export type UiIconKey =
+  | 'chevron'
+  | 'close'
+  | 'check'
+  | 'menu'
+  | 'external'
+  | 'expand'
+  | 'chat';
 
 export type AnyIconKey = IconKey | UiIconKey;
 
@@ -69,6 +76,12 @@ const PATHS: Record<AnyIconKey, { d: string; fill?: boolean }[]> = {
   close: [{ d: 'M6 6l12 12M18 6 6 18' }],
   check: [{ d: 'm5 12.5 4.5 4.5L19 7.5' }],
   menu: [{ d: 'M4 7.5h16M4 12h16M4 16.5h16' }],
+  // Stroked speech bubble, not a filled glyph: the filled ones in this table are
+  // the social brand marks, where the shape IS the logo. This is UI chrome and
+  // belongs with wrench/shield/truck.
+  chat: [
+    { d: 'M6.25 4.75h11.5a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5h-6.4L7.5 18.5v-3.75H6.25a1.5 1.5 0 0 1-1.5-1.5v-7a1.5 1.5 0 0 1 1.5-1.5Z' },
+  ],
   // Opposing corner brackets — reads as "open larger" at 16px, where the
   // `external` arrow-out-of-a-box glyph turns to mush.
   expand: [{ d: 'M9.5 4.5H4.5V9.5' }, { d: 'M14.5 19.5h5v-5' }, { d: 'M4.5 4.5l6 6' }, { d: 'M19.5 19.5l-6-6' }],

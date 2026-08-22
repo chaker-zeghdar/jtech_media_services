@@ -1,5 +1,5 @@
 import { getLocale, getTranslations } from 'next-intl/server';
-import { Logo } from '@/components/brand/LogoMark';
+import { LogoMark } from '@/components/brand/LogoMark';
 import { Icon } from '@/components/ui/Icon';
 import { categories } from '@/content/categories';
 import { settings, telLink, whatsappLink } from '@/content/settings';
@@ -123,13 +123,22 @@ export async function Header() {
             instead. `markTone="current"` is <Logo />'s API for exactly this —
             DESIGN.md §7 forbids overriding a component's colour through
             `className`, and the state that decides it is client-side, so it
-            cannot be a static prop either. The wordmark carries its own ink. */}
+            cannot be a static prop either.
+
+            Mark ONLY — no "JTECH" wordmark. <LogoMark /> rather than <Logo />,
+            which is the mark plus a text span. `tone="current"` is the same API
+            <Logo /> was forwarding, so the over-hero colour switch on the parent
+            <Link> still drives it through `currentColor`, unchanged.
+
+            30px against <Logo />'s effective 20: bigger, but still clear of the
+            h-16 row and of the centre track of the 1fr_auto_1fr grid.
+            <Footer /> keeps the full mark+wordmark lockup. */}
         <Link
           href="/"
           aria-label={t('logo')}
           className="shrink-0 justify-self-start text-gold group-data-[over-hero]:text-ink"
         >
-          <Logo markTone="current" />
+          <LogoMark tone="current" height={30} />
         </Link>
 
         {/* The links moved into <NavHighlight /> to gain the sliding highlight

@@ -754,7 +754,13 @@ Non-negotiable, and mostly free if you don't fight it.
 - No gold text on white below 24px — use `text-gold-text`.
 - No two brand devices in one viewport.
 - No glassmorphism, no neon, no dark-mode toggle.
-- No `left`/`right` in layout CSS.
+- No `left`/`right` in layout CSS. **One scoped exception:** `<SocialFab />`,
+  the floating social widget, is pinned to the physical `right-*` corner and
+  does not mirror under Arabic. Floating support widgets are a convention people
+  navigate by physical position — Intercom, Crisp, apple.com/store's own — and a
+  control that changes corner when you change language is harder to find, not
+  more correct. Scoped to that one element, and it is `verify.mjs`'s only
+  expected left/right hit.
 - No `any` in TypeScript (ESLint errors on it), no unused dependencies.
 - No overriding a component's colour via `className` when it sets its own — pass a
   prop instead. `<Swash className="bg-ink">` leaves both `bg-gold` and `bg-ink` in

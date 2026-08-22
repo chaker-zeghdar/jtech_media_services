@@ -6,7 +6,7 @@ import { SectionHeader } from '@/components/layout/SectionHeader';
 import { Reveal } from '@/components/motion/Reveal';
 import { Button } from '@/components/ui/Button';
 import { FeatureChip } from '@/components/ui/FeatureChip';
-import { PriceFrom } from '@/components/ui/Price';
+import { Icon } from '@/components/ui/Icon';
 import { services } from '@/content/services';
 import { whatsappLink } from '@/content/settings';
 import { pickLocale } from '@/lib/format';
@@ -18,7 +18,6 @@ import { pickLocale } from '@/lib/format';
 export async function Services() {
   const locale = await getLocale();
   const t = await getTranslations('services');
-  const tCommon = await getTranslations('common');
   const tProduct = await getTranslations('product');
 
   const items = [...services].sort((a, b) => a.position - b.position);
@@ -65,28 +64,23 @@ export async function Services() {
                     </p>
                   </div>
 
-                  <dl className="hairline-t flex flex-col gap-2 pt-5">
-                    <div className="flex items-baseline justify-between gap-3">
-                      <dt className="sr-only">{tCommon('priceFrom')}</dt>
-                      <dd>
-                        {service.priceFrom > 0 ? (
-                          <PriceFrom value={service.priceFrom} />
-                        ) : (
-                          // Ink, not green. --color-green is scoped to the
-                          // in-stock dot; as 17px text on white it measures
-                          // 2.4:1. This is a price, so it reads like one.
-                          <span className="text-base font-semibold text-ink">
-                            {tCommon('free')}
-                          </span>
-                        )}
-                      </dd>
-                    </div>
-                    <div className="flex items-baseline justify-between gap-3">
-                      <dt className="text-caption text-gray-700">{t('durationLabel')}</dt>
-                      <dd className="text-caption font-medium text-gray-700">
-                        <bdi>{pickLocale(service.duration, locale)}</bdi>
-                      </dd>
-                    </div>
+                  {/* Duration only — the price row was removed on request.
+                      `priceFrom` is still in content/services.ts and still in
+                      the schema; this is a display change, not a data one.
+
+                      A lone `justify-between` row under a hairline read as the
+                      leftover half of a two-row table, so the row closes up to
+                      an icon + label + value line instead. The `clock` glyph
+                      already exists in the icon set — nothing new invented for
+                      a one-line removal. */}
+                  <dl className="hairline-t flex items-baseline gap-2 pt-5 text-caption text-gray-700">
+                    <dt className="flex items-center gap-1.5">
+                      <Icon name="clock" size={14} className="text-gold-text" />
+                      {t('durationLabel')}
+                    </dt>
+                    <dd className="font-medium text-ink">
+                      <bdi>{pickLocale(service.duration, locale)}</bdi>
+                    </dd>
                   </dl>
 
                   <Button

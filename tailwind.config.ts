@@ -167,6 +167,9 @@ const config: Config = {
       zIndex: {
         nav: '40',
         bar: '45',
+        // Above the mobile order bar it floats over, below the mobile menu that
+        // should cover it when open.
+        fab: '46',
         menu: '50',
         modal: '60',
       },

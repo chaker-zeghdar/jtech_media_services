@@ -252,7 +252,8 @@ export const settingsSchema = z.object({
   /** The client's existing site, linked from the footer. */
   website: z.object({ label: z.string().min(1), url: z.string().url() }),
   /** Years trading. Quoted as a plain fact in copy — never an animated counter. */
-  yearsExperience: z.number().int().positive(),
+  /** Founding year, e.g. 2013 — beats a rolling count that goes stale. */
+  foundedYear: z.number().int().positive(),
   /**
    * Follower and customer counts, quoted as plain text.
    * DESIGN.md bans animated counters; these are facts, not a scoreboard.

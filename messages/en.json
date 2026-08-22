@@ -36,7 +36,8 @@
     "openInstagram": "JTECH on Instagram",
     "openFacebook": "JTECH on Facebook",
     "openTiktok": "JTECH on TikTok",
-    "expandSection": "Open section"
+    "expandSection": "Open section",
+    "socialWidget": "Our social links"
   },
   "badges": {
     "new": "New",
@@ -72,7 +73,7 @@
     "subhead": "iPhone, Samsung, Android and computers — a written warranty, delivery to all 58 wilayas, and you pay when it arrives.",
     "ctaPrimary": "See the range",
     "ctaSecondary": "Message us on WhatsApp",
-    "trust": "Over 7 years buying, selling and repairing — and more than 5,000 happy customers."
+    "trust": "Selling, buying and repairing since 2013 — 5,000+ happy customers."
   },
   "categories": {
     "title": "What are you looking for?",
@@ -120,7 +121,7 @@
       },
       "aftersales": {
         "title": "We <em>stick around</em> after the sale — we don't vanish.",
-        "body": "Over 7 years of buying, selling and repairing, right here in Batna."
+        "body": "In Batna since 2013: sales, purchases and repairs."
       }
     },
     "socialProof": "Over 160,000 followers on Instagram, 56,000 on TikTok and 50,000 on Facebook.",

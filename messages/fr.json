@@ -36,7 +36,8 @@
     "openInstagram": "Compte Instagram de JTECH",
     "openFacebook": "Page Facebook de JTECH",
     "openTiktok": "Compte TikTok de JTECH",
-    "expandSection": "Ouvrir la section"
+    "expandSection": "Ouvrir la section",
+    "socialWidget": "Nos réseaux sociaux"
   },
   "badges": {
     "new": "Nouveau",
@@ -72,7 +73,7 @@
     "subhead": "iPhone, Samsung, Android et ordinateurs — garantie écrite, livraison dans les 58 wilayas, et vous payez à la réception.",
     "ctaPrimary": "Voir la gamme",
     "ctaSecondary": "Nous écrire sur WhatsApp",
-    "trust": "Plus de 7 ans à vendre, acheter et réparer — et plus de 5 000 clients satisfaits."
+    "trust": "Depuis 2013, on vend, on achète et on répare — plus de 5 000 clients satisfaits."
   },
   "categories": {
     "title": "Qu’est-ce que vous cherchez ?",
@@ -120,7 +121,7 @@
       },
       "aftersales": {
         "title": "Après la vente, <em>on reste là</em> — on ne disparaît pas.",
-        "body": "Plus de 7 ans à Batna : vente, achat et réparation."
+        "body": "Depuis 2013 à Batna : vente, achat et réparation."
       }
     },
     "socialProof": "Plus de 160 000 abonnés sur Instagram, 56 000 sur TikTok et 50 000 sur Facebook.",

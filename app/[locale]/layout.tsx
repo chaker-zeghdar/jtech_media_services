@@ -9,6 +9,8 @@ import { HashAnchorFix } from '@/components/layout/HashAnchorFix';
 import { Header } from '@/components/layout/Header';
 import { LocalNav } from '@/components/layout/LocalNav';
 import { MobileOrderBar } from '@/components/layout/MobileOrderBar';
+import { SocialFab } from '@/components/layout/SocialFab';
+import { settings } from '@/content/settings';
 import { localeDirections, localeTags, routing } from '@/i18n/routing';
 import { clientMessages } from '@/lib/clientMessages';
 import '../globals.css';
@@ -157,6 +159,18 @@ export default async function LocaleLayout({
 
           <Footer />
           <MobileOrderBar />
+          {/* Site-wide, not homepage-only: the social accounts are as relevant
+              on a category page as on the homepage, and a control that appears
+              and disappears between routes reads as a bug. The three URLs are
+              resolved here so the client island never imports the settings
+              object — see the note on <SocialFab />. */}
+          <SocialFab
+            links={[
+              { key: 'instagram', url: settings.socials.instagram.url, label: t('openInstagram') },
+              { key: 'facebook', url: settings.socials.facebook.url, label: t('openFacebook') },
+              { key: 'tiktok', url: settings.socials.tiktok.url, label: t('openTiktok') },
+            ]}
+          />
         </NextIntlClientProvider>
       </body>
     </html>
