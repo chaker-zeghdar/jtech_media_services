@@ -11,6 +11,16 @@ type StaggerTextProps = {
   stepMs?: number;
   /** Delay before the first word. */
   delayMs?: number;
+  /**
+   * Forces the writing direction of the words.
+   *
+   * Needed when the headline's text is a different script from the page. Each
+   * word is its own `inline-block`, and bidi treats an inline-block as a neutral
+   * object rather than reading the strong-LTR text inside it — so a Latin
+   * headline in an RTL page lays its WORDS out right-to-left and reads
+   * backwards, even though each word itself is shaped correctly.
+   */
+  dir?: 'ltr' | 'rtl';
   className?: string;
 };
 
@@ -32,12 +42,13 @@ export function StaggerText({
   as: Tag = 'span',
   stepMs = 40,
   delayMs = 0,
+  dir,
   className,
 }: StaggerTextProps) {
   const words = text.split(/\s+/).filter(Boolean);
 
   return (
-    <Tag id={id} className={cn(className)}>
+    <Tag id={id} dir={dir} className={cn(className)}>
       {words.map((word, index) => (
         <span key={`${word}-${index}`}>
           <span

@@ -168,23 +168,32 @@ html[lang^='ar'] {
  * degrades the one time it isn't. The hero's own override stays where it is —
  * it is documented as a scoped exception and is simply redundant now.
  *
+ * `hero-display` is excluded too, for a different reason: its only user is the
+ * hero headline, whose copy is the brand name — the same LATIN string in all
+ * three locales. That step never sets Arabic, so zeroing its tracking would
+ * strip the display face's tightening from Latin text.
+ *
  * `numeral` is excluded on purpose. Prices and figures are always Latin digits
  * (DESIGN.md §Numerals), so those steps ARE setting Latin glyphs even on an
  * Arabic page and should keep their tracking.
  *
  * Latin locales are untouched — this whole block is scoped to `lang^='ar'`.
+ *
+ * `.font-latin` opts out. That class means "this element is Latin regardless of
+ * the page's language" — the hero headline (the brand name) and the logo
+ * wordmark — so it is setting Latin glyphs and wants the Latin tracking, which
+ * is exactly what this rule exists to take away from Arabic ones.
  */
 html[lang^='ar']
   :is(
     .text-hero,
-    .text-hero-display,
     .text-section,
     .text-h2,
     .text-h3,
     .text-eyebrow,
     .text-pill,
     .text-caption
-  ) {
+  ):not(.font-latin) {
   letter-spacing: normal;
 }
 

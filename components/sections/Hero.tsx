@@ -140,11 +140,15 @@ export async function Hero() {
           {/* ── The headline is the one documented display-face exception ──
               `text-hero-display` (tailwind.config.ts) is Inter at 900 with tight
               leading and heavy negative tracking — the deliberate bend of
-              DESIGN.md §1's "no display face", recorded there too. Arabic opts
-              out of all three parts of that: Plex Arabic tops out at 700, and
-              negative tracking on a joined script pulls the letterforms apart
-              instead of tightening them, so RTL takes bold, normal tracking and
-              looser leading for the taller ascenders.
+              DESIGN.md §1's "no display face", recorded there too.
+
+              This step used to carry a set of Arabic overrides (bold instead of
+              900, normal tracking, looser leading) because the headline was
+              Arabic copy and Plex Arabic stops at 700 while negative tracking
+              pulls a joined script apart. The headline is now the brand name —
+              the same Latin string in all three locales — so those overrides
+              went with the copy that needed them. See `font-latin` and `dir` on
+              the element itself.
 
               `mt-[0.3em]` rather than a fixed step because leading below 1 lets
               the ink overflow the line box by ~0.15em; at a fixed 16px the
@@ -152,23 +156,41 @@ export async function Hero() {
 
               ── No width caps, deliberately ──
               Earlier revisions capped this in `em` to keep the line COUNT
-              font-independent, because the headline then ran to two or three
-              lines and IBM Plex Sans Arabic is much wider than the Arabic system
-              fallback: with `display: swap` the count changed under the reader
-              and dropped everything below it by a full line.
-
-              The copy is now short enough to set on one line at every width, and
-              one line is a stronger guarantee than any cap was — there is no
-              second line for either face to disagree about. A cap here would now
-              do the opposite of its old job and force the wrap back. The size
-              that keeps it to one line is enforced in the clamp; see the note
-              there for why 640px is the binding width rather than 390px. */}
+              font-independent, back when the headline ran to two or three lines
+              and the two faces disagreed about where it wrapped. One line is a
+              stronger guarantee than any cap was — there is no second line to
+              disagree about — and one Latin string in every locale removes the
+              last reason a cap existed. The size that keeps it to one line is
+              enforced in the clamp. */}
           <StaggerText
             as="h1"
             id="hero-title"
             text={t('title')}
             delayMs={120}
-            className="mt-[0.3em] text-center text-hero-display text-ink rtl:font-bold rtl:leading-[1.12] rtl:tracking-normal"
+            /**
+             * The headline is now the brand name, which is the SAME Latin string
+             * in all three locales — so it renders identically in all three, and
+             * the Arabic-script overrides that used to live here are gone with
+             * the Arabic copy they existed for.
+             *
+             * NO `font-latin` here, deliberately. It would be a no-op: on the
+             * Arabic page `--font-stack-latin` is invalid at computed-value time
+             * (it references `--font-inter`, which layout.tsx only defines for
+             * the Latin locales), so `.font-latin` silently falls back to
+             * inherited. Making it work would mean loading Inter on the Arabic
+             * critical path — the exact cost layout.tsx measured at ~1.1s of FCP
+             * and rejected. The headline therefore sets in Inter on fr/en and in
+             * the system grotesque on ar; both are clean, and neither costs a
+             * request. Flagged rather than silently traded away.
+             *
+             * `dir="ltr"` is not cosmetic. Each word is its own `inline-block`,
+             * and bidi treats an inline-block as a neutral object rather than
+             * reading the strong-LTR text inside it — without this the Arabic
+             * page lays the WORDS out right-to-left and the headline reads
+             * "Services Media JTECH".
+             */
+            dir="ltr"
+            className="mt-[0.3em] text-center text-hero-display text-ink"
           />
 
           {/* Centred with the headline, and deliberately heavier than the plain

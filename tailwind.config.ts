@@ -93,23 +93,29 @@ const config: Config = {
        * range), the tight leading and the heavy negative tracking, which the
        * text steps above deliberately never go near.
        *
-       * Arabic overrides the weight, tracking and leading at the call site:
-       * IBM Plex Sans Arabic tops out at 700, and negative tracking on a joined
-       * script pulls the letterforms apart rather than tightening them.
+       * Arabic used to override the weight, tracking and leading at the call
+       * site, because the copy was Arabic and Plex Arabic stops at 700 while
+       * negative tracking pulls a joined script apart. The copy is now the brand
+       * name — one Latin string in all three locales — so those overrides are
+       * gone and this step is Latin-only by definition. That is also why
+       * globals.css's Arabic tracking reset excludes it.
        *
        * The fluid line is bounded by the requirement that the headline sets on
-       * ONE line, not by taste. The binding case is the longest locale — French
-       * at 8.45em — against the card's inner width, and the awkward point is
-       * 640px, where the container and card paddings both step up and the inner
-       * width drops 48px for one extra pixel of viewport. The slope clears that
-       * step and every other from 320px up, so nothing wraps at any width.
+       * ONE line, not by taste.
        *
-       * That single line is also what makes the headline font-swap-proof: both
-       * faces set it on one line, so there is no rewrap to shift the page — the
-       * width caps this step used to need are gone with it.
+       * Retuned when the copy became the brand name. "JTECH Media Services"
+       * measures 10.64em in Inter against the previous copy's 8.45em, so the
+       * old ceiling overflowed it by a full line at desktop. The binding case is
+       * now Inter on fr/en — the Arabic page renders the same string in a system
+       * grotesque at 9.74em, which is narrower — and the slope is set ~8% under
+       * the one-line ceiling at every width from 320px up rather than riding it,
+       * so a face substitution can't tip it over.
+       *
+       * That single line is also what makes the headline font-swap-proof: one
+       * line cannot rewrap, so there is nothing for a swap to shift.
        */
       'hero-display': [
-        'clamp(1.5rem, -0.5rem + 10vw, 8.5rem)',
+        'clamp(1.25rem, -0.23rem + 8.5vw, 7.4rem)',
         { lineHeight: '0.94', letterSpacing: '-0.035em', fontWeight: '900' },
       ],
       numeral: ['clamp(2.75rem, 1.4rem + 5.4vw, 5rem)', { lineHeight: '1', letterSpacing: '-0.02em' }],
