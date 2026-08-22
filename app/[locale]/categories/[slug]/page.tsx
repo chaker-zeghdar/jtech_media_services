@@ -14,6 +14,8 @@ import { whatsappLink } from '@/content/settings';
 import { routing } from '@/i18n/routing';
 import { pickLocale } from '@/lib/format';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * One category, one page — the thing `categoryHref()` promised and returned
  * `#range` for until now. Every category entry in the header, the homepage
@@ -31,14 +33,6 @@ const SLUGS: readonly CategorySlug[] = categories.map((category) => category.slu
 
 function isCategorySlug(value: string): value is CategorySlug {
   return (SLUGS as readonly string[]).includes(value);
-}
-
-/**
- * Every locale × every category, prerendered. The set is small and entirely
- * known at build time, so there is no reason for any of these to be dynamic.
- */
-export function generateStaticParams() {
-  return routing.locales.flatMap((locale) => SLUGS.map((slug) => ({ locale, slug })));
 }
 
 type PageParams = { params: Promise<{ locale: string; slug: string }> };
