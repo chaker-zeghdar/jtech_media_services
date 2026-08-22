@@ -15,10 +15,21 @@ import type { Config } from 'tailwindcss';
  * See DESIGN.md for the one-brand-device-per-section rule.
  */
 const config: Config = {
+  /**
+   * `./lib` is NOT optional. RAIL_ITEM — the width class every product rail
+   * depends on — lives in lib/rail.ts, and while lib was unscanned Tailwind
+   * never emitted `w-[72vw] sm:w-[42vw] ... xl:w-[290px]`. The class landed in
+   * the HTML with no CSS behind it, so every card shrink-wrapped to its own
+   * product name and rails came out with cards 91px apart in width.
+   *
+   * Anything holding a class string belongs in a scanned directory. Adding a
+   * fourth glob is cheaper than remembering that rule.
+   */
   content: [
     './app/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './content/**/*.{ts,tsx}',
+    './lib/**/*.{ts,tsx}',
   ],
   theme: {
     // ---- Colour: full replacement of the default palette ------------------

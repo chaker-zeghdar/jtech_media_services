@@ -66,7 +66,7 @@ export async function ProductCard({
   const specPills = product.specs.slice(0, 2);
 
   return (
-    <article className={cn('group relative flex h-full flex-col', className)}>
+    <article className={cn('group relative flex h-full w-full flex-col', className)}>
       {/* ---- Image bed --------------------------------------------------- */}
       <div
         className={cn(
@@ -119,15 +119,35 @@ export async function ProductCard({
           Order follows apple.com/store's accessory cards: swatches sit directly
           under the image, then the eyebrow tag, then the name. */}
       <div className="mt-5 flex flex-1 flex-col items-start">
-        <ColourSwatches colours={colours} className="mb-3" />
+        {/* Every variable-height zone in this column reserves its space, so a
+            card with no swatches and a one-line name lands its name, tagline and
+            price at the same y as the card beside it with six colours and a
+            two-line name. Reserved rather than conditional, because a rail is
+            read across, not down: one card's missing row shifts everything below
+            it out of step with its neighbours.
 
-        {badge ? (
-          <div className="mb-3">
-            <Badge badge={badge} />
-          </div>
-        ) : null}
+            <ColourSwatches /> returns null under two colours ("one colour is not
+            a choice"), so without a floor here that row simply vanishes. The
+            height is the dot row plus its own mb-3. */}
+        <div className="mb-3 h-4">
+          <ColourSwatches colours={colours} />
+        </div>
 
-        <h3 className="text-h3 font-semibold leading-tight">{name}</h3>
+        {/* Same reasoning: only some products carry a badge. */}
+        <div className="mb-3 h-6">{badge ? <Badge badge={badge} /> : null}</div>
+
+        {/* Clamped and floored like the tagline below. Two lines, not one:
+            "لينوفو آيديا باد سليم 3" and "Galaxy Watch Ultra 2" are real
+            products and both wrap at this width, so line-clamp-1 would truncate
+            live catalogue entries rather than tidy an edge case.
+
+            The floor is TWO lines (4.375rem = 2 x the measured 35px line box),
+            not one. Flooring at one line only reserves space for the shorter
+            case, which left one- and two-line names 26px out of step with each
+            other down the rail — measured, not assumed. */}
+        <h3 className="line-clamp-2 min-h-[4.375rem] text-h3 font-semibold leading-tight">
+          {name}
+        </h3>
 
         {/* Clamped to two lines AND floored at two lines' height. Both halves
             matter: the clamp stops a long tagline pushing the price row down,

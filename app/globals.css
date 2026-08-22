@@ -82,11 +82,28 @@
      as brand fill, and clears 4.5:1 on white for the accompanying label. */
   --color-amber: #96590a;
 
-  /* Font stacks (§4). The system stack is deliberately first: on the client's
-     Mac and iPhone this renders in real SF with zero network cost. */
-  --font-stack-latin: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
-    var(--font-inter), 'Segoe UI', Roboto, sans-serif;
-  --font-stack-arabic: -apple-system, BlinkMacSystemFont, 'SF Arabic', var(--font-plex-arabic),
+  /**
+   * Font stacks (§4). The WEBFONT LEADS, unconditionally.
+   *
+   * This reverses an earlier deliberate choice, and the old reasoning is worth
+   * stating before the new one: the system stack used to come first so Mac and
+   * iPhone visitors rendered in real SF Pro / SF Arabic at zero network cost,
+   * with Inter and IBM Plex Sans Arabic as the fallback for everyone else. That
+   * is a sound performance trade in isolation.
+   *
+   * It was rejected because it makes the typeface a property of the VISITOR's
+   * device rather than of the brand. A Mac saw SF, Windows and Android saw
+   * whatever their browser maps `-apple-system`/`BlinkMacSystemFont` to — not
+   * reliably Plex even though Plex was the declared fallback — and only a
+   * browser recognising none of those tokens got the intended webfont. Three
+   * visitors, three different typefaces, none of them chosen.
+   *
+   * The system names stay as a LATER fallback, for the case where the webfont
+   * genuinely fails to load. They are no longer the preference.
+   */
+  --font-stack-latin: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, sans-serif;
+  --font-stack-arabic: var(--font-plex-arabic), -apple-system, BlinkMacSystemFont,
     'Segoe UI', Tahoma, sans-serif;
 
   /* Resolved per-locale below; `font-sans` maps to this. */
@@ -131,6 +148,44 @@
    it still applies to the regional tag we actually emit (`ar-DZ`). */
 html[lang^='ar'] {
   --font-ui: var(--font-stack-arabic);
+}
+
+/**
+ * Arabic never takes the type scale's letter-spacing.
+ *
+ * Every heading and label step in tailwind.config.ts carries tracking tuned for
+ * Latin — negative on the headline steps (h3 -0.01em through hero -0.02em),
+ * positive on the small-caps ones (eyebrow +0.06em, caption +0.01em). Arabic is
+ * a JOINED script: negative tracking drags the letterforms into each other and
+ * positive tracking breaks the joins outright. Neither is a tightening; both
+ * change the rhythm enough that the face stops reading as itself.
+ *
+ * The codebase already knew this and fixed it in exactly one place — the hero
+ * <h1>'s `rtl:tracking-normal`. This is that same fix applied at the scale
+ * level instead of per call site, and it is deliberately NOT a per-component
+ * class: a rule here covers every heading that exists and every heading anyone
+ * adds later, where a utility has to be remembered each time and silently
+ * degrades the one time it isn't. The hero's own override stays where it is —
+ * it is documented as a scoped exception and is simply redundant now.
+ *
+ * `numeral` is excluded on purpose. Prices and figures are always Latin digits
+ * (DESIGN.md §Numerals), so those steps ARE setting Latin glyphs even on an
+ * Arabic page and should keep their tracking.
+ *
+ * Latin locales are untouched — this whole block is scoped to `lang^='ar'`.
+ */
+html[lang^='ar']
+  :is(
+    .text-hero,
+    .text-hero-display,
+    .text-section,
+    .text-h2,
+    .text-h3,
+    .text-eyebrow,
+    .text-pill,
+    .text-caption
+  ) {
+  letter-spacing: normal;
 }
 
 /* ==========================================================================

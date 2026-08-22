@@ -11,8 +11,27 @@
  * drift apart — it just quietly fetches the wrong source.
  */
 
-/** Rail item width. Every rail uses it so they all snap alike. */
-export const RAIL_ITEM = 'w-[72vw] sm:w-[42vw] md:w-[31vw] lg:w-[23vw] xl:w-[290px]';
+/**
+ * Rail item width. Every rail uses it so they all snap alike.
+ *
+ * `min-w` and `max-w` are pinned to the same value as `w` at every breakpoint,
+ * which looks redundant and is not. A rail child is a flex item, and a flex
+ * item's `width` is only a starting point — `min-width: auto` lets it grow to
+ * its min-content size, which for these cards is the width of the longest
+ * unwrapped product name. Locking all three makes the box's size a definition
+ * rather than a preference, so no content can push it around.
+ *
+ * (The bug that prompted this was actually elsewhere — lib/ was missing from
+ * Tailwind's `content` globs, so none of these classes were generated at all.
+ * That is fixed in tailwind.config.ts. The pinning stays regardless: it closes
+ * the flex-item variant of the same symptom independently.)
+ */
+export const RAIL_ITEM =
+  'w-[72vw] min-w-[72vw] max-w-[72vw] ' +
+  'sm:w-[42vw] sm:min-w-[42vw] sm:max-w-[42vw] ' +
+  'md:w-[31vw] md:min-w-[31vw] md:max-w-[31vw] ' +
+  'lg:w-[23vw] lg:min-w-[23vw] lg:max-w-[23vw] ' +
+  'xl:w-[290px] xl:min-w-[290px] xl:max-w-[290px]';
 
 /** Homepage rails show this many products; the full list lives in content/. */
 export const RAIL_LIMIT = 10;
