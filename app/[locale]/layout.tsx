@@ -62,11 +62,29 @@ export function generateStaticParams() {
  * production deploys the platform-provided host is used automatically; the
  * literal is only the local-development fallback.
  */
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : 'https://jtech-dz.com');
+function getSiteUrl(): URL {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+
+  if (configured) {
+    try {
+      return new URL(/^https?:\/\//i.test(configured) ? configured : `https://${configured}`);
+    } catch {
+      // Fall through to the Vercel-provided URL or the production fallback.
+    }
+  }
+
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+
+  if (vercel) {
+    try {
+      return new URL(/^https?:\/\//i.test(vercel) ? vercel : `https://${vercel}`);
+    } catch {
+      // Fall through to the production fallback.
+    }
+  }
+
+  return new URL('https://jtech-dz.com');
+}
 
 export async function generateMetadata({
   params,
@@ -79,7 +97,7 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: 'meta' });
 
   return {
-    metadataBase: new URL(siteUrl),
+    metadataBase: getSiteUrl(),
     title: t('title'),
     description: t('description'),
     // `as-needed` means Arabic has no prefix, so the canonical for ar is "/".
