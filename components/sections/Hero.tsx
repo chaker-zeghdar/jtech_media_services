@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { GoldRibbon } from '@/components/brand/GoldRibbon';
 import { Container } from '@/components/layout/Container';
@@ -9,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { ProductImage } from '@/components/ui/ProductImage';
 import { SlideBanner } from '@/components/ui/SlideBanner';
-import { featuredProduct, primaryVariant } from '@/content/products';
+import { featuredProduct } from '@/content/products';
 import { settings, whatsappLink } from '@/content/settings';
 import { pickLocale } from '@/lib/format';
 
@@ -17,8 +16,8 @@ import { pickLocale } from '@/lib/format';
  * The hero — one inset card holding the whole opening statement.
  *
  * Oversized headline, the product floating on a soft wash with the gold ribbon
- * sweeping behind it, a zoomed detail crop pinned to the stage, the primary CTA
- * overlaid on the product, and the trust line set as a pull quote.
+ * sweeping behind it, the primary CTA overlaid on the product, and the trust
+ * line set as a pull quote.
  *
  * ── The surface is NOT a second <GoldPanel /> ────────────────────────────────
  * `--gradient-hero` (globals.css) runs full gold at the top edge down through
@@ -48,9 +47,7 @@ export async function Hero() {
   const tSocial = await getTranslations('social');
 
   const product = featuredProduct();
-  const variant = primaryVariant(product);
   const name = pickLocale(product.name, locale);
-  const shot = variant.images[0];
 
   /**
    * The client's four real channels — matching the reference's four-icon count
@@ -202,13 +199,14 @@ export async function Hero() {
           </Enter>
 
           {/* ---- Product stage --------------------------------------------
-              The wrapper is `relative` so the detail crop and the CTA can hang
-              off the product box, while the social row can still fall back to
-              normal flow below it on mobile. */}
+              The wrapper is `relative` so the CTA can hang off the product box,
+              while the social row can still fall back to normal flow below it
+              on mobile. */}
           <div className="relative mt-10 md:mt-2">
             <Enter delayMs={160} className="relative mx-auto w-full max-w-hero">
-              {/* 16:10 caps the product's rendered HEIGHT, which is what keeps
-                  the 520×677 cutout inside its own resolution — see `sizes`. */}
+              {/* 16:10 caps the product's rendered HEIGHT — the box the ribbon
+                  sweeps behind and the CTA overlays, independent of the source
+                  image's own aspect ratio. */}
               <div className="relative aspect-[16/10]">
                 {/* No bed and no glow: the product sits on the card's own wash and
                     the ribbon is the only thing behind it. Negative insets let the
@@ -218,18 +216,16 @@ export async function Hero() {
                 <div className="absolute inset-0 z-20 flex items-center justify-center">
                   <ProductImage
                     /**
-                     * A client-supplied cutout (520×677), not a hero-resolution
-                     * photograph — swap it when real product photography arrives.
-                     *
-                     * `object-contain` in a 16:10 box makes HEIGHT the binding
-                     * constraint: 388px tall renders ~298px wide, well inside the
-                     * 520px source. The stage's width is never the rendered
-                     * width, so `sizes` declares the ~298px it actually paints at.
+                     * A fixed hero-only cutout at /public/hero.png (370×370,
+                     * square, four colourways), not the per-variant product photo
+                     * — deliberately independent of `product.variants`, so this
+                     * stage doesn't change if the featured product's own image
+                     * does. Swap the file to change what the hero shows.
                      */
-                    src={shot}
+                    src="/hero.png"
                     name={name}
-                    width={520}
-                    height={677}
+                    width={370}
+                    height={370}
                     priority
                     sizes="(max-width: 767px) 45vw, 300px"
                     className="drop-shadow-product"
@@ -255,68 +251,6 @@ export async function Hero() {
                     </span>
                   </Button>
                 </Enter>
-
-                {/* ---- Detail crop ----------------------------------------
-                    Not a stock photo: a tight zoom of the SAME real cutout,
-                    scaled inside an overflow-hidden square so it reads as a macro
-                    of the camera module. `object-position` is a physical
-                    percentage into the artwork, which is correct — the image
-                    itself does not mirror, so its framing must not either. The
-                    panel's LAYOUT position is logical (`start`), so the panel
-                    does mirror. */}
-                {shot ? (
-                  <Enter
-                    delayMs={500}
-                    className="absolute -bottom-2 start-0 z-30 w-24 sm:w-28 md:w-36"
-                  >
-                    <div className="relative aspect-square overflow-hidden rounded-card bg-gray-50 shadow-card">
-                      <Image
-                        src={shot}
-                        alt=""
-                        width={520}
-                        height={677}
-                        /**
-                         * The post-transform size, NOT the 96/112/144px box. The
-                         * scale magnifies whatever bitmap next/image hands back,
-                         * so declaring the box got a 144px source stretched past
-                         * 400px and it rendered visibly soft. 420px is still a
-                         * downscale from the 520px original.
-                         */
-                        sizes="(max-width: 767px) 320px, 420px"
-                        className="absolute inset-0 h-full w-full scale-[2.8] object-cover"
-                        /**
-                         * Two knobs, and they do different jobs. `objectPosition`
-                         * picks the vertical band (the source is portrait, so
-                         * `cover` crops height, and only the Y value bites).
-                         * `transformOrigin` is what the zoom happens ABOUT —
-                         * without it the scale magnifies the box's centre, which
-                         * landed on the gap between the two handsets and read as
-                         * a random slice. Both are physical percentages into the
-                         * artwork, which is correct: the image itself never
-                         * mirrors, so its framing must not either.
-                         *
-                         * The window the pair produces is `origin * (1 - 1/scale)`
-                         * wide, so 2.8 / 13% frames the rear camera module alone.
-                         * At 2.15 the window was wide enough to catch the second
-                         * handset's edge, which read as a seam rather than a crop.
-                         */
-                        style={{ objectPosition: '50% 20%', transformOrigin: '13% 20%' }}
-                      />
-                    </div>
-
-                    {/* A real destination, not a decorative control: it opens the
-                        fuller look at this same iPhone. `#featured` rather than a
-                        <QuickView /> trigger because that is a client island and
-                        the hero deliberately ships no client JS on the LCP path. */}
-                    <a
-                      href="#featured"
-                      aria-label={`${tProduct('learnMore')} — ${name}`}
-                      className="absolute -bottom-3 end-2 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-ink shadow-card transition-colors duration-200 hover:bg-gold-tint"
-                    >
-                      <Icon name="expand" size={16} />
-                    </a>
-                  </Enter>
-                ) : null}
               </div>
             </Enter>
 
