@@ -242,7 +242,7 @@ export async function Featured() {
       <Carousel label={`${t('railLabel')} — ${tA11y('carouselProgress')}`} className="mt-6">
         {railProducts.map((product) => (
           <div key={product.slug} className={RAIL_ITEM}>
-            <ProductCard product={product} bed="white" sizes={RAIL_SIZES} />
+            <ProductCard product={product} locale={locale} bed="white" sizes={RAIL_SIZES} />
           </div>
         ))}
       </Carousel>

@@ -103,7 +103,12 @@ export default async function CategoryPage({ params }: PageParams) {
           <ul className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((product) => (
               <li key={product.slug}>
-                <ProductCard product={product} locale={locale} bed="white" sizes={GRID_SIZES} />
+                <ProductCard
+                  product={product}
+                  locale={locale}
+                  bed="white"
+                  sizes={GRID_SIZES}
+                />
               </li>
             ))}
           </ul>

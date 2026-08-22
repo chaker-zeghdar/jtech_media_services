@@ -1,4 +1,4 @@
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import type { Product } from '@/content/schemas';
 import { whatsappLink } from '@/content/contact';
 import { cn } from '@/lib/cn';
@@ -14,7 +14,7 @@ import { QuickViewTrigger } from './QuickViewTrigger';
 
 type ProductCardProps = {
   product: Product;
-  locale?: Locale;
+  locale: string;
   /** Passed through to next/image. Required — see ProductImage. */
   sizes?: string;
   /**
@@ -53,16 +53,16 @@ type ProductCardProps = {
  */
 export async function ProductCard({
   product,
-  locale: explicitLocale,
+  locale,
   sizes = '(max-width: 639px) 78vw, (max-width: 1023px) 44vw, (max-width: 1439px) 30vw, 300px',
   bed = 'gray',
   className,
 }: ProductCardProps) {
-  const locale = explicitLocale ?? (await getLocale());
-  const t = await getTranslations({ locale, namespace: 'product' });
+  const typedLocale = locale as Locale;
+  const t = await getTranslations({ locale: typedLocale, namespace: 'product' });
 
-  const name = pickLocale(product.name, locale);
-  const tagline = firstClause(pickLocale(product.description, locale));
+  const name = pickLocale(product.name, typedLocale);
+  const tagline = firstClause(pickLocale(product.description, typedLocale));
   const variant = primaryVariant(product);
   const badge = primaryBadge(product);
   const colours = productColours(product);

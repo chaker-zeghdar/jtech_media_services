@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { CornerBlob } from '@/components/brand/CornerBlob';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
@@ -23,6 +23,7 @@ import { RAIL_ITEM, RAIL_LIMIT, RAIL_SIZES } from '@/lib/rail';
  * the same promise worded the same way, not a duplication to tidy up.
  */
 export async function OurLaptops() {
+  const locale = await getLocale();
   const t = await getTranslations('laptops');
   const tCommon = await getTranslations('common');
   const tA11y = await getTranslations('a11y');
@@ -42,7 +43,7 @@ export async function OurLaptops() {
       <Carousel label={`${t('title')} — ${tA11y('carouselProgress')}`} className="mt-14">
         {products.map((product) => (
           <div key={product.slug} className={RAIL_ITEM}>
-            <ProductCard product={product} bed="gray" sizes={RAIL_SIZES} />
+            <ProductCard product={product} locale={locale} bed="gray" sizes={RAIL_SIZES} />
           </div>
         ))}
       </Carousel>

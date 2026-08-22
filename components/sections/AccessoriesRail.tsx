@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { Halftone } from '@/components/brand/Halftone';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
@@ -13,6 +13,7 @@ import { RAIL_ITEM, RAIL_SIZES } from '@/lib/rail';
  * bottom-start corner so it doesn't echo the range section's placement.
  */
 export async function AccessoriesRail() {
+  const locale = await getLocale();
   const t = await getTranslations('accessoriesSection');
   const tA11y = await getTranslations('a11y');
   const products = accessories().slice(0, 6);
@@ -29,7 +30,7 @@ export async function AccessoriesRail() {
         <Carousel label={`${t('title')} — ${tA11y('carouselProgress')}`} className="mt-14">
           {products.map((product) => (
             <div key={product.slug} className={RAIL_ITEM}>
-              <ProductCard product={product} bed="white" sizes={RAIL_SIZES} />
+              <ProductCard product={product} locale={locale} bed="white" sizes={RAIL_SIZES} />
             </div>
           ))}
         </Carousel>

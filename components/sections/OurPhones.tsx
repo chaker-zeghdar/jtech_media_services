@@ -56,7 +56,7 @@ export async function OurPhones() {
             .slice(0, RAIL_LIMIT)
             .map((product) => (
               <div key={product.slug} className={RAIL_ITEM}>
-                <ProductCard product={product} bed="white" sizes={RAIL_SIZES} />
+                <ProductCard product={product} locale={locale} bed="white" sizes={RAIL_SIZES} />
               </div>
             ))}
         </Carousel>
