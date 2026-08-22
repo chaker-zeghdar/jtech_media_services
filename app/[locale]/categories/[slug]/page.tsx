@@ -81,8 +81,8 @@ export default async function CategoryPage({ params }: PageParams) {
   const category = categories.find((entry) => entry.slug === slug);
   if (!category) notFound();
 
-  const t = await getTranslations('categoryPage');
-  const tProduct = await getTranslations('product');
+  const t = await getTranslations({ locale, namespace: 'categoryPage' });
+  const tProduct = await getTranslations({ locale, namespace: 'product' });
   const name = pickLocale(category.name, locale);
   const items = productsByCategory(slug);
 
@@ -103,7 +103,7 @@ export default async function CategoryPage({ params }: PageParams) {
           <ul className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((product) => (
               <li key={product.slug}>
-                <ProductCard product={product} bed="white" sizes={GRID_SIZES} />
+                <ProductCard product={product} locale={locale} bed="white" sizes={GRID_SIZES} />
               </li>
             ))}
           </ul>

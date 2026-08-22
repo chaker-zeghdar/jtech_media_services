@@ -3,6 +3,7 @@ import type { Product } from '@/content/schemas';
 import { whatsappLink } from '@/content/contact';
 import { cn } from '@/lib/cn';
 import { firstClause, pickLocale } from '@/lib/format';
+import type { Locale } from '@/i18n/routing';
 import { primaryBadge, priceFrom, primaryVariant, productColours } from '@/lib/product';
 import { Badge } from './Badge';
 import { Button } from './Button';
@@ -13,6 +14,7 @@ import { QuickViewTrigger } from './QuickViewTrigger';
 
 type ProductCardProps = {
   product: Product;
+  locale?: Locale;
   /** Passed through to next/image. Required — see ProductImage. */
   sizes?: string;
   /**
@@ -51,12 +53,13 @@ type ProductCardProps = {
  */
 export async function ProductCard({
   product,
+  locale: explicitLocale,
   sizes = '(max-width: 639px) 78vw, (max-width: 1023px) 44vw, (max-width: 1439px) 30vw, 300px',
   bed = 'gray',
   className,
 }: ProductCardProps) {
-  const locale = await getLocale();
-  const t = await getTranslations('product');
+  const locale = explicitLocale ?? (await getLocale());
+  const t = await getTranslations({ locale, namespace: 'product' });
 
   const name = pickLocale(product.name, locale);
   const tagline = firstClause(pickLocale(product.description, locale));
