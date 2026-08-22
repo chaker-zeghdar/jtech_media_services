@@ -578,11 +578,28 @@ html[lang^='ar']
     will-change: transform;
   }
 
+  /* Same keyframe, run back to front — an instance-level choice (see the
+     `reverse` prop on <SlideBanner />), not a locale one. `dir="ltr"` on the
+     viewport already fixed which physical way "forward" is; this just lets one
+     instance travel the other physical way on top of that fix. */
+  .marquee-track.marquee-reverse {
+    animation-direction: reverse;
+  }
+
   /* Pause on hover AND on focus-within — a keyboard user must be able to stop
      it to reach the links, and hover alone doesn't give them that. */
   .marquee-viewport:hover .marquee-track,
   .marquee-viewport:focus-within .marquee-track {
     animation-play-state: paused;
+  }
+
+  /* Opts a full-bleed instance out of the HOVER half of the rule above only —
+     `:focus-within` above still applies unconditionally. Two classes beats one
+     class + :hover, so this wins the cascade without `!important`. See the
+     `pauseOnHover` note on <SlideBanner /> for why a full-bleed banner needs
+     this and a normal-width one doesn't. */
+  .marquee-viewport.marquee-no-hover-pause:hover .marquee-track {
+    animation-play-state: running;
   }
 
   /* Lets the browser skip style, layout and paint for sections that are still
