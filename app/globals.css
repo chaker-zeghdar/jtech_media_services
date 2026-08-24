@@ -109,38 +109,52 @@
   /* Resolved per-locale below; `font-sans` maps to this. */
   --font-ui: var(--font-stack-latin);
 
-  /* Sticky chrome, measured off the components that render it:
-     Header is h-16, LocalNav is h-12. Both stick, and both now sit ON the hero
-     card rather than in bars above it. */
+  /* Sticky chrome, measured off the component that renders it: Header is h-16.
+     It sticks, and sits ON the hero card rather than in a bar above it. */
   --header-height: 64px;
-  --nav-height: 48px;
+
+  /**
+   * 0, not deleted. This was LocalNav's height (48px) before it was removed at
+   * the client's request — a second sticky bar stacked under Header read as a
+   * second navbar. Deleting the token outright would look like the obvious
+   * cleanup, but `<Hero />` and `<WhyJtech />` both compose it directly into
+   * their own `calc()`s (`header-height + nav-height`), and an undefined custom
+   * property makes the WHOLE `calc()` invalid at computed-value time — Hero's
+   * negative top margin would fall back to `0` and the hero card would render
+   * 64px too low, with a bare gap above it where the transparent header no
+   * longer has gold to sit on. Zeroing it instead keeps both formulas correct
+   * with no edit to either file: `header-height + 0` is exactly the sticky
+   * chrome height that still exists. Restore 48px here first if LocalNav is
+   * ever brought back — that one edit is everything either consumer needs.
+   */
+  --nav-height: 0px;
 
   /**
    * The hero card's blank top band — the strip the chrome floats over before any
    * copy starts. Declared once because two things must agree on it exactly: the
-   * card's top padding, and the height of the sentinel <HeaderShell /> and
-   * <LocalNav /> observe to decide when they have left the hero. Split them and
-   * the bars change state at an offset that no longer matches the design.
+   * card's top padding, and the height of the sentinel <HeaderShell /> observes
+   * to decide when it has left the hero. Split them and the header would change
+   * state at an offset that no longer matches the design.
    *
-   * It reserves the header only, not the header plus the nav: the nav is hidden
-   * at this scroll position, so reserving room for it would put back the gap
-   * above the hero that removing <AnnouncementBar /> was meant to close.
+   * (<LocalNav /> used to observe this same sentinel through `useHeroPassed` —
+   * see useOverHero.ts — before it was removed from the render tree. That hook
+   * is unused dead code now, same as the rest of LocalNav.tsx.)
    */
   --hero-card-top: calc(2.5rem + var(--header-height));
 
   /**
    * How far an anchored section must clear the top of the viewport.
    *
-   * BOTH the Header and the LocalNav are sticky, so an anchor has to clear the
-   * pair of them — 112px of chrome — plus 16px so the section edge doesn't graze
-   * the nav. Each section already opens with 72/120px of its own padding above
-   * the heading, which is the real breathing room.
+   * Header is sticky, so an anchor has to clear it plus 16px so the section
+   * edge doesn't graze it. Each section already opens with 72/120px of its own
+   * padding above the heading, which is the real breathing room.
    *
-   * Derived from the same two primitives that position the bars themselves
-   * (LocalNav sticks at `top: var(--header-height)`), so the anchor offset and
-   * the sticky stacking cannot drift apart.
+   * Used to add LocalNav's height too, back when a second sticky bar sat under
+   * Header — dropped along with that bar rather than left as `+ 0`, since this
+   * formula (unlike Hero's and WhyJtech's) has no other reason to reference
+   * `--nav-height` by name.
    */
-  --nav-offset: calc(var(--header-height) + var(--nav-height) + 16px);
+  --nav-offset: calc(var(--header-height) + 16px);
 }
 
 /* Arabic locale picks up the Arabic stack from the same `font-sans` class, so

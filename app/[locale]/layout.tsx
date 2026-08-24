@@ -7,8 +7,6 @@ import type { ReactNode } from 'react';
 import { Footer } from '@/components/layout/Footer';
 import { HashAnchorFix } from '@/components/layout/HashAnchorFix';
 import { Header } from '@/components/layout/Header';
-import { LocalNav } from '@/components/layout/LocalNav';
-import { MobileOrderBar } from '@/components/layout/MobileOrderBar';
 import { SocialFab } from '@/components/layout/SocialFab';
 import { settings } from '@/content/settings';
 import { localeDirections, localeTags, routing } from '@/i18n/routing';
@@ -151,7 +149,7 @@ export default async function LocaleLayout({
       // silences its "detected scroll-behavior: smooth" console warning.
       data-scroll-behavior="smooth"
     >
-      <body className="pb-[68px] md:pb-0">
+      <body>
         <NextIntlClientProvider locale={locale} messages={clientMessages(messages)}>
           <a href="#main" className="skip-link">
             {t('skipToContent')}
@@ -161,22 +159,48 @@ export default async function LocaleLayout({
 
           {/* No <AnnouncementBar />. Everything it carried now has a better
               home: the phone and WhatsApp are icon buttons in <Header /> (and in
-              <MobileMenu /> + <MobileOrderBar /> below sm, where those buttons
-              are hidden), the locale switcher moved into <Header /> too, and the
+              <MobileMenu /> below sm, where those buttons are hidden), the
+              locale switcher moved into <Header /> too, and the
               delivery/cash-on-delivery promise is stated in the hero's own
               subhead rather than in 12px type above it. The component is still
               in components/layout/ if it is ever wanted back; this is the only
               route, so gating it per-page would have been indirection with
               nothing on the other side. */}
           <Header />
-          <LocalNav />
+
+          {/* No <LocalNav />, at the client's request: a second sticky bar
+              stacked directly under <Header /> read as a second navbar, not as
+              a useful jump list. The component is still in components/layout/
+              if it is ever wanted back — see the matching note on
+              <AnnouncementBar /> above for why this file just stops rendering
+              it rather than deleting it. --nav-height in globals.css is now 0
+              rather than removed: <Hero /> and <WhyJtech /> both compose it
+              into their own sticky-chrome math (`header-height + nav-height`),
+              so zeroing it keeps those formulas correct with no edits to either
+              file, where deleting it outright would have made both `calc()`s
+              invalid. */}
 
           <main id="main" aria-label={t('mainContent')}>
             {children}
           </main>
 
           <Footer />
-          <MobileOrderBar />
+          {/* No <MobileOrderBar />, at the client's request: the fixed bottom
+              order bar (call + WhatsApp) is gone from mobile widths entirely.
+              The component is still in components/layout/ if it is ever wanted
+              back. `<body>` no longer reserves the 68px this bar needed —
+              see the matching notes above for <AnnouncementBar /> and
+              <LocalNav />.
+
+              This was the only PERSISTENT ordering affordance on mobile —
+              below `sm`, <Header /> hides its own phone/WhatsApp icon buttons
+              (`hidden sm:inline-flex`), so a mobile visitor's nearest CTA is
+              now whichever of Hero's own WhatsApp link, a product card's order
+              link, or <SocialFab /> happens to be on screen. <SocialFab /> is
+              social-only by design — no phone/WhatsApp in it, because this bar
+              covered that. If a persistent mobile ordering CTA is wanted again,
+              <SocialFab /> gaining a WhatsApp entry is the natural place for
+              it — not built speculatively here. */}
           {/* Site-wide, not homepage-only: the social accounts are as relevant
               on a category page as on the homepage, and a control that appears
               and disappears between routes reads as a bug. The three URLs are

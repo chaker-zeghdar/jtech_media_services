@@ -59,6 +59,8 @@ export async function Featured() {
   const variant = primaryVariant(product);
   const colours = productColours(product);
   const name = pickLocale(product.name, locale);
+  // Two, not the product's full highlight set — see the note at the <dl />.
+  const highlights = product.highlights.slice(0, 2);
 
   /**
    * One rail where there used to be two sections. `bestsellers()` leads because
@@ -94,8 +96,10 @@ export async function Featured() {
           only place this is used. `rounded-b-none` because a radius and a
           diagonal cut fight each other at the same corner; the top keeps its
           radius, the bottom is the cut. Extra bottom padding clears the
-          deepest point of the cut (4vw). */}
-      <div className="diagonal-end on-ink mt-14 rounded-tile rounded-b-none bg-ink py-14 pb-[calc(3.5rem+4vw)] text-white md:mt-16 md:py-16 md:pb-[calc(4rem+4vw)]">
+          deepest point of the cut (4vw) — that `+4vw` term is the diagonal-cut
+          mechanic itself and is untouched; only the base rem values it's added
+          to were pulled down a notch (py-14/16 → py-10/12) to shrink the block. */}
+      <div className="diagonal-end on-ink mt-14 rounded-tile rounded-b-none bg-ink py-10 pb-[calc(2.5rem+4vw)] text-white md:mt-16 md:py-12 md:pb-[calc(3rem+4vw)]">
         <Container className="grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
           {/* ---- Product + ribbon ------------------------------------------ */}
           <Reveal className="relative order-1 mx-auto w-full max-w-[520px] lg:order-none">
@@ -145,14 +149,22 @@ export async function Featured() {
                 {t.rich('title', { em: goldPill })}
               </h3>
               <Swash />
-              <p className="mt-6 max-w-[46ch] text-subhead text-gray-300">{t('subhead')}</p>
+              <p className="mt-5 max-w-[46ch] text-subhead text-gray-300">{t('subhead')}</p>
             </Reveal>
 
-            {/* Big spec numerals — 48MP · A18 · 12 · 3 */}
-            {product.highlights.length > 0 ? (
+            {/* Two spec numerals, not four — 48MP · A18. This was a full
+                spec-sheet moment (48MP / A18 / 12 / 3) inside a panel meant to
+                say "here's the one product," and the same numbers are one tap
+                away on the product's own quick-view / category page. The two
+                kept are the two a phone is actually marketed on — the camera
+                and the chip; front-camera resolution and lens count are detail,
+                not headline. `grid-cols-2` with no `sm:` step: two items
+                already fill two columns at every width, so the old
+                `sm:grid-cols-4` had nothing left to do. */}
+            {highlights.length > 0 ? (
               <Reveal delayMs={120}>
-                <dl className="mt-12 grid grid-cols-2 gap-x-8 gap-y-10 border-t border-white/15 pt-10 sm:grid-cols-4">
-                  {product.highlights.map((highlight) => (
+                <dl className="mt-8 grid grid-cols-2 gap-x-8 border-t border-white/15 pt-8">
+                  {highlights.map((highlight) => (
                     <div key={highlight.label.en}>
                       <dt className="sr-only">{pickLocale(highlight.label, locale)}</dt>
                       <dd>
@@ -172,7 +184,7 @@ export async function Featured() {
 
             {/* Colour swatches */}
             {colours.length > 1 ? (
-              <Reveal delayMs={180} className="mt-12">
+              <Reveal delayMs={180} className="mt-8">
                 {/* gray-500 on ink, not gray-700 — see the note in Price.tsx. */}
                 <h3 className="text-caption uppercase text-gray-500">{t('coloursLabel')}</h3>
                 <ul className="mt-4 flex flex-wrap items-center gap-3">
@@ -191,7 +203,7 @@ export async function Featured() {
             ) : null}
 
             {/* Price + actions */}
-            <Reveal delayMs={240} className="mt-12 flex flex-col gap-7">
+            <Reveal delayMs={240} className="mt-8 flex flex-col gap-7">
               <div>
                 <p className="text-caption uppercase text-gray-500">{t('priceLabel')}</p>
                 <Price
