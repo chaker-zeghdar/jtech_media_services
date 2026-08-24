@@ -1,4 +1,4 @@
-import type { LocalizedText } from '@/content/schemas';
+import type { LocalizedText, Wilaya } from '@/content/schemas';
 import type { Locale } from '@/i18n/routing';
 
 /**
@@ -22,6 +22,18 @@ export function formatInteger(value: number): string {
 /** Reads the field for the active locale out of a localized content value. */
 export function pickLocale(text: LocalizedText, locale: Locale): string {
   return text[locale];
+}
+
+/**
+ * `Wilaya` (content/wilayas.ts) only carries `nameAr`/`nameFr` — there is no
+ * `nameEn` in the data, because Algerian wilayas don't have a distinct English
+ * exonym the way, say, countries do. English falls back to the French name,
+ * which is the conventional way they're referred to in French/English mixed
+ * contexts (shipping labels, delivery apps) — a deliberate call, not an
+ * oversight, and one worth a future editor knowing was made on purpose.
+ */
+export function pickWilayaName(wilaya: Wilaya, locale: Locale): string {
+  return locale === 'ar' ? wilaya.nameAr : wilaya.nameFr;
 }
 
 /**

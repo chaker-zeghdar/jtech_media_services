@@ -213,6 +213,31 @@
     "colourCount": "متوفر بـ {count, plural, =1 {لون واحد} =2 {لونين} few {# ألوان} many {# لوناً} other {# لون}}",
     "moreColours": "+{count}"
   },
+  "checkout": {
+    "eyebrow": "اطلب دروك",
+    "quantityLabel": "الكمية",
+    "decreaseQuantity": "نقص الكمية",
+    "increaseQuantity": "زيد الكمية",
+    "deliveryMethodLabel": "كيفاش تحب تستلم",
+    "deskOption": "مكتب التوصيل",
+    "homeOption": "توصيل للدار",
+    "wilayaLabel": "الولاية",
+    "wilayaPlaceholder": "اختار ولايتك",
+    "wilayaError": "اختار ولايتك",
+    "nameLabel": "الاسم الكامل",
+    "nameError": "دخل اسمك",
+    "phoneLabel": "رقم الهاتف",
+    "phoneHint": "مثال: 0659 39 13 13",
+    "phoneError": "دخل رقم هاتف صحيح (05/06/07 ومتبوع بـ 8 أرقام)",
+    "addressLabel": "عنوان التوصيل",
+    "addressError": "دخل عنوانك",
+    "summaryTitle": "ملخص الطلب",
+    "deliveryFeeLabel": "التوصيل",
+    "totalLabel": "المجموع",
+    "submitCta": "أكّد الطلب",
+    "confirmedTitle": "توصلنا بطلبك!",
+    "confirmedBody": "غادي نتصلو بيك ولا نكلموك في واتساب باش نأكدو الطلب ونهاية السعر في أقرب وقت."
+  },
   "locale": {
     "label": "اللغة"
   },

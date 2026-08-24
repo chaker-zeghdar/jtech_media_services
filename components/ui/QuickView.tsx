@@ -1,46 +1,63 @@
 'use client';
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { useLocale, useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useRef } from 'react';
+import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { Product } from '@/content/schemas';
-// Client component — see the import note in ProductCard.tsx.
-import { whatsappLink } from '@/content/contact';
-import { pickLocale } from '@/lib/format';
-import { primaryVariant, productColours } from '@/lib/product';
 import { cn } from '@/lib/cn';
-import { Button } from './Button';
+import { type ConfirmedOrder, CheckoutView } from './CheckoutView';
 import { Icon } from './Icon';
-import { Price } from './Price';
-import { ProductImage } from './ProductImage';
-import { StockDot } from './StockDot';
+import { OrderConfirmation } from './OrderConfirmation';
+import { ProductDetailView } from './ProductDetailView';
+
+type View = 'detail' | 'checkout' | 'confirmed';
 
 type QuickViewProps = {
   product: Product;
   open: boolean;
   onClose: () => void;
+  /**
+   * Which view a fresh open lands on. `<ProductDialogTrigger />` passes
+   * `'checkout'` for the card's own order button (skip the detail view —
+   * someone clicking "order" already knows what they want) and `'detail'`
+   * for "learn more". Re-applied every time `open` transitions to true, so
+   * reopening the same mounted dialog from the other trigger doesn't leave
+   * it on whatever view it was last closed on.
+   */
+  initialView?: View;
 };
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 /**
- * Product quick-view dialog.
+ * Product quick-view dialog — and, since the checkout pass, also the
+ * single-product buy-now flow. One dialog, three interchangeable views:
  *
- * This is the one place Framer Motion earns its weight: it only mounts on click,
- * so it is loaded through next/dynamic from <ProductCard /> and contributes
- * nothing to first-load JS. The always-on motion primitives in components/motion
- * are CSS for exactly that reason.
+ *   'detail'    the original quick view — photo, price, colours, specs
+ *   'checkout'  variant/quantity/delivery form + live order summary
+ *   'confirmed' the post-submit recap; see CheckoutView's own PHASE 3 note
  *
- * Implements the full dialog contract by hand — no headless library: labelled by
- * the product name, focus moved in on open and restored on close, Tab cycled
- * inside, Escape and backdrop both close, and the page behind is scroll-locked
- * and hidden from assistive tech via aria-hidden on the portal sibling.
+ * They share this file's dialog shell (portal, focus trap, Escape, backdrop,
+ * scroll lock) rather than being three separate dialogs, which is both the
+ * more premium feel — one continuous panel, not a stack of popups — and the
+ * reason `<ProductCard />`'s "order" button and its own "اعرف أكثر" → "order"
+ * button switch views in place instead of closing and reopening.
+ *
+ * This is the one place Framer Motion earns its weight: it only mounts on
+ * click, so it is loaded through next/dynamic from <ProductDialogTrigger />
+ * and contributes nothing to first-load JS. The always-on motion primitives
+ * in components/motion are CSS for exactly that reason.
+ *
+ * Implements the full dialog contract by hand — no headless library:
+ * labelled by whichever view's own heading is currently showing (see the
+ * `titleId` note below), focus moved in on open and restored on close, Tab
+ * cycled inside, Escape and backdrop both close, and the page behind is
+ * scroll-locked and hidden from assistive tech via aria-hidden on the portal
+ * sibling.
  */
-export function QuickView({ product, open, onClose }: QuickViewProps) {
-  const locale = useLocale();
-  const t = useTranslations('product');
+export function QuickView({ product, open, onClose, initialView = 'detail' }: QuickViewProps) {
   const tCommon = useTranslations('common');
   const reduce = useReducedMotion();
 
@@ -48,9 +65,8 @@ export function QuickView({ product, open, onClose }: QuickViewProps) {
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const restoreFocusTo = useRef<HTMLElement | null>(null);
 
-  const name = pickLocale(product.name, locale);
-  const variant = primaryVariant(product);
-  const colours = productColours(product);
+  const [view, setView] = useState<View>(initialView);
+  const [confirmedOrder, setConfirmedOrder] = useState<ConfirmedOrder | null>(null);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
@@ -105,6 +121,41 @@ export function QuickView({ product, open, onClose }: QuickViewProps) {
     };
   }, [open, handleKeyDown]);
 
+  // A fresh open always starts at the view its trigger asked for, and always
+  // drops any order left over from a previous visit — reopening the dialog
+  // must never show a stale confirmation from an earlier session.
+  useEffect(() => {
+    if (open) {
+      setView(initialView);
+      setConfirmedOrder(null);
+    }
+  }, [open, initialView]);
+
+  // Switching views WITHIN an already-open dialog (detail's own order button,
+  // or a successful checkout submit) needs its own focus move: the element
+  // that was focused a moment ago may no longer exist in the new view, and an
+  // unfocused body is a silently lost place for a screen reader user. Every
+  // view renders its own heading at `titleId`, so that's always a safe,
+  // present target. `tabIndex={-1}` is what makes a heading programmatically
+  // focusable without joining the normal Tab order.
+  //
+  // Guarded to skip the INITIAL open: that moment already belongs to the
+  // effect above, which sends focus to the dialog's first focusable control
+  // (the close button) rather than its heading, and the two would otherwise
+  // both fire on mount and fight over where focus lands. `wasOpen` is what
+  // tells the difference between "just opened" and "already open, view
+  // changed" without changing what a fresh open does.
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    if (open && wasOpen.current) {
+      dialogRef.current?.scrollTo({ top: 0 });
+      const heading = document.getElementById(titleId);
+      heading?.setAttribute('tabindex', '-1');
+      heading?.focus();
+    }
+    wasOpen.current = open;
+  }, [view, open, titleId]);
+
   if (typeof document === 'undefined') return null;
 
   const duration = reduce ? 0 : 0.26;
@@ -146,84 +197,30 @@ export function QuickView({ product, open, onClose }: QuickViewProps) {
               <Icon name="close" size={18} />
             </button>
 
-            <div className="grid gap-8 p-6 sm:p-10 md:grid-cols-2 md:gap-12">
-              <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-card bg-gray-50">
-                <ProductImage
-                  src={variant.images[0]}
-                  name={name}
-                  width={520}
-                  height={520}
-                  sizes="(max-width: 767px) 88vw, 400px"
-                  className="drop-shadow-product"
-                />
+            {view === 'confirmed' && confirmedOrder ? (
+              <div className="p-6 sm:p-10">
+                <OrderConfirmation order={confirmedOrder} titleId={titleId} />
               </div>
-
-              <div className="flex flex-col">
-                <p className="text-caption uppercase text-ink/70">{product.brand}</p>
-                <h2 id={titleId} className="mt-2 text-h2 font-semibold">
-                  {name}
-                </h2>
-
-                <p className="mt-4 text-base text-gray-700">
-                  {pickLocale(product.description, locale)}
-                </p>
-
-                <div className="mt-6">
-                  <Price
-                    value={variant.price}
-                    compareAt={variant.compareAt}
-                    size="lg"
-                    showSaving
+            ) : (
+              <div className="grid gap-8 p-6 sm:p-10 md:grid-cols-2 md:gap-12">
+                {view === 'detail' ? (
+                  <ProductDetailView
+                    product={product}
+                    titleId={titleId}
+                    onOrder={() => setView('checkout')}
                   />
-                  <StockDot status={variant.stock} className="mt-3" />
-                </div>
-
-                {colours.length > 1 ? (
-                  <div className="mt-7">
-                    <h3 className="text-caption uppercase text-gray-700">{t('colours')}</h3>
-                    <ul className="mt-3 flex flex-wrap gap-2.5">
-                      {colours.map((colour) => (
-                        <li key={colour.slug}>
-                          <span
-                            title={pickLocale(colour.label, locale)}
-                            className="block h-7 w-7 rounded-full border border-gray-300"
-                            style={{ backgroundColor: colour.hex }}
-                          >
-                            <span className="sr-only">{pickLocale(colour.label, locale)}</span>
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
-
-                {product.specs.length > 0 ? (
-                  <div className="mt-7">
-                    <h3 className="text-caption uppercase text-gray-700">{t('specs')}</h3>
-                    <dl className="mt-3 divide-y divide-gray-300 border-t border-gray-300">
-                      {product.specs.map((spec) => (
-                        <div key={spec.key} className="flex items-baseline justify-between gap-4 py-2.5">
-                          <dt className="text-sm text-gray-700">{pickLocale(spec.label, locale)}</dt>
-                          <dd className="text-sm font-medium">
-                            <bdi className="num">{spec.value}</bdi>
-                          </dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </div>
-                ) : null}
-
-                <div className="mt-8">
-                  <Button
-                    href={whatsappLink(t('orderMessage', { product: name }))}
-                    external
-                    fullWidth
-                  >
-                    {t('order')}
-                  </Button>
-                </div>
+                ) : (
+                  <CheckoutView
+                    product={product}
+                    titleId={titleId}
+                    onSubmit={(order) => {
+                      setConfirmedOrder(order);
+                      setView('confirmed');
+                    }}
+                  />
+                )}
               </div>
-            </div>
+            )}
           </motion.div>
         </div>
       ) : null}

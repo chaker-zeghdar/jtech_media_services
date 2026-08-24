@@ -242,12 +242,13 @@ JTECH's graphic language, taken from the client's Instagram. All pure CSS/SVG �
 | `<NumberedSquare/>`| 40×40px, radius 12px, gold fill, ink numeral 15px/700.                     |
 | `<Pill />`         | `ink` (black bed, white text) or `gold` (gold bed, ink text). 12px/600.    |
 
-### Colour swatches are a summary, not a picker
+### Colour swatches are a summary, not a picker — except inside checkout
 
-`<ColourSwatches>` on a product card answers "what colours does this come in?"
-before a click. It has **no state and no click handler** — the card grid has no
-variant switching, and `<QuickView>` already lists colours, so adding one here
-would be a second mechanism for the same job.
+`<ColourSwatches>` on a product card, and the plain colour dots inside
+`<QuickView>`'s detail view, both answer "what colours does this come in?"
+before a click. Neither has state or a click handler — until the checkout
+pass, nothing on the page had anywhere for a selection to GO, so adding one
+would have been a second mechanism with no job to do.
 
 The dots are `aria-hidden`; the accessible content is the list around them — an
 `aria-label` carrying the count and one `<li>` per colour with a visually-hidden
@@ -257,6 +258,22 @@ Colour is never the only signal, exactly as for `StockDot`.
 
 Every `background-color` reads from `variant.colour.hex`. The component defines no
 colour literal, and neither should anything else outside `content/products.ts`.
+
+**`<CheckoutView>`'s own swatches are real.** They're a different component
+(`components/ui/CheckoutView.tsx`), not `<ColourSwatches>` with a handler bolted
+on — the summary component's whole contract is "no state," so a picker earned
+its own markup rather than quietly breaking that contract. Selecting a colour
+resolves the exact variant (`lib/product.ts → resolveVariant`) and, if that
+colour comes in more than one storage, narrows a second picker to just the
+storage options that colour actually ships in — a variant is one SKU the shop
+stocks, not an independent colour × storage grid, so the storage picker can
+never offer a combination nobody sells. Built as a plain `role="group"` of
+`aria-pressed` toggle buttons rather than `role="radiogroup"` / `role="radio"`:
+the full ARIA radio pattern requires roving tabindex and arrow-key navigation
+between options, and a subtly incomplete version of that contract is worse than
+not claiming it. The delivery-method pair beside it (desk/home) uses real native
+`<input type="radio">` instead, because that ARIA contract comes free from the
+browser and a two-option text pill styles cleanly as one.
 
 ### The governing rule
 
@@ -670,9 +687,12 @@ Layout, not network. Three decisions keep that in check — change them knowingl
 
 - **`<ProductCard />` is a server component.** All of its hover choreography is
   CSS on the card's `group`, so a card needs no JavaScript. Only
-  `<QuickViewTrigger />` is a client island, and only the best-sellers grid
-  enables it (the brief scopes quick view to that section). Making the whole card
-  a client component cost ~80ms of Total Blocking Time for one boolean per card.
+  `<ProductDialogTrigger />` is a client island — the "learn more" and "order"
+  links, plus the single lazily-mounted `<QuickView />` dialog behind both of
+  them (was `<QuickViewTrigger />`, one link and one dialog mount; the checkout
+  pass gave "order" a real destination in the same dialog instead of a
+  WhatsApp deep link, so it needed the same island). Making the whole card a
+  client component cost ~80ms of Total Blocking Time for one boolean per card.
 - **Sections carry `content-visibility: auto`** via `.defer-offscreen`, so the
   browser skips style, layout and paint for sections still below the fold. This
   moved First Contentful Paint 2.3s → 1.7s and Speed Index 3.1s → 1.7s under
@@ -681,6 +701,67 @@ Layout, not network. Three decisions keep that in check — change them knowingl
 - **The rails are capped** (`RAIL_LIMIT`, and `.slice()` in the best-sellers and
   accessories sections). The content layer holds the full catalogue; the homepage
   shows a subset, because every extra card is ~35 DOM nodes of layout work.
+
+### The product card, sized down
+
+`lib/rail.ts → RAIL_ITEM`/`RAIL_SIZES` shrank ~12% at every breakpoint alike
+(`290px → 256px` at `xl`, the rest scaled the same ratio) — a "smaller, more
+premium" card is a proportional shrink of the whole rail, not just the fixed
+desktop step, or the card would visibly jump in scale at one breakpoint.
+
+The name dropped from `text-h3` (22–28px fluid) to `text-subhead-sm` (a FIXED
+19px) — deliberately fixed rather than another fluid step: a calmer, smaller
+card is exactly the case where a size that stops growing past a certain
+viewport reads as more controlled than one that keeps scaling with it. Its
+two-line floor was re-measured against the new size and leading the same way
+the original floor was measured against `text-h3` (§1's methodology, not a new
+one) — `3.4375rem`, 2 × the real rendered 27.5px line box. Caught while
+measuring: `leading-tight` was still attached from the `text-h3` version, where
+it was a harmless duplicate of that token's own 1.25 leading; under
+`text-subhead-sm` (1.45) it silently overrode the token's real leading down to
+1.25. Removed — a size step's own leading should win over a generic utility
+sitting next to it, and this is the reason to actually measure the rendered
+value rather than compute it from the token alone.
+
+The image bed's padding came down `p-8 → p-6` with it, and the spec-value
+hover pills (`48MP` / `A18 Pro`, fading in along the bed's bottom edge) were
+cut outright rather than shrunk — at the smaller footprint they landed at the
+exact moment the bed is already tinting gold and the product is already
+lifting and rotating, and a fourth thing fading in read as busy competing for
+attention, not as a fourth premium beat. The remaining three-beat hover
+choreography (bed tint, light sweep, lift+rotate) is unchanged.
+
+### Checkout lives inside `<QuickView>`, not a second dialog
+
+`components/ui/CheckoutView.tsx` + `components/ui/OrderConfirmation.tsx` are
+two more views `<QuickView>` can show, switched to by
+`<ProductCard>`'s "order" link (straight to checkout, skipping detail) and by
+the detail view's own order button (in place, no close/reopen) — see the
+accessibility-contract bullet above for how the shared dialog handles that.
+Reusing the one dialog shell rather than building a second is both the
+simpler implementation and the intended feel: one continuous panel, not a
+stack of popups.
+
+**Variant resolution.** A product's `variants` are not an independent colour ×
+storage grid — each one is a SKU the shop actually stocks. `lib/product.ts`'s
+`variantsForColour`/`resolveVariant` are what keep the storage picker from
+ever offering "black, 256GB" when only "black, 512GB" is a real row in
+`content/products.ts`.
+
+**The fee calculator is real data, not a placeholder.** `content/wilayas.ts`'s
+58 rows and their `deskFee`/`homeFee` were written for exactly this — see its
+own comment. `lib/format.ts → pickWilayaName` picks `nameAr`/`nameFr`; English
+falls back to `nameFr` (Algerian wilayas have no distinct English exonym, and
+French is the conventional way they're referred to in mixed French/English
+contexts) — a deliberate call worth knowing was made on purpose, not a gap.
+
+**This is UI only.** `CheckoutView.handleSubmit` validates, builds a local
+snapshot, and hands it to a state setter — no `fetch`, no `whatsappLink()`, no
+persistence. The submit function itself is commented `PHASE 3 (not built
+yet)` at the exact line a real backend call replaces. `<ProductCard>`'s
+"order" link is the one CTA on the page that no longer deep-links to
+WhatsApp on click — every other contact point (`<Header>`, `<MobileMenu>`,
+the featured spotlight) still does.
 
 ### Keyframes live in `globals.css`, not in the Tailwind config
 
@@ -713,6 +794,18 @@ Non-negotiable, and mostly free if you don't fight it.
   restore it on close, cycle Tab inside, close on Escape and on backdrop, and
   scroll-lock the page. `MobileMenu` uses `visibility: hidden` when closed so its
   links leave the accessibility tree and the tab order.
+- **One dialog, three views, one accessible name that keeps up.** `QuickView`
+  switches between a detail view, a checkout view and a confirmation view
+  in place, so `aria-labelledby` can't point at a fixed element — whichever
+  view is showing renders ITS OWN heading at the shared `titleId`, so the
+  dialog's accessible name always resolves to real, currently-visible text.
+  Switching views also moves focus to that heading (`tabIndex={-1}`, so it's
+  reachable programmatically without joining the Tab order) and resets the
+  dialog's scroll to the top — the element that was focused a moment ago may
+  not exist in the new view, and a silently unfocused `<body>` is a lost place
+  for a screen-reader user. That focus move is skipped on the dialog's own
+  initial open, which already has its own rule (first focusable element, i.e.
+  the close button) and would otherwise fight this one for where focus lands.
 - **Native elements where they exist.** `Accordion` is `<details>`/`<summary>`:
   correct announcements, keyboard operation and find-in-page expansion, zero JS.
 - **Wide content scrolls inside its own container.** `CompareTable` and the

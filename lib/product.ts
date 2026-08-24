@@ -49,3 +49,35 @@ export function productColours(product: Product): ProductColour[] {
   }
   return [...seen.values()];
 }
+
+/**
+ * Every variant sharing a colour, in variant order — the storage options a
+ * checkout's storage picker offers once a colour is chosen.
+ *
+ * Colour and storage are not an independent grid in this catalogue: a variant
+ * is one SKU the shop actually stocks, so "black, 256GB" only exists as an
+ * option if that exact row is in content/products.ts. Filtering by colour
+ * first is what keeps the storage picker from ever offering a combination
+ * nobody sells.
+ */
+export function variantsForColour(product: Product, colourSlug: string): ProductVariant[] {
+  return product.variants.filter((variant) => variant.colour.slug === colourSlug);
+}
+
+/**
+ * The exact variant for a (colour, storage) pick.
+ *
+ * Falls back to the first variant for that colour if the requested storage
+ * isn't one of its options — reachable only via a stale selection (e.g. the
+ * colour just changed and storage hasn't caught up yet in the same render),
+ * never as the normal path, since the checkout view always re-derives a valid
+ * storage alongside every colour change.
+ */
+export function resolveVariant(
+  product: Product,
+  colourSlug: string,
+  storage: string | null,
+): ProductVariant {
+  const forColour = variantsForColour(product, colourSlug);
+  return forColour.find((variant) => variant.storage === storage) ?? forColour[0] ?? primaryVariant(product);
+}

@@ -213,6 +213,31 @@
     "colourCount": "Available in {count, plural, one {# colour} other {# colours}}",
     "moreColours": "+{count}"
   },
+  "checkout": {
+    "eyebrow": "Order now",
+    "quantityLabel": "Quantity",
+    "decreaseQuantity": "Decrease quantity",
+    "increaseQuantity": "Increase quantity",
+    "deliveryMethodLabel": "Delivery method",
+    "deskOption": "Pickup desk",
+    "homeOption": "Home delivery",
+    "wilayaLabel": "Wilaya",
+    "wilayaPlaceholder": "Choose your wilaya",
+    "wilayaError": "Choose your wilaya",
+    "nameLabel": "Full name",
+    "nameError": "Enter your name",
+    "phoneLabel": "Phone number",
+    "phoneHint": "e.g. 0659 39 13 13",
+    "phoneError": "Enter a valid Algerian phone number",
+    "addressLabel": "Delivery address",
+    "addressError": "Enter your address",
+    "summaryTitle": "Order summary",
+    "deliveryFeeLabel": "Delivery",
+    "totalLabel": "Total",
+    "submitCta": "Confirm order",
+    "confirmedTitle": "Order received!",
+    "confirmedBody": "We'll call or message you on WhatsApp shortly to confirm the order and the final total."
+  },
   "locale": {
     "label": "Language"
   },

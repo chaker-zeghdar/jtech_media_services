@@ -213,6 +213,31 @@
     "colourCount": "Disponible en {count, plural, one {# coloris} other {# coloris}}",
     "moreColours": "+{count}"
   },
+  "checkout": {
+    "eyebrow": "Commander maintenant",
+    "quantityLabel": "Quantité",
+    "decreaseQuantity": "Diminuer la quantité",
+    "increaseQuantity": "Augmenter la quantité",
+    "deliveryMethodLabel": "Mode de livraison",
+    "deskOption": "Bureau de livraison",
+    "homeOption": "Livraison à domicile",
+    "wilayaLabel": "Wilaya",
+    "wilayaPlaceholder": "Choisissez votre wilaya",
+    "wilayaError": "Choisissez votre wilaya",
+    "nameLabel": "Nom complet",
+    "nameError": "Indiquez votre nom",
+    "phoneLabel": "Numéro de téléphone",
+    "phoneHint": "Exemple : 0659 39 13 13",
+    "phoneError": "Indiquez un numéro de téléphone algérien valide",
+    "addressLabel": "Adresse de livraison",
+    "addressError": "Indiquez votre adresse",
+    "summaryTitle": "Récapitulatif de la commande",
+    "deliveryFeeLabel": "Livraison",
+    "totalLabel": "Total",
+    "submitCta": "Confirmer la commande",
+    "confirmedTitle": "Commande reçue !",
+    "confirmedBody": "Nous vous appellerons ou vous écrirons sur WhatsApp très vite pour confirmer la commande et le total."
+  },
   "locale": {
     "label": "Langue"
   },
