@@ -4,14 +4,36 @@ import { notFound } from 'next/navigation';
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import type { ReactNode } from 'react';
+import type { AnyIconKey } from '@/components/ui/Icon';
 import { Footer } from '@/components/layout/Footer';
 import { HashAnchorFix } from '@/components/layout/HashAnchorFix';
 import { Header } from '@/components/layout/Header';
 import { SocialFab } from '@/components/layout/SocialFab';
-import { settings } from '@/content/settings';
-import { localeDirections, localeTags, routing } from '@/i18n/routing';
+import type { LocalizedText } from '@/content/schemas';
+import { settings, telHref, whatsappLink } from '@/content/settings';
+import { localeDirections, localeTags, routing, type Locale } from '@/i18n/routing';
 import { clientMessages } from '@/lib/clientMessages';
+import { pickLocale } from '@/lib/format';
 import '../globals.css';
+
+/**
+ * <SocialFab />'s phone pills, keyed by `department.key`. The pill's visible
+ * text is deliberately shorter than `department.label` ("سبونسور وتعبئة
+ * الرصيد" doesn't fit a 44px pill) — falls back to the full label for any
+ * department key this map doesn't know about, so a future addition degrades
+ * rather than disappears.
+ */
+const DEPARTMENT_ICON: Record<string, AnyIconKey> = {
+  orders: 'whatsapp',
+  repair: 'wrench',
+  advertising: 'cash',
+};
+
+const DEPARTMENT_SHORT_LABEL: Record<string, LocalizedText> = {
+  orders: { ar: 'واتساب', fr: 'WhatsApp', en: 'WhatsApp' },
+  repair: { ar: 'تصليح', fr: 'Réparation', en: 'Repair' },
+  advertising: { ar: 'سبونسور', fr: 'Sponsor', en: 'Sponsor' },
+};
 
 /**
  * Fonts are loaded as CSS variables and consumed from globals.css, where the
@@ -134,6 +156,22 @@ export default async function LocaleLayout({
 
   const messages = await getMessages();
   const t = await getTranslations('a11y');
+  const tProduct = await getTranslations('product');
+  const typedLocale = locale as Locale;
+
+  const phones = settings.departments.map((department) => {
+    const isOrders = department.key === 'orders';
+    return {
+      key: department.key,
+      href: isOrders ? whatsappLink(tProduct('generalMessage')) : telHref(department.phoneE164),
+      label: isOrders
+        ? `${t('openWhatsapp')} ${department.phone}`
+        : t('callPhone', { phone: department.phone }),
+      shortLabel: pickLocale(DEPARTMENT_SHORT_LABEL[department.key] ?? department.label, typedLocale),
+      icon: DEPARTMENT_ICON[department.key] ?? 'phone',
+      external: isOrders,
+    };
+  });
 
   // One family per locale — Arabic gets Plex Arabic, the Latin locales get Inter.
   // The unused CSS variable simply doesn't resolve, and the font stacks in
@@ -194,24 +232,22 @@ export default async function LocaleLayout({
 
               This was the only PERSISTENT ordering affordance on mobile —
               below `sm`, <Header /> hides its own phone/WhatsApp icon buttons
-              (`hidden sm:inline-flex`), so a mobile visitor's nearest CTA is
-              now whichever of Hero's own WhatsApp link, a product card's order
-              link, or <SocialFab /> happens to be on screen. <SocialFab /> is
-              social-only by design — no phone/WhatsApp in it, because this bar
-              covered that. If a persistent mobile ordering CTA is wanted again,
-              <SocialFab /> gaining a WhatsApp entry is the natural place for
-              it — not built speculatively here. */}
-          {/* Site-wide, not homepage-only: the social accounts are as relevant
-              on a category page as on the homepage, and a control that appears
-              and disappears between routes reads as a bug. The three URLs are
-              resolved here so the client island never imports the settings
-              object — see the note on <SocialFab />. */}
+              (`hidden sm:inline-flex`). <SocialFab /> closes that gap now: it
+              carries the three staffed phone lines as labelled pills alongside
+              the social accounts, so a mobile visitor always has a reachable
+              call/WhatsApp affordance even with the bar gone. */}
+          {/* Site-wide, not homepage-only: the social accounts and phone lines
+              are as relevant on a category page as on the homepage, and a
+              control that appears and disappears between routes reads as a
+              bug. Everything is resolved here so the client island never
+              imports the settings object — see the note on <SocialFab />. */}
           <SocialFab
             links={[
               { key: 'instagram', url: settings.socials.instagram.url, label: t('openInstagram') },
               { key: 'facebook', url: settings.socials.facebook.url, label: t('openFacebook') },
               { key: 'tiktok', url: settings.socials.tiktok.url, label: t('openTiktok') },
             ]}
+            phones={phones}
           />
         </NextIntlClientProvider>
       </body>

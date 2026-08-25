@@ -386,9 +386,10 @@ colour, rather than overriding it through `className`, which §7 forbids.
 ### The chrome sits on the card, and has two states
 
 There is no announcement bar. Everything it carried moved somewhere better —
-phone and WhatsApp into `<Header />` (and `<MobileMenu />` / `<MobileOrderBar />`
-below `sm`), the locale switcher into `<Header />`, and the delivery and
-cash-on-delivery promise into the hero's own subhead, where it is a sentence
+phone and WhatsApp into `<Header />` (and `<MobileMenu />` below `sm`, and into
+`<SocialFab />`'s phone pills now that `<MobileOrderBar />` is gone), the
+locale switcher into `<Header />`, and the delivery and cash-on-delivery
+promise into the hero's own subhead, where it is a sentence
 rather than 12px of chrome. The page now opens on the hero card itself.
 
 The card is pulled up by `--header-height + --nav-height + 2px` so it starts at
@@ -547,6 +548,14 @@ white chip cost the section nothing.
 `rounded-full` rather than a sixth radius. Icon-only it reads as a disc and
 matches the header's contact buttons and the hero's social chips; labelled it
 reads as a pill.
+
+### The labelled phone pill — `<SocialFab />`'s department lines
+
+Same white-`shadow-card` disc as the plain social icon circles beside it, just
+wide enough to carry an icon and a short label ("واتساب", "تصليح", "سبونسور")
+instead of being icon-only — the one case in this file where a circle grows
+into a pill because the content genuinely needs a visible number's context, not
+for decoration.
 
 ### Diagonal section boundaries — `.diagonal-end`
 

@@ -131,9 +131,9 @@ JS (156 KB → 132 KB after the fix).
 
 Client components use instead:
 
-- `content/contact.ts` — plain literals plus `whatsappLink()` / `telLink` /
-  `mailLink`. Zero imports, no zod. `content/settings.ts` spreads these same
-  literals, so there is still one source of truth.
+- `content/contact.ts` — plain literals plus `whatsappLink()` / `telLink`.
+  Zero imports, no zod. `content/settings.ts` spreads these same literals, so
+  there is still one source of truth.
 - `lib/product.ts` — `primaryVariant()`, `priceFrom()`, `productColours()`.
   Type-only imports, which the compiler erases.
 
@@ -220,31 +220,29 @@ That is the whole change — no component edits, no config.
 
 These are the client's real details. Two files:
 
-1. **`content/contact.ts`** — the primary (orders/WhatsApp) phone and the email.
-   These live separately so client components can build `tel:` and `wa.me` links
-   without pulling zod into the browser bundle.
+1. **`content/contact.ts`** — the primary (orders/WhatsApp) phone. Lives
+   separately so client components can build `tel:` and `wa.me` links without
+   pulling zod into the browser bundle.
 2. **`content/settings.ts`** — the three departments, address, hours, socials,
-   website, delivery fees and map. It spreads in the values from `contact.ts`, so
+   delivery fees and map. It spreads in the values from `contact.ts`, so
    nothing is duplicated.
 
 **The three numbers are not interchangeable** and are modelled as `departments`
 rather than as extra string fields, so a component can't accidentally show the
-advertising line as the shop number:
+repair line as the shop number:
 
 | Department    | Number           |
 | ------------- | ---------------- |
 | Orders + WhatsApp | `0659 39 13 13` |
-| Branding, web and apps | `0782 76 30 40` |
-| Advertising + e-recharge | `0792 00 86 88` |
+| Repair service | `0773 34 51 20` |
+| Sponsoring + e-recharge | `0792 00 86 88` |
 
-**Two items are still unconfirmed**, and the data says so rather than assuming:
+`mapPinConfirmed: true` — the map marker is the client's own confirmed Google
+Maps pin (decoded from its Plus Code), not an approximation. See the comment
+above `mapEmbedUrl` in `content/settings.ts` for how it was derived.
 
-- `emailConfirmed: false` — `contact@jtechmediaservice.com` is inferred from the
-  domain, not stated by the client. An amber notice renders until it flips.
-- `mapPinConfirmed: false` — the written address is confirmed; the lat/long behind
-  the marker is an approximation of the university-hospital district. A caption
-  says so, and "open in maps" runs a **search** for the landmark rather than a
-  fixed coordinate, so a customer lands correctly regardless.
+There is no email or website field — both were removed outright (not hidden)
+once the client's real numbers made the inferred, unconfirmed email moot.
 
 No component hardcodes a phone number, an address or a social handle.
 

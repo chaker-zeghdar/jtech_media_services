@@ -5,8 +5,8 @@ import { Section } from '@/components/layout/Section';
 import { SectionHeader } from '@/components/layout/SectionHeader';
 import { Reveal } from '@/components/motion/Reveal';
 import { Button } from '@/components/ui/Button';
-import { Icon } from '@/components/ui/Icon';
-import { mailLink, ordersDepartment, settings, telHref, whatsappLink } from '@/content/settings';
+import { Icon, type AnyIconKey } from '@/components/ui/Icon';
+import { ordersDepartment, settings, telHref, whatsappLink } from '@/content/settings';
 import { pickLocale } from '@/lib/format';
 
 /**
@@ -15,9 +15,17 @@ import { pickLocale } from '@/lib/format';
  * is a shape in the way.
  *
  * The three department numbers are listed separately and labelled, because they
- * are not interchangeable — the branding line does not take repair enquiries.
+ * are not interchangeable — the repair line does not take advertising enquiries.
  * Only the orders line carries the WhatsApp entry.
  */
+
+/** Keyed by `department.key`. Falls back to a plain phone glyph for anything new. */
+const DEPARTMENT_ICON: Record<string, AnyIconKey> = {
+  orders: 'phone',
+  repair: 'wrench',
+  advertising: 'cash',
+};
+
 export async function Contact() {
   const locale = await getLocale();
   const t = await getTranslations('contact');
@@ -81,20 +89,30 @@ export async function Contact() {
                   <Icon name="phone" size={20} className="shrink-0 text-gold-text" />
                   {t('departments')}
                 </dt>
-                <dd className="mt-2 ps-9">
-                  <ul className="flex flex-col gap-3">
+                <dd className="mt-3 ps-9">
+                  {/* Three small tiles rather than a plain list: the numbers
+                      aren't interchangeable (see the note above), so each gets
+                      its own icon and is independently tappable — a shared
+                      "أرقام الهاتف" heading over a bare list read as one
+                      generic block instead of three distinct lines. */}
+                  <ul className="grid gap-2.5 sm:grid-cols-3">
                     {settings.departments.map((department) => (
-                      <li key={department.key} className="flex flex-col gap-0.5">
+                      <li key={department.key}>
                         <a
                           href={telHref(department.phoneE164)}
                           aria-label={tA11y('callPhone', { phone: department.phone })}
-                          className="text-base font-semibold transition-colors duration-200 hover:text-gold-text"
+                          className="flex h-full flex-col gap-2 rounded-card border border-gray-300 px-4 py-3.5 transition-colors duration-200 hover:border-gold hover:bg-gold-tint"
                         >
-                          <bdi className="num">{department.phone}</bdi>
+                          <Icon
+                            name={DEPARTMENT_ICON[department.key] ?? 'phone'}
+                            size={18}
+                            className="text-gold-text"
+                          />
+                          <bdi className="num text-base font-semibold">{department.phone}</bdi>
+                          <span className="text-caption text-gray-700">
+                            {pickLocale(department.label, locale)}
+                          </span>
                         </a>
-                        <span className="text-caption text-gray-700">
-                          {pickLocale(department.label, locale)}
-                        </span>
                       </li>
                     ))}
                   </ul>
@@ -118,41 +136,6 @@ export async function Contact() {
                     className="transition-colors duration-200 hover:text-gold-text"
                   >
                     <bdi className="num">{orders.phone}</bdi>
-                  </a>
-                </dd>
-              </div>
-
-              <div className="py-5">
-                <dt className="flex items-center gap-4 text-caption uppercase text-gray-700">
-                  <Icon name="mail" size={20} className="shrink-0 text-gold-text" />
-                  {t('email')}
-                </dt>
-                <dd className="mt-1 break-words ps-9 text-base font-semibold">
-                  <a
-                    href={mailLink}
-                    aria-label={tA11y('sendEmail', { email: settings.email })}
-                    className="font-latin transition-colors duration-200 hover:text-gold-text"
-                    dir="ltr"
-                  >
-                    {settings.email}
-                  </a>
-                </dd>
-              </div>
-
-              <div className="py-5">
-                <dt className="flex items-center gap-4 text-caption uppercase text-gray-700">
-                  <Icon name="external" size={20} className="shrink-0 text-gold-text" />
-                  {t('website')}
-                </dt>
-                <dd className="mt-1 break-words ps-9 text-base font-semibold">
-                  <a
-                    href={settings.website.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-latin transition-colors duration-200 hover:text-gold-text"
-                    dir="ltr"
-                  >
-                    {settings.website.label}
                   </a>
                 </dd>
               </div>
@@ -206,14 +189,6 @@ export async function Contact() {
                 ))}
               </ul>
             </div>
-
-            {/* Both notices are removed by flipping the matching flag in
-                content/settings.ts once the client confirms. */}
-            {!settings.emailConfirmed ? (
-              <p className="mt-8 rounded-card border border-gold bg-gold-tint px-4 py-3 text-caption text-gold-text">
-                {t('emailNotice')}
-              </p>
-            ) : null}
           </Reveal>
 
           {/* ---- Map ------------------------------------------------------ */}

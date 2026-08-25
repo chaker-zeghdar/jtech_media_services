@@ -5,15 +5,10 @@ import { type Settings, parseContent, settingsSchema } from './schemas';
  * Mirrors the single row of table `settings`.
  *
  * These are the client's REAL details, taken from their own marketing posts.
- * Two items remain unconfirmed and are flagged in the data rather than assumed:
- *
- *   emailConfirmed  — the address is inferred from the domain, not stated.
- *   mapPinConfirmed — the written address is confirmed, the lat/long is not.
- *                     See the note above `mapEmbedUrl`.
  *
  * To change contact details: edit this file for the address, hours, socials,
  * departments and delivery figures, and `content/contact.ts` for the primary
- * phone, WhatsApp and email. Those four live there so client components can build
+ * phone and WhatsApp number. Those live there so client components can build
  * `tel:`/`wa.me` links without pulling zod into the browser bundle; they are
  * spread in below, so this object remains the single validated view.
  *
@@ -21,7 +16,6 @@ import { type Settings, parseContent, settingsSchema } from './schemas';
  */
 export const settings: Settings = parseContent('content/settings.ts', settingsSchema, {
   ...CONTACT,
-  emailConfirmed: false,
 
   /**
    * Three staffed lines, and they are NOT interchangeable — the orders line is
@@ -40,13 +34,13 @@ export const settings: Settings = parseContent('content/settings.ts', settingsSc
       },
     },
     {
-      key: 'branding',
-      phone: '0782 76 30 40',
-      phoneE164: '+213782763040',
+      key: 'repair',
+      phone: '0773 34 51 20',
+      phoneE164: '+213773345120',
       label: {
-        ar: 'الهوية البصرية، المواقع والتطبيقات',
-        fr: 'Branding, sites web et applications',
-        en: 'Branding, web and app services',
+        ar: 'خدمة التصليح',
+        fr: 'Service Réparation',
+        en: 'Repair Service',
       },
     },
     {
@@ -54,17 +48,12 @@ export const settings: Settings = parseContent('content/settings.ts', settingsSc
       phone: '0792 00 86 88',
       phoneE164: '+213792008688',
       label: {
-        ar: 'الإعلانات الممولة والتعبئة الإلكترونية',
-        fr: 'Publicité et recharge électronique',
-        en: 'Advertising and e-recharge',
+        ar: 'سبونسور وتعبئة الرصيد',
+        fr: 'Sponsor et Recharge',
+        en: 'Sponsoring and e-recharge',
       },
     },
   ],
-
-  website: {
-    label: 'www.jtechmediaservice.com',
-    url: 'https://www.jtechmediaservice.com',
-  },
 
   foundedYear: 2013,
 
@@ -118,19 +107,24 @@ export const settings: Settings = parseContent('content/settings.ts', settingsSc
   /**
    * OpenStreetMap: keyless, script-free, no cookie banner.
    *
-   * ⚠️ The bounding box and marker below are centred on the university-hospital
-   * district of Batna, which is where the written address puts the shop — but the
-   * exact coordinates were NOT supplied and are an approximation. `mapPinConfirmed`
-   * is false until the client sends a pin or the shop is located on the map.
-   *
-   * Because of that, `mapLinkUrl` deliberately opens a SEARCH for the landmark
-   * rather than a fixed lat/long: a search lands the customer at the right place
-   * even while the embedded marker is approximate.
+   * The client sent their real Google Maps pin (an Instagram-wrapped short link
+   * resolving to `https://maps.app.goo.gl/kgLmTN8XbFRD7Gnz8`, place id
+   * `0x12f4113c29e6bef7:0x1fe94c4cd9122ea5`), whose query string — "Jtech media
+   * services, cité frères Lombarkia, en face CHU, Batna" — matches the written
+   * `address` above ("opposite the university hospital"). The pin itself encodes
+   * a Plus Code (`8F78G5PR+4CV`), decoded with Google's own open-source
+   * `openlocationcode` algorithm to 35.535363, 6.191047. The bbox/marker below
+   * are centred on that confirmed point, replacing the earlier CHU-district
+   * approximation.
    */
   mapEmbedUrl:
-    'https://www.openstreetmap.org/export/embed.html?bbox=6.1596%2C35.5386%2C6.1916%2C35.5586&layer=mapnik&marker=35.5486%2C6.1756',
-  mapLinkUrl: 'https://www.openstreetmap.org/search?query=CHU%20Batna',
-  mapPinConfirmed: false,
+    'https://www.openstreetmap.org/export/embed.html?bbox=6.175047%2C35.525363%2C6.207047%2C35.545363&layer=mapnik&marker=35.535363%2C6.191047',
+  /**
+   * The client's own Google Maps link, stripped of the Instagram redirect and
+   * tracking params (utm_*, fbclid, g_st) it arrived wrapped in.
+   */
+  mapLinkUrl: 'https://maps.app.goo.gl/kgLmTN8XbFRD7Gnz8',
+  mapPinConfirmed: true,
 });
 
 /**
@@ -138,7 +132,7 @@ export const settings: Settings = parseContent('content/settings.ts', settingsSc
  * Client components must import these from `content/contact` directly — see the
  * note at the top of that file.
  */
-export { CONTACT, mailLink, telHref, telLink, whatsappLink, whatsappNumber } from './contact';
+export { CONTACT, telHref, telLink, whatsappLink, whatsappNumber } from './contact';
 
 /** The orders line — the only department that takes product enquiries. */
 export function ordersDepartment() {

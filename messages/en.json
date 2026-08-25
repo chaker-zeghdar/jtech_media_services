@@ -32,7 +32,6 @@
     "mapTitle": "Map showing the JTECH shop in Batna",
     "callPhone": "Call {phone}",
     "openWhatsapp": "Message us on WhatsApp",
-    "sendEmail": "Send an email to {email}",
     "openInstagram": "JTECH on Instagram",
     "openFacebook": "JTECH on Facebook",
     "openTiktok": "JTECH on TikTok",
@@ -157,14 +156,11 @@
     "subhead": "The shop is opposite the university hospital in Batna, and we answer on WhatsApp from morning to evening.",
     "phone": "Phone",
     "whatsapp": "WhatsApp",
-    "email": "Email",
     "address": "Address",
     "hours": "Opening hours",
     "follow": "Follow us",
     "mapCta": "Open in maps",
     "departments": "Our numbers",
-    "website": "Website",
-    "emailNotice": "The email address is inferred from the domain and is not yet confirmed by the client.",
     "mapNotice": "The map pin is approximate — the written address is authoritative until it is confirmed."
   },
   "footer": {

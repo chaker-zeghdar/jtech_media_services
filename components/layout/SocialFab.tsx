@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Icon } from '@/components/ui/Icon';
+import { Icon, type AnyIconKey } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 
 export type SocialFabLink = {
@@ -11,17 +11,36 @@ export type SocialFabLink = {
   label: string;
 };
 
+/** A staffed line, rendered as a labelled pill rather than a plain icon circle. */
+export type SocialFabPhoneLink = {
+  key: string;
+  href: string;
+  /** Accessible name — includes the number, see the `aria-label` note below. */
+  label: string;
+  /** Short visible text on the pill: "واتساب", not the full department label. */
+  shortLabel: string;
+  icon: AnyIconKey;
+  /** WhatsApp opens in a new tab; plain `tel:` lines navigate in place. */
+  external?: boolean;
+};
+
 /**
- * Floating social widget — a round trigger pinned to the viewport corner that
- * expands to the shop's three accounts.
+ * Floating widget — a round trigger pinned to the viewport corner that expands
+ * to the shop's three social accounts and its three staffed phone lines.
  *
- * ── Why only socials ───────────────────────────────────────────────────────
+ * ── Phones joined the socials here ─────────────────────────────────────────
  *
- * Phone and WhatsApp are deliberately absent. Both already have prominent,
- * dedicated affordances (the header's icon buttons, <MobileOrderBar /> on
- * mobile), so repeating them here would be a third copy of the same two links.
- * The social accounts are the thing the site had no dedicated control for, and
- * that is the whole job of this widget.
+ * This used to be social-only: phone and WhatsApp had their own dedicated
+ * affordances (the header's icon buttons, <MobileOrderBar /> on mobile), so
+ * repeating them here would have been a third copy of the same two links.
+ * <MobileOrderBar /> is gone now at the client's request, and <Header /> hides
+ * its own phone/WhatsApp buttons below `sm` — which left mobile with no
+ * persistent ordering affordance at all. This widget was the natural place to
+ * close that gap (flagged as such in layout.tsx when the bar was removed), so
+ * it now renders two visually distinct groups: labelled pills for the phone
+ * lines (a bare icon can't carry a phone number), plain icon circles for the
+ * socials, phones listed first since calling to order is the higher-intent
+ * action of the two.
  *
  * ── Physical right, on purpose ─────────────────────────────────────────────
  *
@@ -37,10 +56,16 @@ export type SocialFabLink = {
  *
  * `content/settings.ts` is client-safe (its `parseContent` is pure zod), but
  * importing it here would pull the whole settings object — departments,
- * delivery, hours — into the client bundle to use three URLs. The server
- * resolves them in layout.tsx and passes them down instead.
+ * delivery, hours — into the client bundle to use a handful of URLs. The
+ * server resolves them in layout.tsx and passes them down instead.
  */
-export function SocialFab({ links }: { links: readonly SocialFabLink[] }) {
+export function SocialFab({
+  links,
+  phones,
+}: {
+  links: readonly SocialFabLink[];
+  phones: readonly SocialFabPhoneLink[];
+}) {
   const t = useTranslations('a11y');
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -73,36 +98,66 @@ export function SocialFab({ links }: { links: readonly SocialFabLink[] }) {
   return (
     <div
       ref={rootRef}
-      /**
-       * `bottom-[84px]` under md clears <MobileOrderBar />'s 68px bar with 16px
-       * to spare; from md that bar is gone and this drops to a normal 24px
-       * corner offset.
-       */
-      className="fixed bottom-[84px] right-4 z-fab flex flex-col items-center gap-3 md:bottom-6 md:right-6"
+      /* `dir="ltr"` alongside the physical `right-*` below: the pill row now
+         holds variable-width department pills, not uniform circles, so their
+         alignment has to stay physically right too, or `items-end` would flip
+         to the visual left under the page's `dir="rtl"` and drift away from a
+         trigger button that never moves. Forcing ltr here makes "end" reliably
+         mean "right" for this one subtree — Arabic pill text still renders
+         correctly inside it, the same way `dir="ltr"` + `<bdi>` already isolate
+         Latin/numeral runs elsewhere in this codebase. */
+      dir="ltr"
+      /* <MobileOrderBar /> is gone, so this no longer needs a taller mobile
+         offset to clear its 68px bar — one corner offset at every breakpoint. */
+      className="fixed bottom-6 right-4 z-fab flex flex-col items-center gap-4 md:right-6"
     >
       {/* Rendered in both states so the links keep their place in the tab order
           only when reachable: `invisible` removes them from it when closed, and
-          it is what lets the open/close transition animate. */}
-      <ul
+          it is what lets the open/close transition animate.
+
+          Two groups, not six identical circles: phones need a visible number
+          and label, socials don't, so phones are labelled pills and socials
+          stay bare icon circles — shape alone tells them apart. Phones sit
+          above socials, closer to the top of the expanded stack, since calling
+          to order is the higher-intent action of the two. */}
+      <div
         className={cn(
-          'flex flex-col items-center gap-3 transition-[opacity,transform] duration-300 ease-brand',
+          'flex flex-col items-end gap-4 transition-[opacity,transform] duration-300 ease-brand',
           open ? 'visible opacity-100' : 'invisible translate-y-2 opacity-0',
         )}
       >
-        {links.map((link) => (
-          <li key={link.key}>
-            <a
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={link.label}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-card transition-colors duration-200 hover:bg-gold-tint"
-            >
-              <Icon name={link.key} size={18} />
-            </a>
-          </li>
-        ))}
-      </ul>
+        <ul className="flex flex-col items-end gap-2.5">
+          {phones.map((phone) => (
+            <li key={phone.key}>
+              <a
+                href={phone.href}
+                {...(phone.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                aria-label={phone.label}
+                className="inline-flex h-11 items-center gap-2 rounded-full bg-white ps-3 pe-4 text-ink shadow-card transition-colors duration-200 hover:bg-gold-tint"
+              >
+                <Icon name={phone.icon} size={16} />
+                <bdi className="text-caption font-semibold">{phone.shortLabel}</bdi>
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <ul className="flex flex-col items-center gap-2.5">
+          {links.map((link) => (
+            <li key={link.key}>
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={link.label}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-card transition-colors duration-200 hover:bg-gold-tint"
+              >
+                <Icon name={link.key} size={18} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <button
         type="button"

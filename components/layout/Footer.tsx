@@ -4,7 +4,7 @@ import { Logo } from '@/components/brand/LogoMark';
 import { Icon } from '@/components/ui/Icon';
 import { categories } from '@/content/categories';
 import { services } from '@/content/services';
-import { mailLink, settings, telLink, whatsappLink } from '@/content/settings';
+import { settings, telLink, whatsappLink } from '@/content/settings';
 import { pickLocale } from '@/lib/format';
 import { Container } from './Container';
 import { Link } from '@/i18n/navigation';
@@ -142,15 +142,6 @@ export async function Footer() {
                   className="transition-colors duration-200 hover:text-white"
                 >
                   {tContact('whatsapp')}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={mailLink}
-                  aria-label={tA11y('sendEmail', { email: settings.email })}
-                  className="transition-colors duration-200 hover:text-white"
-                >
-                  {settings.email}
                 </a>
               </li>
               <li className="text-gray-500">{pickLocale(settings.address, locale)}</li>

@@ -243,13 +243,8 @@ export const settingsSchema = z.object({
   /** E.164, used in tel: and wa.me links. */
   phoneE164: z.string().regex(/^\+\d{8,15}$/),
   whatsapp: z.string().regex(/^\+\d{8,15}$/),
-  email: z.string().email(),
-  /** False while the email is inferred rather than confirmed by the client. */
-  emailConfirmed: z.boolean(),
   /** The three staffed lines, ordered. The first is the orders/WhatsApp line. */
   departments: z.array(departmentSchema).min(1),
-  /** The client's existing site, linked from the footer. */
-  website: z.object({ label: z.string().min(1), url: z.string().url() }),
   /** Years trading. Quoted as a plain fact in copy — never an animated counter. */
   /** Founding year, e.g. 2013 — beats a rolling count that goes stale. */
   foundedYear: z.number().int().positive(),
