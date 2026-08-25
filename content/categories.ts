@@ -23,7 +23,7 @@ export const categories: readonly Category[] = parseContent(
       position: 1,
       name: { ar: 'آيفون', fr: 'iPhone', en: 'iPhone' },
       tagline: {
-        ar: 'من 13 حتى 16 برو ماكس، كامل مضمون',
+        ar: 'من X إلى 17 برو ماكس، جميعها مضمونة',
         fr: 'Du 13 au 16 Pro Max, tous garantis',
         en: 'From the 13 to the 16 Pro Max, all under warranty',
       },
@@ -66,7 +66,7 @@ export const categories: readonly Category[] = parseContent(
       position: 4,
       name: { ar: 'حواسيب', fr: 'Ordinateurs', en: 'Computers' },
       tagline: {
-        ar: 'للدراسة، للخدمة، وللڨيمينڨ',
+        ar: 'للدراسة والعمل والألعاب',
         fr: 'Pour les études, le travail et le gaming',
         en: 'For study, work and gaming',
       },
@@ -76,9 +76,9 @@ export const categories: readonly Category[] = parseContent(
       image: '/categories/accessories.png',
       icon: 'headphones',
       position: 5,
-      name: { ar: 'أكسسوارات', fr: 'Accessoires', en: 'Accessories' },
+      name: { ar: 'إكسسوارات', fr: 'Accessoires', en: 'Accessories' },
       tagline: {
-        ar: 'شواحن، إيربودز، كفرات وحماية',
+        ar: 'شواحن، سماعات، أغطية حماية ووقايات للشاشة',
         fr: 'Chargeurs, écouteurs, coques et protections',
         en: 'Chargers, earbuds, cases and protection',
       },

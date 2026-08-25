@@ -200,7 +200,6 @@ export const serviceSchema = z.object({
   description: localizedTextSchema,
   /** DZD integer, rendered as "من X دج". */
   priceFrom: priceSchema,
-  duration: localizedTextSchema,
   position: z.number().int().positive(),
 });
 export type Service = z.infer<typeof serviceSchema>;

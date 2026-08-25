@@ -6,7 +6,6 @@ import { SectionHeader } from '@/components/layout/SectionHeader';
 import { Reveal } from '@/components/motion/Reveal';
 import { Button } from '@/components/ui/Button';
 import { FeatureChip } from '@/components/ui/FeatureChip';
-import { Icon } from '@/components/ui/Icon';
 import { services } from '@/content/services';
 import { whatsappLink } from '@/content/settings';
 import { pickLocale } from '@/lib/format';
@@ -63,25 +62,6 @@ export async function Services() {
                       {pickLocale(service.description, locale)}
                     </p>
                   </div>
-
-                  {/* Duration only — the price row was removed on request.
-                      `priceFrom` is still in content/services.ts and still in
-                      the schema; this is a display change, not a data one.
-
-                      A lone `justify-between` row under a hairline read as the
-                      leftover half of a two-row table, so the row closes up to
-                      an icon + label + value line instead. The `clock` glyph
-                      already exists in the icon set — nothing new invented for
-                      a one-line removal. */}
-                  <dl className="hairline-t flex items-baseline gap-2 pt-5 text-caption text-gray-700">
-                    <dt className="flex items-center gap-1.5">
-                      <Icon name="clock" size={14} className="text-gold-text" />
-                      {t('durationLabel')}
-                    </dt>
-                    <dd className="font-medium text-ink">
-                      <bdi>{pickLocale(service.duration, locale)}</bdi>
-                    </dd>
-                  </dl>
 
                   <Button
                     variant="link"

@@ -44,7 +44,7 @@ export const settings: Settings = parseContent('content/settings.ts', settingsSc
       phone: '0782 76 30 40',
       phoneE164: '+213782763040',
       label: {
-        ar: 'البراندينڨ، المواقع والتطبيقات',
+        ar: 'الهوية البصرية، المواقع والتطبيقات',
         fr: 'Branding, sites web et applications',
         en: 'Branding, web and app services',
       },
@@ -54,7 +54,7 @@ export const settings: Settings = parseContent('content/settings.ts', settingsSc
       phone: '0792 00 86 88',
       phoneE164: '+213792008688',
       label: {
-        ar: 'الإشهار والتعبئة الإلكترونية',
+        ar: 'الإعلانات الممولة والتعبئة الإلكترونية',
         fr: 'Publicité et recharge électronique',
         en: 'Advertising and e-recharge',
       },
