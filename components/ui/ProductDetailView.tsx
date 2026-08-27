@@ -2,11 +2,10 @@
 
 import { useTranslations } from 'next-intl';
 import type { Product } from '@/content/schemas';
-import { primaryVariant, productColours } from '@/lib/product';
+import { primaryVariant } from '@/lib/product';
 import { Button } from './Button';
-import { Price } from './Price';
 import { ProductGallery } from './ProductGallery';
-import { StockDot } from './StockDot';
+import { ProductInfo } from './ProductInfo';
 
 type ProductDetailViewProps = {
   product: Product;
@@ -21,87 +20,35 @@ type ProductDetailViewProps = {
 };
 
 /**
- * The original `<QuickView />` content, unchanged in substance and extracted
- * only so the dialog can switch between this, `<CheckoutView />` and
- * `<OrderConfirmation />` without one file growing a three-way conditional
- * around unrelated concerns.
+ * The quick-view dialog's product detail: gallery on one side, written detail
+ * on the other.
  *
- * The one real change: the order button no longer deep-links to WhatsApp. It
- * calls `onOrder`, which flips `<QuickView />`'s internal view state to
- * `'checkout'` — the dialog stays open and switches content in place, which is
- * both the more premium feel (one continuous panel, not a stack of popups) and
- * what checkout is now built to do instead of handing off to WhatsApp.
+ * The written column moved to `<ProductInfo />`, shared verbatim with
+ * `/products/[slug]`. What stays here is what is specific to the dialog — the
+ * two-column split `<QuickView />`'s grid expects, and an order button that
+ * flips the dialog's own view state rather than navigating anywhere. The
+ * landing page passes a scroll link into the same slot.
  */
 export function ProductDetailView({ product, titleId, onOrder }: ProductDetailViewProps) {
   const t = useTranslations('product');
-
-  const name = product.name;
   const variant = primaryVariant(product);
-  const colours = productColours(product);
 
   return (
     <>
       {/* Every photo on the variant, not just the first. <ProductGallery />
           collapses to a single static frame when there is one photo or none,
           which is still most of the catalogue. */}
-      <ProductGallery images={variant.images} name={name} />
+      <ProductGallery images={variant.images} name={product.name} />
 
-      <div className="flex flex-col">
-        <p className="text-caption uppercase text-ink/70">{product.brand}</p>
-        <h2 id={titleId} className="mt-2 text-h2 font-semibold">
-          {name}
-        </h2>
-
-        {product.description ? (
-          <p className="mt-4 text-base text-gray-700">{product.description}</p>
-        ) : null}
-
-        <div className="mt-6">
-          <Price value={variant.price} compareAt={variant.compareAt} size="lg" showSaving />
-          <StockDot status={variant.stock} className="mt-3" />
-        </div>
-
-        {colours.length > 1 ? (
-          <div className="mt-7">
-            <h3 className="text-caption uppercase text-gray-700">{t('colours')}</h3>
-            <ul className="mt-3 flex flex-wrap gap-2.5">
-              {colours.map((colour) => (
-                <li key={colour.slug}>
-                  <span
-                    title={colour.label}
-                    className="block h-7 w-7 rounded-full border border-gray-300"
-                    style={{ backgroundColor: colour.hex }}
-                  >
-                    <span className="sr-only">{colour.label}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
-
-        {product.specs.length > 0 ? (
-          <div className="mt-7">
-            <h3 className="text-caption uppercase text-gray-700">{t('specs')}</h3>
-            <dl className="mt-3 divide-y divide-gray-300 border-t border-gray-300">
-              {product.specs.map((spec) => (
-                <div key={spec.key} className="flex items-baseline justify-between gap-4 py-2.5">
-                  <dt className="text-sm text-gray-700">{spec.label}</dt>
-                  <dd className="text-sm font-medium">
-                    <bdi className="num">{spec.value}</bdi>
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        ) : null}
-
-        <div className="mt-8">
+      <ProductInfo
+        product={product}
+        titleId={titleId}
+        action={
           <Button type="button" onClick={onOrder} fullWidth>
             {t('order')}
           </Button>
-        </div>
-      </div>
+        }
+      />
     </>
   );
 }

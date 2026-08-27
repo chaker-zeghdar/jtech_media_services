@@ -11,10 +11,13 @@ type OrderConfirmationProps = {
 };
 
 /**
- * The client-side "order received" state `<CheckoutView />` switches to on a
- * valid submit. Reads real, honest as far as it goes — the numbers and details
- * shown are exactly what was entered — but nothing behind it sent anything
- * anywhere; see the PHASE 3 note on `CheckoutView.handleSubmit`.
+ * The "order received" state `<CheckoutView />` switches to once the order has
+ * actually been written.
+ *
+ * The numbers here are the SERVER's, not the browser's: `submitOrder`
+ * recomputes the unit price and the delivery fee from the database and returns
+ * them, and `<CheckoutView />` puts those into this snapshot. So the total
+ * shown is the total recorded, not the total the page had guessed.
  *
  * Single column rather than the two-column grid the other two views use: a
  * confirmation is one message, not a form beside a summary, and forcing it

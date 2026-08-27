@@ -43,6 +43,16 @@ type CheckoutViewProps = {
   product: Product;
   titleId: string;
   onSubmit: (order: ConfirmedOrder) => void;
+  /**
+   * Where this order was placed from, recorded on `orders.landing_slug`.
+   *
+   * Null in the quick-view dialog, which can be opened from anywhere on the
+   * site and so attributes to nothing in particular. Set to the product's slug
+   * on `/products/[slug]`, which is the URL an ad points at — that column is
+   * the only way to tell an order that came from a campaign apart from one
+   * placed while browsing.
+   */
+  landingSlug?: string | null;
 };
 
 /**
@@ -90,7 +100,12 @@ type Daira = { id: number; name: string; name_ascii: string };
  * storage picker to what that colour actually comes in (`variantsForColour`),
  * rather than offering a combination nobody sells.
  */
-export function CheckoutView({ product, titleId, onSubmit }: CheckoutViewProps) {
+export function CheckoutView({
+  product,
+  titleId,
+  onSubmit,
+  landingSlug = null,
+}: CheckoutViewProps) {
   const locale = useLocale();
   const t = useTranslations('checkout');
   const tProduct = useTranslations('product');
@@ -208,7 +223,7 @@ export function CheckoutView({ product, titleId, onSubmit }: CheckoutViewProps) 
         customerName: customerName.trim(),
         customerPhone: phone.replace(/\s+/g, ''),
         address: deliveryMethod === 'home' ? address.trim() : null,
-        landingSlug: null,
+        landingSlug,
         website,
       });
 
