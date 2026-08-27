@@ -1,4 +1,4 @@
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import { GoldRibbon } from '@/components/brand/GoldRibbon';
 import { Container } from '@/components/layout/Container';
 import { HERO_CHROME_SENTINEL_ID } from '@/components/layout/navigation';
@@ -10,7 +10,6 @@ import { ProductImage } from '@/components/ui/ProductImage';
 import { SlideBanner } from '@/components/ui/SlideBanner';
 import { featuredProduct } from '@/lib/queries/products';
 import { settings, whatsappLink } from '@/content/settings';
-import { pickLocale } from '@/lib/format';
 
 /**
  * The hero — one inset card holding the whole opening statement.
@@ -39,7 +38,6 @@ import { pickLocale } from '@/lib/format';
  * headline (the LCP element) paints without waiting on hydration.
  */
 export async function Hero() {
-  const locale = await getLocale();
   const t = await getTranslations('hero');
   const tProduct = await getTranslations('product');
   const tA11y = await getTranslations('a11y');
@@ -54,7 +52,7 @@ export async function Hero() {
    * failing the render.
    */
   const product = await featuredProduct();
-  const name = product ? pickLocale(product.name, locale) : t('title');
+  const name = product ? product.name : t('title');
 
   /**
    * The client's four real channels — matching the reference's four-icon count

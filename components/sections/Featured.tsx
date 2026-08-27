@@ -17,7 +17,6 @@ import { StockDot } from '@/components/ui/StockDot';
 import { whatsappLink } from '@/content/settings';
 import { priceFrom, primaryVariant, productColours } from '@/lib/product';
 import { bestsellers, deviceRange, featuredProduct } from '@/lib/queries/products';
-import { pickLocale } from '@/lib/format';
 import { RAIL_ITEM, RAIL_LIMIT, RAIL_SIZES } from '@/lib/rail';
 
 /**
@@ -60,7 +59,7 @@ export async function Featured() {
 
   const variant = primaryVariant(product);
   const colours = productColours(product);
-  const name = pickLocale(product.name, locale);
+  const name = product.name;
   // Two, not the product's full highlight set — see the note at the <dl />.
   const highlights = product.highlights.slice(0, 2);
 
@@ -167,13 +166,13 @@ export async function Featured() {
               <Reveal delayMs={120}>
                 <dl className="mt-8 grid grid-cols-2 gap-x-8 border-t border-white/15 pt-8">
                   {highlights.map((highlight) => (
-                    <div key={highlight.label.en}>
-                      <dt className="sr-only">{pickLocale(highlight.label, locale)}</dt>
+                    <div key={highlight.label}>
+                      <dt className="sr-only">{highlight.label}</dt>
                       <dd>
                         <SpecStat
                           value={highlight.value}
                           unit={highlight.unit}
-                          label={pickLocale(highlight.label, locale)}
+                          label={highlight.label}
                           size="md"
                           surface="ink"
                         />
@@ -196,7 +195,7 @@ export async function Featured() {
                         className="block h-8 w-8 rounded-full border border-white/25"
                         style={{ backgroundColor: colour.hex }}
                       >
-                        <span className="sr-only">{pickLocale(colour.label, locale)}</span>
+                        <span className="sr-only">{colour.label}</span>
                       </span>
                     </li>
                   ))}

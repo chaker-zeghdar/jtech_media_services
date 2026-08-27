@@ -28,7 +28,7 @@ export function ProductRow({ product }: { product: AdminProduct }) {
   function remove() {
     // Deleting a product also drops its variants. Cheap confirm beats an undo
     // stack for a single-admin tool.
-    if (!confirm(`حذف "${product.name.ar}" نهائياً؟`)) return;
+    if (!confirm(`حذف "${product.name}" نهائياً؟`)) return;
     setError(null);
     startTransition(async () => {
       try {
@@ -44,7 +44,7 @@ export function ProductRow({ product }: { product: AdminProduct }) {
     <tr className={pending ? 'opacity-50' : undefined}>
       <td className="px-4 py-3">
         <Link href={`/admin/products/${product.id}`} className="font-medium hover:underline">
-          {product.name.ar}
+          {product.name}
         </Link>
         <span className="block text-xs text-gray-500">{product.slug}</span>
         {error ? <span className="block text-xs text-red-700">{error}</span> : null}

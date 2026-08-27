@@ -9,6 +9,10 @@
  * valid when they were written. The seed maps it to database columns directly
  * and lets Postgres be the check.
  *
+ * Localized {ar,fr,en} objects were collapsed to their Arabic string when the
+ * catalogue moved to single-language content: those columns are plain text
+ * now, so seeding an object would write a JSON blob into a text field.
+ *
  * Recovered from the pre-deletion backup of the original `content/products.ts`
  * — note that file's Modern Standard Arabic copy was never committed (the
  * rewrite and the deletion landed in the same commit), so this snapshot is the
@@ -25,48 +29,44 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['new', 'bestseller'],
     featured: true,
     bestseller: true,
-    name: { ar: 'آيفون 16 برو', fr: 'iPhone 16 Pro', en: 'iPhone 16 Pro' },
-    description: {
-      ar: 'التيتانيوم، ومعالج A18 Pro، وكاميرا 48 ميغابيكسل تصوّر بجودة سينمائية. إنه الآيفون الذي كنت تنتظره.',
-      fr: 'Titane, puce A18 Pro et un capteur 48 Mpx qui filme comme une caméra de cinéma. L’iPhone que vous attendiez.',
-      en: 'Titanium, the A18 Pro chip and a 48MP sensor that shoots like a cinema camera. The iPhone worth waiting for.',
-    },
+    name: 'آيفون 16 برو',
+    description: 'التيتانيوم، ومعالج A18 Pro، وكاميرا 48 ميغابيكسل تصوّر بجودة سينمائية. إنه الآيفون الذي كنت تنتظره.',
     highlights: [
       {
         value: '48',
         unit: 'MP',
-        label: { ar: 'الكاميرا الرئيسية', fr: 'Capteur principal', en: 'Main camera' },
+        label: 'الكاميرا الرئيسية',
       },
-      { value: 'A18', unit: 'Pro', label: { ar: 'المعالج', fr: 'Puce', en: 'Chip' } },
+      { value: 'A18', unit: 'Pro', label: 'المعالج' },
       {
         value: '12',
         unit: 'MP',
-        label: { ar: 'كاميرا السيلفي', fr: 'Caméra frontale', en: 'Front camera' },
+        label: 'كاميرا السيلفي',
       },
       {
         value: '3',
         unit: null,
-        label: { ar: 'عدسات خلفية', fr: 'Objectifs arrière', en: 'Rear lenses' },
+        label: 'عدسات خلفية',
       },
     ],
     specs: [
       {
         key: 'screen',
-        label: { ar: 'الشاشة', fr: 'Écran', en: 'Display' },
+        label: 'الشاشة',
         value: '6.3" ProMotion 120 Hz',
       },
-      { key: 'chip', label: { ar: 'المعالج', fr: 'Puce', en: 'Chip' }, value: 'A18 Pro' },
+      { key: 'chip', label: 'المعالج', value: 'A18 Pro' },
       {
         key: 'camera',
-        label: { ar: 'الكاميرا', fr: 'Caméra', en: 'Camera' },
+        label: 'الكاميرا',
         value: '48 MP + 48 MP + 12 MP',
       },
       {
         key: 'battery',
-        label: { ar: 'البطارية', fr: 'Autonomie', en: 'Battery' },
+        label: 'البطارية',
         value: '27 h',
       },
-      { key: 'sim', label: { ar: 'الشريحة', fr: 'SIM', en: 'SIM' }, value: 'Nano-SIM + eSIM' },
+      { key: 'sim', label: 'الشريحة', value: 'Nano-SIM + eSIM' },
     ],
     variants: [
       {
@@ -74,7 +74,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'desert-titanium',
           hex: '#BFA48F',
-          label: { ar: 'تيتانيوم صحراوي', fr: 'Titane désert', en: 'Desert Titanium' },
+          label: 'تيتانيوم صحراوي',
         },
         storage: '256 GB',
         price: 289000,
@@ -87,7 +87,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'natural-titanium',
           hex: '#C2BCB2',
-          label: { ar: 'تيتانيوم طبيعي', fr: 'Titane naturel', en: 'Natural Titanium' },
+          label: 'تيتانيوم طبيعي',
         },
         storage: '256 GB',
         price: 289000,
@@ -100,7 +100,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'black-titanium',
           hex: '#3B3B3D',
-          label: { ar: 'تيتانيوم أسود', fr: 'Titane noir', en: 'Black Titanium' },
+          label: 'تيتانيوم أسود',
         },
         storage: '512 GB',
         price: 329000,
@@ -113,7 +113,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'white-titanium',
           hex: '#F2F1ED',
-          label: { ar: 'تيتانيوم أبيض', fr: 'Titane blanc', en: 'White Titanium' },
+          label: 'تيتانيوم أبيض',
         },
         storage: '256 GB',
         price: 289000,
@@ -130,21 +130,17 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['new'],
     featured: false,
     bestseller: true,
-    name: { ar: 'آيفون 16 برو ماكس', fr: 'iPhone 16 Pro Max', en: 'iPhone 16 Pro Max' },
-    description: {
-      ar: 'أكبر شاشة وأطول عمر بطارية في تاريخ آيفون. إذا كنت تصوّر أو تلعب كثيراً، فهذا هو خيارك.',
-      fr: 'Le plus grand écran et la meilleure autonomie jamais vus sur un iPhone. Pour ceux qui filment ou jouent beaucoup.',
-      en: 'The biggest screen and longest battery Apple has shipped. For heavy shooters and heavy gamers.',
-    },
+    name: 'آيفون 16 برو ماكس',
+    description: 'أكبر شاشة وأطول عمر بطارية في تاريخ آيفون. إذا كنت تصوّر أو تلعب كثيراً، فهذا هو خيارك.',
     highlights: [],
     specs: [
       {
         key: 'screen',
-        label: { ar: 'الشاشة', fr: 'Écran', en: 'Display' },
+        label: 'الشاشة',
         value: '6.9" ProMotion 120 Hz',
       },
-      { key: 'chip', label: { ar: 'المعالج', fr: 'Puce', en: 'Chip' }, value: 'A18 Pro' },
-      { key: 'battery', label: { ar: 'البطارية', fr: 'Autonomie', en: 'Battery' }, value: '33 h' },
+      { key: 'chip', label: 'المعالج', value: 'A18 Pro' },
+      { key: 'battery', label: 'البطارية', value: '33 h' },
     ],
     variants: [
       {
@@ -152,7 +148,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'desert-titanium',
           hex: '#BFA48F',
-          label: { ar: 'تيتانيوم صحراوي', fr: 'Titane désert', en: 'Desert Titanium' },
+          label: 'تيتانيوم صحراوي',
         },
         storage: '256 GB',
         price: 339000,
@@ -165,7 +161,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'black-titanium',
           hex: '#3B3B3D',
-          label: { ar: 'تيتانيوم أسود', fr: 'Titane noir', en: 'Black Titanium' },
+          label: 'تيتانيوم أسود',
         },
         storage: '512 GB',
         price: 379000,
@@ -182,19 +178,15 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['bestseller'],
     featured: false,
     bestseller: true,
-    name: { ar: 'آيفون 16', fr: 'iPhone 16', en: 'iPhone 16' },
-    description: {
-      ar: 'زر التحكم بالكاميرا، ومعالج A18، وألوان جديدة. أفضل آيفون من حيث السعر.',
-      fr: 'Commande de caméra, puce A18 et de nouvelles couleurs. Le meilleur rapport qualité-prix de la gamme.',
-      en: 'Camera Control, the A18 chip and fresh colours. The best value in the lineup.',
-    },
+    name: 'آيفون 16',
+    description: 'زر التحكم بالكاميرا، ومعالج A18، وألوان جديدة. أفضل آيفون من حيث السعر.',
     highlights: [],
     specs: [
-      { key: 'screen', label: { ar: 'الشاشة', fr: 'Écran', en: 'Display' }, value: '6.1" OLED' },
-      { key: 'chip', label: { ar: 'المعالج', fr: 'Puce', en: 'Chip' }, value: 'A18' },
+      { key: 'screen', label: 'الشاشة', value: '6.1" OLED' },
+      { key: 'chip', label: 'المعالج', value: 'A18' },
       {
         key: 'camera',
-        label: { ar: 'الكاميرا', fr: 'Caméra', en: 'Camera' },
+        label: 'الكاميرا',
         value: '48 MP + 12 MP',
       },
     ],
@@ -204,7 +196,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'ultramarine',
           hex: '#4C6EA8',
-          label: { ar: 'أزرق بحري', fr: 'Outremer', en: 'Ultramarine' },
+          label: 'أزرق بحري',
         },
         storage: '128 GB',
         price: 219000,
@@ -217,7 +209,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'teal',
           hex: '#A8C8C0',
-          label: { ar: 'أزرق مخضر', fr: 'Sarcelle', en: 'Teal' },
+          label: 'أزرق مخضر',
         },
         storage: '256 GB',
         price: 245000,
@@ -230,7 +222,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'black',
           hex: '#35363A',
-          label: { ar: 'أسود', fr: 'Noir', en: 'Black' },
+          label: 'أسود',
         },
         storage: '128 GB',
         price: 219000,
@@ -247,16 +239,12 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['promo'],
     featured: false,
     bestseller: false,
-    name: { ar: 'آيفون 15', fr: 'iPhone 15', en: 'iPhone 15' },
-    description: {
-      ar: 'الجزيرة الديناميكية وكاميرا 48 ميغابيكسل، بسعر أصبح معقولاً جداً.',
-      fr: 'Dynamic Island et capteur 48 Mpx, à un prix devenu vraiment raisonnable.',
-      en: 'Dynamic Island and a 48MP sensor, at a price that has finally become sensible.',
-    },
+    name: 'آيفون 15',
+    description: 'الجزيرة الديناميكية وكاميرا 48 ميغابيكسل، بسعر أصبح معقولاً جداً.',
     highlights: [],
     specs: [
-      { key: 'screen', label: { ar: 'الشاشة', fr: 'Écran', en: 'Display' }, value: '6.1" OLED' },
-      { key: 'chip', label: { ar: 'المعالج', fr: 'Puce', en: 'Chip' }, value: 'A16 Bionic' },
+      { key: 'screen', label: 'الشاشة', value: '6.1" OLED' },
+      { key: 'chip', label: 'المعالج', value: 'A16 Bionic' },
     ],
     variants: [
       {
@@ -264,7 +252,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'blue',
           hex: '#D3E0E4',
-          label: { ar: 'أزرق فاتح', fr: 'Bleu', en: 'Blue' },
+          label: 'أزرق فاتح',
         },
         storage: '128 GB',
         price: 178000,
@@ -277,7 +265,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'black',
           hex: '#35363A',
-          label: { ar: 'أسود', fr: 'Noir', en: 'Black' },
+          label: 'أسود',
         },
         storage: '128 GB',
         price: 178000,
@@ -294,16 +282,12 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['promo'],
     featured: false,
     bestseller: false,
-    name: { ar: 'آيفون 13', fr: 'iPhone 13', en: 'iPhone 13' },
-    description: {
-      ar: 'لا يزال قوياً، ولا يزال يستقبل التحديثات، وأصبح سعره في المتناول. مدخل مثالي إلى عالم آبل.',
-      fr: 'Toujours performant, toujours mis à jour, et enfin abordable. L’entrée idéale dans l’écosystème Apple.',
-      en: 'Still fast, still getting updates, and now genuinely affordable. The best way into the Apple ecosystem.',
-    },
+    name: 'آيفون 13',
+    description: 'لا يزال قوياً، ولا يزال يستقبل التحديثات، وأصبح سعره في المتناول. مدخل مثالي إلى عالم آبل.',
     highlights: [],
     specs: [
-      { key: 'screen', label: { ar: 'الشاشة', fr: 'Écran', en: 'Display' }, value: '6.1" OLED' },
-      { key: 'chip', label: { ar: 'المعالج', fr: 'Puce', en: 'Chip' }, value: 'A15 Bionic' },
+      { key: 'screen', label: 'الشاشة', value: '6.1" OLED' },
+      { key: 'chip', label: 'المعالج', value: 'A15 Bionic' },
     ],
     variants: [
       {
@@ -311,7 +295,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'midnight',
           hex: '#25282C',
-          label: { ar: 'أسود منتصف الليل', fr: 'Minuit', en: 'Midnight' },
+          label: 'أسود منتصف الليل',
         },
         storage: '128 GB',
         price: 128000,
@@ -330,25 +314,21 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['new'],
     featured: false,
     bestseller: true,
-    name: { ar: 'غالاكسي Z فولد 8', fr: 'Galaxy Z Fold 8', en: 'Galaxy Z Fold 8' },
-    description: {
-      ar: 'هاتف وجهاز لوحي في آن واحد. عند فتحه تجد شاشة بحجم 7.6 بوصة تعمل عليها كما لو كانت حاسوباً محمولاً.',
-      fr: 'Un téléphone et une tablette dans un seul appareil. Déplié : 7,6 pouces où l’on travaille comme sur un portable.',
-      en: 'A phone and a tablet in one. Unfolded it gives you 7.6 inches you can actually work on.',
-    },
+    name: 'غالاكسي Z فولد 8',
+    description: 'هاتف وجهاز لوحي في آن واحد. عند فتحه تجد شاشة بحجم 7.6 بوصة تعمل عليها كما لو كانت حاسوباً محمولاً.',
     highlights: [],
     specs: [
       {
         key: 'screen',
-        label: { ar: 'الشاشة الداخلية', fr: 'Écran interne', en: 'Inner display' },
+        label: 'الشاشة الداخلية',
         value: '7.6" 120 Hz',
       },
       {
         key: 'cover',
-        label: { ar: 'الشاشة الخارجية', fr: 'Écran externe', en: 'Cover display' },
+        label: 'الشاشة الخارجية',
         value: '6.3" 120 Hz',
       },
-      { key: 'ram', label: { ar: 'الذاكرة', fr: 'Mémoire', en: 'Memory' }, value: '12 GB RAM' },
+      { key: 'ram', label: 'الذاكرة', value: '12 GB RAM' },
     ],
     variants: [
       {
@@ -356,7 +336,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'silver-shadow',
           hex: '#B8BABE',
-          label: { ar: 'فضي', fr: 'Argent', en: 'Silver Shadow' },
+          label: 'فضي',
         },
         storage: '256 GB',
         price: 425000,
@@ -369,7 +349,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'navy',
           hex: '#2C3A52',
-          label: { ar: 'كحلي', fr: 'Bleu marine', en: 'Navy' },
+          label: 'كحلي',
         },
         storage: '512 GB',
         price: 468000,
@@ -386,29 +366,21 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['new', 'last-units'],
     featured: false,
     bestseller: false,
-    name: {
-      ar: 'غالاكسي Z فولد 8 ألترا',
-      fr: 'Galaxy Z Fold 8 Ultra',
-      en: 'Galaxy Z Fold 8 Ultra',
-    },
-    description: {
-      ar: 'النسخة الكبيرة: كاميرا 200 ميغابيكسل وقلم S Pen داخل الجهاز. أقوى قابل للطي في السوق.',
-      fr: 'La version XL : capteur 200 Mpx et S Pen intégré. Le pliable le plus abouti du marché.',
-      en: 'The XL version: a 200MP sensor and an integrated S Pen. The most capable foldable on the market.',
-    },
+    name: 'غالاكسي Z فولد 8 ألترا',
+    description: 'النسخة الكبيرة: كاميرا 200 ميغابيكسل وقلم S Pen داخل الجهاز. أقوى قابل للطي في السوق.',
     highlights: [],
     specs: [
       {
         key: 'screen',
-        label: { ar: 'الشاشة الداخلية', fr: 'Écran interne', en: 'Inner display' },
+        label: 'الشاشة الداخلية',
         value: '8.0" 120 Hz',
       },
       {
         key: 'camera',
-        label: { ar: 'الكاميرا', fr: 'Caméra', en: 'Camera' },
+        label: 'الكاميرا',
         value: '200 MP',
       },
-      { key: 'pen', label: { ar: 'القلم', fr: 'Stylet', en: 'Stylus' }, value: 'S Pen' },
+      { key: 'pen', label: 'القلم', value: 'S Pen' },
     ],
     variants: [
       {
@@ -416,7 +388,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'titanium-black',
           hex: '#43454A',
-          label: { ar: 'تيتانيوم أسود', fr: 'Titane noir', en: 'Titanium Black' },
+          label: 'تيتانيوم أسود',
         },
         storage: '512 GB',
         price: 498000,
@@ -433,21 +405,17 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['bestseller'],
     featured: false,
     bestseller: true,
-    name: { ar: 'غالاكسي Z فليب 8', fr: 'Galaxy Z Flip 8', en: 'Galaxy Z Flip 8' },
-    description: {
-      ar: 'ينطوي ويدخل جيبك من دون أن تشعر بثقله، وتتيح لك الشاشة الخارجية التقاط صور سيلفي بالكاميرا الرئيسية.',
-      fr: 'Il se plie et disparaît dans la poche, et l’écran externe permet de faire des selfies avec le capteur principal.',
-      en: 'Folds down and vanishes into a pocket, and the cover screen lets you shoot selfies on the main camera.',
-    },
+    name: 'غالاكسي Z فليب 8',
+    description: 'ينطوي ويدخل جيبك من دون أن تشعر بثقله، وتتيح لك الشاشة الخارجية التقاط صور سيلفي بالكاميرا الرئيسية.',
     highlights: [],
     specs: [
-      { key: 'screen', label: { ar: 'الشاشة', fr: 'Écran', en: 'Display' }, value: '6.7" 120 Hz' },
+      { key: 'screen', label: 'الشاشة', value: '6.7" 120 Hz' },
       {
         key: 'cover',
-        label: { ar: 'الشاشة الخارجية', fr: 'Écran externe', en: 'Cover display' },
+        label: 'الشاشة الخارجية',
         value: '3.4"',
       },
-      { key: 'battery', label: { ar: 'البطارية', fr: 'Batterie', en: 'Battery' }, value: '4000 mAh' },
+      { key: 'battery', label: 'البطارية', value: '4000 mAh' },
     ],
     variants: [
       {
@@ -455,7 +423,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'blue',
           hex: '#4A6FA5',
-          label: { ar: 'أزرق', fr: 'Bleu', en: 'Blue' },
+          label: 'أزرق',
         },
         storage: '256 GB',
         price: 235000,
@@ -468,7 +436,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'coral-red',
           hex: '#D9584E',
-          label: { ar: 'أحمر مرجاني', fr: 'Rouge corail', en: 'Coral Red' },
+          label: 'أحمر مرجاني',
         },
         storage: '256 GB',
         price: 235000,
@@ -481,7 +449,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'mint',
           hex: '#B7CFC0',
-          label: { ar: 'أخضر نعناعي', fr: 'Menthe', en: 'Mint' },
+          label: 'أخضر نعناعي',
         },
         storage: '512 GB',
         price: 268000,
@@ -498,17 +466,13 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['bestseller'],
     featured: false,
     bestseller: true,
-    name: { ar: 'غالاكسي S25 ألترا', fr: 'Galaxy S25 Ultra', en: 'Galaxy S25 Ultra' },
-    description: {
-      ar: 'كاميرا 200 ميغابيكسل وزوم 100x، وقلم S Pen. تجربة أندرويد كاملة دون أي نقص.',
-      fr: 'Capteur 200 Mpx, zoom 100x et S Pen. L’Android complet, sans compromis.',
-      en: 'A 200MP sensor, 100x zoom and the S Pen. Android with nothing left out.',
-    },
+    name: 'غالاكسي S25 ألترا',
+    description: 'كاميرا 200 ميغابيكسل وزوم 100x، وقلم S Pen. تجربة أندرويد كاملة دون أي نقص.',
     highlights: [],
     specs: [
-      { key: 'screen', label: { ar: 'الشاشة', fr: 'Écran', en: 'Display' }, value: '6.9" 120 Hz' },
-      { key: 'camera', label: { ar: 'الكاميرا', fr: 'Caméra', en: 'Camera' }, value: '200 MP' },
-      { key: 'zoom', label: { ar: 'الزوم', fr: 'Zoom', en: 'Zoom' }, value: '100x' },
+      { key: 'screen', label: 'الشاشة', value: '6.9" 120 Hz' },
+      { key: 'camera', label: 'الكاميرا', value: '200 MP' },
+      { key: 'zoom', label: 'الزوم', value: '100x' },
     ],
     variants: [
       {
@@ -516,7 +480,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'titanium-black',
           hex: '#43454A',
-          label: { ar: 'تيتانيوم أسود', fr: 'Titane noir', en: 'Titanium Black' },
+          label: 'تيتانيوم أسود',
         },
         storage: '256 GB',
         price: 355000,
@@ -529,7 +493,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'titanium-gray',
           hex: '#8E9095',
-          label: { ar: 'تيتانيوم رمادي', fr: 'Titane gris', en: 'Titanium Gray' },
+          label: 'تيتانيوم رمادي',
         },
         storage: '512 GB',
         price: 392000,
@@ -546,17 +510,13 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['new'],
     featured: false,
     bestseller: false,
-    name: { ar: 'غالاكسي ووتش ألترا 2', fr: 'Galaxy Watch Ultra 2', en: 'Galaxy Watch Ultra 2' },
-    description: {
-      ar: 'هيكل تيتانيوم، مقاومة للماء 100 متر، وبطارية توصل 100 ساعة. مصنوعة للرياضة الحقيقية.',
-      fr: 'Boîtier titane, étanche à 100 m et jusqu’à 100 h d’autonomie. Faite pour le sport, pas pour la vitrine.',
-      en: 'Titanium case, 100m water resistance and up to 100 hours of battery. Built for actual training.',
-    },
+    name: 'غالاكسي ووتش ألترا 2',
+    description: 'هيكل تيتانيوم، مقاومة للماء 100 متر، وبطارية توصل 100 ساعة. مصنوعة للرياضة الحقيقية.',
     highlights: [],
     specs: [
-      { key: 'case', label: { ar: 'الهيكل', fr: 'Boîtier', en: 'Case' }, value: '47 mm Titanium' },
-      { key: 'battery', label: { ar: 'البطارية', fr: 'Autonomie', en: 'Battery' }, value: '100 h' },
-      { key: 'water', label: { ar: 'مقاومة الماء', fr: 'Étanchéité', en: 'Water resistance' }, value: '10 ATM' },
+      { key: 'case', label: 'الهيكل', value: '47 mm Titanium' },
+      { key: 'battery', label: 'البطارية', value: '100 h' },
+      { key: 'water', label: 'مقاومة الماء', value: '10 ATM' },
     ],
     variants: [
       {
@@ -564,7 +524,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'titanium-gray',
           hex: '#7D7F84',
-          label: { ar: 'تيتانيوم رمادي', fr: 'Titane gris', en: 'Titanium Gray' },
+          label: 'تيتانيوم رمادي',
         },
         storage: '47 mm',
         price: 86000,
@@ -577,7 +537,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'titanium-white',
           hex: '#E3E2DE',
-          label: { ar: 'تيتانيوم أبيض', fr: 'Titane blanc', en: 'Titanium White' },
+          label: 'تيتانيوم أبيض',
         },
         storage: '47 mm',
         price: 86000,
@@ -594,17 +554,13 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['bestseller'],
     featured: false,
     bestseller: true,
-    name: { ar: 'غالاكسي ووتش 9', fr: 'Galaxy Watch 9', en: 'Galaxy Watch 9' },
-    description: {
-      ar: 'تقيس النبض والنوم وضغط الدم، وتجعل هاتفك يبقى في جيبك. متوافقة مع جميع أجهزة أندرويد.',
-      fr: 'Pouls, sommeil, tension — et le téléphone reste dans la poche. Compatible avec tous les Android.',
-      en: 'Heart rate, sleep and blood pressure tracking, so your phone can stay in your pocket. Works with any Android.',
-    },
+    name: 'غالاكسي ووتش 9',
+    description: 'تقيس النبض والنوم وضغط الدم، وتجعل هاتفك يبقى في جيبك. متوافقة مع جميع أجهزة أندرويد.',
     highlights: [],
     specs: [
-      { key: 'case', label: { ar: 'الهيكل', fr: 'Boîtier', en: 'Case' }, value: '44 mm' },
-      { key: 'battery', label: { ar: 'البطارية', fr: 'Autonomie', en: 'Battery' }, value: '40 h' },
-      { key: 'health', label: { ar: 'الصحة', fr: 'Santé', en: 'Health' }, value: 'ECG + BIA' },
+      { key: 'case', label: 'الهيكل', value: '44 mm' },
+      { key: 'battery', label: 'البطارية', value: '40 h' },
+      { key: 'health', label: 'الصحة', value: 'ECG + BIA' },
     ],
     variants: [
       {
@@ -612,7 +568,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'silver',
           hex: '#C9CBCF',
-          label: { ar: 'فضي', fr: 'Argent', en: 'Silver' },
+          label: 'فضي',
         },
         storage: '44 mm',
         price: 52000,
@@ -625,7 +581,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'graphite',
           hex: '#4A4B4F',
-          label: { ar: 'رمادي غرافيت', fr: 'Graphite', en: 'Graphite' },
+          label: 'رمادي غرافيت',
         },
         storage: '40 mm',
         price: 48000,
@@ -642,16 +598,12 @@ export const PRODUCTS_SEED_DATA = [
     badges: [],
     featured: false,
     bestseller: false,
-    name: { ar: 'غالاكسي A56', fr: 'Galaxy A56', en: 'Galaxy A56' },
-    description: {
-      ar: 'سامسونغ بسعر معقول: شاشة AMOLED، وبطارية تدوم يومين كاملين، وست سنوات من التحديثات.',
-      fr: 'Le Samsung au bon prix : écran AMOLED, deux jours d’autonomie et six ans de mises à jour.',
-      en: 'The sensible Samsung: an AMOLED screen, two days of battery and six years of updates.',
-    },
+    name: 'غالاكسي A56',
+    description: 'سامسونغ بسعر معقول: شاشة AMOLED، وبطارية تدوم يومين كاملين، وست سنوات من التحديثات.',
     highlights: [],
     specs: [
-      { key: 'screen', label: { ar: 'الشاشة', fr: 'Écran', en: 'Display' }, value: '6.7" AMOLED' },
-      { key: 'battery', label: { ar: 'البطارية', fr: 'Batterie', en: 'Battery' }, value: '5000 mAh' },
+      { key: 'screen', label: 'الشاشة', value: '6.7" AMOLED' },
+      { key: 'battery', label: 'البطارية', value: '5000 mAh' },
     ],
     variants: [
       {
@@ -659,7 +611,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'graphite',
           hex: '#3F4145',
-          label: { ar: 'رمادي غرافيت', fr: 'Graphite', en: 'Graphite' },
+          label: 'رمادي غرافيت',
         },
         storage: '8 GB / 256 GB',
         price: 68000,
@@ -678,17 +630,13 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['bestseller', 'promo'],
     featured: false,
     bestseller: true,
-    name: { ar: 'ريدمي نوت 13', fr: 'Redmi Note 13', en: 'Redmi Note 13' },
-    description: {
-      ar: 'الأكثر مبيعاً لدينا، وليس ذلك من دون سبب: كاميرا 108 ميغابيكسل وبطارية تدوم يومين كاملين.',
-      fr: 'Notre meilleure vente, et ce n’est pas un hasard : capteur 108 Mpx et deux jours d’autonomie.',
-      en: 'Our best seller, and not by accident: a 108MP camera and two days of battery.',
-    },
+    name: 'ريدمي نوت 13',
+    description: 'الأكثر مبيعاً لدينا، وليس ذلك من دون سبب: كاميرا 108 ميغابيكسل وبطارية تدوم يومين كاملين.',
     highlights: [],
     specs: [
-      { key: 'screen', label: { ar: 'الشاشة', fr: 'Écran', en: 'Display' }, value: '6.67" AMOLED' },
-      { key: 'camera', label: { ar: 'الكاميرا', fr: 'Caméra', en: 'Camera' }, value: '108 MP' },
-      { key: 'battery', label: { ar: 'البطارية', fr: 'Batterie', en: 'Battery' }, value: '5000 mAh' },
+      { key: 'screen', label: 'الشاشة', value: '6.67" AMOLED' },
+      { key: 'camera', label: 'الكاميرا', value: '108 MP' },
+      { key: 'battery', label: 'البطارية', value: '5000 mAh' },
     ],
     variants: [
       {
@@ -696,7 +644,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'midnight-black',
           hex: '#2A2C31',
-          label: { ar: 'أسود', fr: 'Noir', en: 'Midnight Black' },
+          label: 'أسود',
         },
         storage: '8 GB / 128 GB',
         price: 44500,
@@ -709,7 +657,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'ocean-teal',
           hex: '#2E6D6E',
-          label: { ar: 'أزرق محيطي', fr: 'Bleu océan', en: 'Ocean Teal' },
+          label: 'أزرق محيطي',
         },
         storage: '8 GB / 256 GB',
         price: 51000,
@@ -726,16 +674,12 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['new'],
     featured: false,
     bestseller: false,
-    name: { ar: 'ريدمي نوت 14 برو', fr: 'Redmi Note 14 Pro', en: 'Redmi Note 14 Pro' },
-    description: {
-      ar: 'شاشة منحنية، وشحن بقوة 67 واط، ومقاومة IP68 للماء والغبار. أداء الفئة الرائدة بنصف السعر.',
-      fr: 'Écran incurvé, charge 67 W et certification IP68. Du flagship à moitié prix.',
-      en: 'A curved screen, 67W charging and IP68. Flagship feel at half the price.',
-    },
+    name: 'ريدمي نوت 14 برو',
+    description: 'شاشة منحنية، وشحن بقوة 67 واط، ومقاومة IP68 للماء والغبار. أداء الفئة الرائدة بنصف السعر.',
     highlights: [],
     specs: [
-      { key: 'screen', label: { ar: 'الشاشة', fr: 'Écran', en: 'Display' }, value: '6.67" AMOLED' },
-      { key: 'charge', label: { ar: 'الشحن', fr: 'Charge', en: 'Charging' }, value: '67 W' },
+      { key: 'screen', label: 'الشاشة', value: '6.67" AMOLED' },
+      { key: 'charge', label: 'الشحن', value: '67 W' },
     ],
     variants: [
       {
@@ -743,7 +687,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'lavender',
           hex: '#8A7BB8',
-          label: { ar: 'بنفسجي', fr: 'Lavande', en: 'Lavender' },
+          label: 'بنفسجي',
         },
         storage: '8 GB / 256 GB',
         price: 62000,
@@ -760,16 +704,12 @@ export const PRODUCTS_SEED_DATA = [
     badges: [],
     featured: false,
     bestseller: false,
-    name: { ar: 'بوكو X7 برو', fr: 'Poco X7 Pro', en: 'Poco X7 Pro' },
-    description: {
-      ar: 'لعشاق الألعاب: معالج Dimensity 8400 وشحن بقوة 90 واط يملأ البطارية خلال 40 دقيقة.',
-      fr: 'Pour les joueurs : Dimensity 8400 et charge 90 W qui remplit la batterie en 40 minutes.',
-      en: 'For gamers: a Dimensity 8400 and 90W charging that fills the battery in 40 minutes.',
-    },
+    name: 'بوكو X7 برو',
+    description: 'لعشاق الألعاب: معالج Dimensity 8400 وشحن بقوة 90 واط يملأ البطارية خلال 40 دقيقة.',
     highlights: [],
     specs: [
-      { key: 'chip', label: { ar: 'المعالج', fr: 'Puce', en: 'Chip' }, value: 'Dimensity 8400' },
-      { key: 'charge', label: { ar: 'الشحن', fr: 'Charge', en: 'Charging' }, value: '90 W' },
+      { key: 'chip', label: 'المعالج', value: 'Dimensity 8400' },
+      { key: 'charge', label: 'الشحن', value: '90 W' },
     ],
     variants: [
       {
@@ -777,7 +717,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'poco-yellow',
           hex: '#E0B33C',
-          label: { ar: 'أصفر', fr: 'Jaune', en: 'Yellow' },
+          label: 'أصفر',
         },
         storage: '8 GB / 256 GB',
         price: 58000,
@@ -794,16 +734,12 @@ export const PRODUCTS_SEED_DATA = [
     badges: [],
     featured: false,
     bestseller: false,
-    name: { ar: 'هونور X9c', fr: 'Honor X9c', en: 'Honor X9c' },
-    description: {
-      ar: 'شاشة مقاومة للكسر، وبطارية سعة 6600 مللي أمبير. مصمم ليدوم معك سنوات طويلة.',
-      fr: 'Un écran qui résiste vraiment et une batterie de 6600 mAh. Conçu pour durer.',
-      en: 'A screen that genuinely survives drops and a 6600mAh battery. Built to last years.',
-    },
+    name: 'هونور X9c',
+    description: 'شاشة مقاومة للكسر، وبطارية سعة 6600 مللي أمبير. مصمم ليدوم معك سنوات طويلة.',
     highlights: [],
     specs: [
-      { key: 'battery', label: { ar: 'البطارية', fr: 'Batterie', en: 'Battery' }, value: '6600 mAh' },
-      { key: 'screen', label: { ar: 'الشاشة', fr: 'Écran', en: 'Display' }, value: '6.78" AMOLED' },
+      { key: 'battery', label: 'البطارية', value: '6600 mAh' },
+      { key: 'screen', label: 'الشاشة', value: '6.78" AMOLED' },
     ],
     variants: [
       {
@@ -811,7 +747,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'black',
           hex: '#2C2E33',
-          label: { ar: 'أسود', fr: 'Noir', en: 'Black' },
+          label: 'أسود',
         },
         storage: '8 GB / 256 GB',
         price: 51000,
@@ -830,17 +766,13 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['new'],
     featured: false,
     bestseller: true,
-    name: { ar: 'ماكبوك إير M4', fr: 'MacBook Air M4', en: 'MacBook Air M4' },
-    description: {
-      ar: 'خفيف الوزن، بلا مروحة تبريد، وبطارية تكفي ليوم عمل كامل. أفضل حاسوب محمول للطلاب والمصممين.',
-      fr: 'Léger, sans ventilateur, une journée entière d’autonomie. Le meilleur portable pour les étudiants et les créatifs.',
-      en: 'Light, fanless, and a full working day of battery. The best laptop for students and designers.',
-    },
+    name: 'ماكبوك إير M4',
+    description: 'خفيف الوزن، بلا مروحة تبريد، وبطارية تكفي ليوم عمل كامل. أفضل حاسوب محمول للطلاب والمصممين.',
     highlights: [],
     specs: [
-      { key: 'chip', label: { ar: 'المعالج', fr: 'Puce', en: 'Chip' }, value: 'Apple M4' },
-      { key: 'screen', label: { ar: 'الشاشة', fr: 'Écran', en: 'Display' }, value: '13.6" Liquid Retina' },
-      { key: 'battery', label: { ar: 'البطارية', fr: 'Autonomie', en: 'Battery' }, value: '18 h' },
+      { key: 'chip', label: 'المعالج', value: 'Apple M4' },
+      { key: 'screen', label: 'الشاشة', value: '13.6" Liquid Retina' },
+      { key: 'battery', label: 'البطارية', value: '18 h' },
     ],
     variants: [
       {
@@ -848,7 +780,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'sky-blue',
           hex: '#B4C4D8',
-          label: { ar: 'أزرق سماوي', fr: 'Bleu ciel', en: 'Sky Blue' },
+          label: 'أزرق سماوي',
         },
         storage: '16 GB / 256 GB',
         price: 268000,
@@ -861,7 +793,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'midnight',
           hex: '#2E3641',
-          label: { ar: 'أسود منتصف الليل', fr: 'Minuit', en: 'Midnight' },
+          label: 'أسود منتصف الليل',
         },
         storage: '16 GB / 512 GB',
         price: 312000,
@@ -878,17 +810,13 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['bestseller'],
     featured: false,
     bestseller: false,
-    name: { ar: 'HP فيكتوس 15', fr: 'HP Victus 15', en: 'HP Victus 15' },
-    description: {
-      ar: 'بطاقة رسومات RTX 4050 وشاشة بمعدل تحديث 144 هرتز، تشغّل جميع الألعاب الحديثة دون أي مشاكل.',
-      fr: 'RTX 4050 et écran 144 Hz. Il fait tourner tous les jeux du moment sans broncher.',
-      en: 'An RTX 4050 and a 144Hz screen. It runs everything current without complaining.',
-    },
+    name: 'HP فيكتوس 15',
+    description: 'بطاقة رسومات RTX 4050 وشاشة بمعدل تحديث 144 هرتز، تشغّل جميع الألعاب الحديثة دون أي مشاكل.',
     highlights: [],
     specs: [
-      { key: 'gpu', label: { ar: 'بطاقة الرسومات', fr: 'Carte graphique', en: 'Graphics' }, value: 'RTX 4050 6 GB' },
-      { key: 'cpu', label: { ar: 'المعالج', fr: 'Processeur', en: 'Processor' }, value: 'Core i5-13420H' },
-      { key: 'screen', label: { ar: 'الشاشة', fr: 'Écran', en: 'Display' }, value: '15.6" 144 Hz' },
+      { key: 'gpu', label: 'بطاقة الرسومات', value: 'RTX 4050 6 GB' },
+      { key: 'cpu', label: 'المعالج', value: 'Core i5-13420H' },
+      { key: 'screen', label: 'الشاشة', value: '15.6" 144 Hz' },
     ],
     variants: [
       {
@@ -896,7 +824,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'mica-silver',
           hex: '#54565B',
-          label: { ar: 'فضي', fr: 'Argent', en: 'Mica Silver' },
+          label: 'فضي',
         },
         storage: '16 GB / 512 GB',
         price: 165000,
@@ -913,16 +841,12 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['promo'],
     featured: false,
     bestseller: false,
-    name: { ar: 'لينوفو آيديا باد سليم 3', fr: 'Lenovo IdeaPad Slim 3', en: 'Lenovo IdeaPad Slim 3' },
-    description: {
-      ar: 'للدراسة والعمل المكتبي: معالج Ryzen 5، وشاشة FHD، ووزن خفيف يمكنك حمله إلى الجامعة كل يوم.',
-      fr: 'Études et bureautique : Ryzen 5, écran FHD et un poids qu’on emporte à la fac tous les jours.',
-      en: 'Study and office work: a Ryzen 5, an FHD screen, and light enough to carry to class daily.',
-    },
+    name: 'لينوفو آيديا باد سليم 3',
+    description: 'للدراسة والعمل المكتبي: معالج Ryzen 5، وشاشة FHD، ووزن خفيف يمكنك حمله إلى الجامعة كل يوم.',
     highlights: [],
     specs: [
-      { key: 'cpu', label: { ar: 'المعالج', fr: 'Processeur', en: 'Processor' }, value: 'Ryzen 5 7520U' },
-      { key: 'screen', label: { ar: 'الشاشة', fr: 'Écran', en: 'Display' }, value: '15.6" FHD' },
+      { key: 'cpu', label: 'المعالج', value: 'Ryzen 5 7520U' },
+      { key: 'screen', label: 'الشاشة', value: '15.6" FHD' },
     ],
     variants: [
       {
@@ -930,7 +854,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'arctic-grey',
           hex: '#8C8E92',
-          label: { ar: 'رمادي', fr: 'Gris', en: 'Arctic Grey' },
+          label: 'رمادي',
         },
         storage: '8 GB / 512 GB',
         price: 78000,
@@ -949,16 +873,12 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['bestseller'],
     featured: false,
     bestseller: true,
-    name: { ar: 'إيربودز برو 2', fr: 'AirPods Pro 2', en: 'AirPods Pro 2' },
-    description: {
-      ar: 'إلغاء ضجيج يعزلك تماماً عن ضوضاء الشارع، وشحن عبر USB-C. أفضل سماعات إيربودز لهاتف آيفون.',
-      fr: 'Une réduction de bruit qui efface la rue entière, et la charge USB-C. Les meilleurs écouteurs pour iPhone.',
-      en: 'Noise cancelling that erases the whole street, plus USB-C charging. The best earbuds for an iPhone.',
-    },
+    name: 'إيربودز برو 2',
+    description: 'إلغاء ضجيج يعزلك تماماً عن ضوضاء الشارع، وشحن عبر USB-C. أفضل سماعات إيربودز لهاتف آيفون.',
     highlights: [],
     specs: [
-      { key: 'anc', label: { ar: 'إلغاء الضجيج', fr: 'Réduction de bruit', en: 'Noise cancelling' }, value: 'Active' },
-      { key: 'battery', label: { ar: 'البطارية', fr: 'Autonomie', en: 'Battery' }, value: '30 h' },
+      { key: 'anc', label: 'إلغاء الضجيج', value: 'Active' },
+      { key: 'battery', label: 'البطارية', value: '30 h' },
     ],
     variants: [
       {
@@ -966,7 +886,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'white',
           hex: '#F5F5F0',
-          label: { ar: 'أبيض', fr: 'Blanc', en: 'White' },
+          label: 'أبيض',
         },
         storage: null,
         price: 42000,
@@ -983,16 +903,12 @@ export const PRODUCTS_SEED_DATA = [
     badges: [],
     featured: false,
     bestseller: false,
-    name: { ar: 'غالاكسي بادز 3 برو', fr: 'Galaxy Buds3 Pro', en: 'Galaxy Buds3 Pro' },
-    description: {
-      ar: 'صوت Hi-Fi 24 بيت وترجمة فورية مع هواتف غالاكسي. تصميم جديد بالكامل.',
-      fr: 'Son Hi-Fi 24 bit et traduction instantanée avec les Galaxy. Design entièrement repensé.',
-      en: '24-bit Hi-Fi audio and live translation with Galaxy phones. A completely new design.',
-    },
+    name: 'غالاكسي بادز 3 برو',
+    description: 'صوت Hi-Fi 24 بيت وترجمة فورية مع هواتف غالاكسي. تصميم جديد بالكامل.',
     highlights: [],
     specs: [
-      { key: 'audio', label: { ar: 'الصوت', fr: 'Audio', en: 'Audio' }, value: '24-bit Hi-Fi' },
-      { key: 'battery', label: { ar: 'البطارية', fr: 'Autonomie', en: 'Battery' }, value: '26 h' },
+      { key: 'audio', label: 'الصوت', value: '24-bit Hi-Fi' },
+      { key: 'battery', label: 'البطارية', value: '26 h' },
     ],
     variants: [
       {
@@ -1000,7 +916,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'silver',
           hex: '#D5D7DB',
-          label: { ar: 'فضي', fr: 'Argent', en: 'Silver' },
+          label: 'فضي',
         },
         storage: null,
         price: 33000,
@@ -1017,20 +933,12 @@ export const PRODUCTS_SEED_DATA = [
     badges: ['bestseller'],
     featured: false,
     bestseller: false,
-    name: {
-      ar: 'باور بانك أنكر 20000 mAh',
-      fr: 'Batterie externe Anker 20 000 mAh',
-      en: 'Anker 20,000 mAh power bank',
-    },
-    description: {
-      ar: 'تشحن هاتف آيفون بالكامل أربع مرات. شحن سريع بقوة 30 واط ومنفذان. أداة ضرورية عند السفر.',
-      fr: 'Quatre charges complètes d’iPhone. Charge rapide 30 W, deux ports. Indispensable en déplacement.',
-      en: 'Four full iPhone charges. 30W fast charging, two ports. Essential if you travel.',
-    },
+    name: 'باور بانك أنكر 20000 mAh',
+    description: 'تشحن هاتف آيفون بالكامل أربع مرات. شحن سريع بقوة 30 واط ومنفذان. أداة ضرورية عند السفر.',
     highlights: [],
     specs: [
-      { key: 'capacity', label: { ar: 'السعة', fr: 'Capacité', en: 'Capacity' }, value: '20 000 mAh' },
-      { key: 'output', label: { ar: 'الخرج', fr: 'Sortie', en: 'Output' }, value: '30 W USB-C' },
+      { key: 'capacity', label: 'السعة', value: '20 000 mAh' },
+      { key: 'output', label: 'الخرج', value: '30 W USB-C' },
     ],
     variants: [
       {
@@ -1038,7 +946,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'black',
           hex: '#2B2C30',
-          label: { ar: 'أسود', fr: 'Noir', en: 'Black' },
+          label: 'أسود',
         },
         storage: null,
         price: 7500,
@@ -1055,19 +963,11 @@ export const PRODUCTS_SEED_DATA = [
     badges: [],
     featured: false,
     bestseller: false,
-    name: {
-      ar: 'شاحن سريع 30 واط USB-C',
-      fr: 'Chargeur rapide 30 W USB-C',
-      en: '30W USB-C fast charger',
-    },
-    description: {
-      ar: 'يشحن هاتف آيفون بنسبة 50٪ خلال نصف ساعة. يعمل مع آيفون وسامسونغ وكل جهاز يدعم USB-C.',
-      fr: 'iPhone à 50 % en une demi-heure. Compatible iPhone, Samsung et tout ce qui est USB-C.',
-      en: 'iPhone to 50% in half an hour. Works with iPhone, Samsung and anything USB-C.',
-    },
+    name: 'شاحن سريع 30 واط USB-C',
+    description: 'يشحن هاتف آيفون بنسبة 50٪ خلال نصف ساعة. يعمل مع آيفون وسامسونغ وكل جهاز يدعم USB-C.',
     highlights: [],
     specs: [
-      { key: 'output', label: { ar: 'القدرة', fr: 'Puissance', en: 'Output' }, value: '30 W PD' },
+      { key: 'output', label: 'القدرة', value: '30 W PD' },
     ],
     variants: [
       {
@@ -1075,7 +975,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'white',
           hex: '#F5F5F0',
-          label: { ar: 'أبيض', fr: 'Blanc', en: 'White' },
+          label: 'أبيض',
         },
         storage: null,
         price: 4200,
@@ -1092,19 +992,11 @@ export const PRODUCTS_SEED_DATA = [
     badges: [],
     featured: false,
     bestseller: false,
-    name: {
-      ar: 'حماية شاشة زجاج مقوّى',
-      fr: 'Verre trempé de protection',
-      en: 'Tempered glass screen protector',
-    },
-    description: {
-      ar: 'نقوم بتركيبها في المتجر دون فقاعات، وإذا تعرّضت للكسر خلال الأسبوع الأول نستبدلها مجاناً.',
-      fr: 'Posé en magasin sans bulle, et remplacé gratuitement s’il casse dans la première semaine.',
-      en: 'We fit it in store with no bubbles, and replace it free if it cracks in the first week.',
-    },
+    name: 'حماية شاشة زجاج مقوّى',
+    description: 'نقوم بتركيبها في المتجر دون فقاعات، وإذا تعرّضت للكسر خلال الأسبوع الأول نستبدلها مجاناً.',
     highlights: [],
     specs: [
-      { key: 'hardness', label: { ar: 'الصلابة', fr: 'Dureté', en: 'Hardness' }, value: '9H' },
+      { key: 'hardness', label: 'الصلابة', value: '9H' },
     ],
     variants: [
       {
@@ -1112,7 +1004,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'clear',
           hex: '#E8E8ED',
-          label: { ar: 'شفاف', fr: 'Transparent', en: 'Clear' },
+          label: 'شفاف',
         },
         storage: null,
         price: 1500,
@@ -1129,19 +1021,11 @@ export const PRODUCTS_SEED_DATA = [
     badges: [],
     featured: false,
     bestseller: false,
-    name: {
-      ar: 'كفر سيليكون بحماية الزوايا',
-      fr: 'Coque silicone renforcée',
-      en: 'Silicone case with corner protection',
-    },
-    description: {
-      ar: 'سيليكون ناعم من الداخل وزوايا مقوّاة. متوفرة لجميع طرازات آيفون وسامسونغ.',
-      fr: 'Intérieur doux, coins renforcés. Disponible pour tous les modèles iPhone et Samsung.',
-      en: 'Soft-lined inside, reinforced corners. In stock for every iPhone and Samsung model.',
-    },
+    name: 'كفر سيليكون بحماية الزوايا',
+    description: 'سيليكون ناعم من الداخل وزوايا مقوّاة. متوفرة لجميع طرازات آيفون وسامسونغ.',
     highlights: [],
     specs: [
-      { key: 'material', label: { ar: 'المادة', fr: 'Matière', en: 'Material' }, value: 'Silicone + TPU' },
+      { key: 'material', label: 'المادة', value: 'Silicone + TPU' },
     ],
     variants: [
       {
@@ -1149,7 +1033,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'black',
           hex: '#2B2C30',
-          label: { ar: 'أسود', fr: 'Noir', en: 'Black' },
+          label: 'أسود',
         },
         storage: null,
         price: 3500,
@@ -1162,7 +1046,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'sand',
           hex: '#D8C8B4',
-          label: { ar: 'بيج', fr: 'Sable', en: 'Sand' },
+          label: 'بيج',
         },
         storage: null,
         price: 3500,
@@ -1179,20 +1063,12 @@ export const PRODUCTS_SEED_DATA = [
     badges: [],
     featured: false,
     bestseller: false,
-    name: {
-      ar: 'كابل USB-C مضفّر 2 متر',
-      fr: 'Câble USB-C tressé 2 m',
-      en: 'Braided USB-C cable, 2 m',
-    },
-    description: {
-      ar: 'مضفّر لمنع التلف عند نقطة التوصيل، وطويل بما يكفي للشحن وأنت مستلقٍ.',
-      fr: 'Tressé pour ne pas casser au niveau du connecteur, et assez long pour charger depuis le lit.',
-      en: 'Braided so it doesn’t fray at the connector, and long enough to charge from bed.',
-    },
+    name: 'كابل USB-C مضفّر 2 متر',
+    description: 'مضفّر لمنع التلف عند نقطة التوصيل، وطويل بما يكفي للشحن وأنت مستلقٍ.',
     highlights: [],
     specs: [
-      { key: 'length', label: { ar: 'الطول', fr: 'Longueur', en: 'Length' }, value: '2 m' },
-      { key: 'speed', label: { ar: 'السرعة', fr: 'Débit', en: 'Speed' }, value: '60 W / 480 Mbps' },
+      { key: 'length', label: 'الطول', value: '2 m' },
+      { key: 'speed', label: 'السرعة', value: '60 W / 480 Mbps' },
     ],
     variants: [
       {
@@ -1200,7 +1076,7 @@ export const PRODUCTS_SEED_DATA = [
         colour: {
           slug: 'grey',
           hex: '#6E6E73',
-          label: { ar: 'رمادي', fr: 'Gris', en: 'Grey' },
+          label: 'رمادي',
         },
         storage: null,
         price: 1900,

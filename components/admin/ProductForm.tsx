@@ -5,12 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useMemo, useState, useTransition } from 'react';
 import { saveProduct } from '@/app/(admin)/admin/actions';
 import { CATEGORY_SPEC_SUGGESTIONS } from '@/content/categoryFields';
-import type { Category, CategorySlug, LocalizedText } from '@/content/schemas';
-import { badgeSchema, stockStatusSchema } from '@/content/schemas';
+import type { Category, CategorySlug } from '@/content/schemas';
+import { badgeSchema, slugify, stockStatusSchema } from '@/content/schemas';
 import { saveInputSchema } from '@/lib/admin/productInput';
 import type { AdminProduct } from '@/lib/queries/admin';
 import { ImageUploader } from './ImageUploader';
-import { LocalizedInput } from './LocalizedInput';
+import { stableSlug } from './slug';
 import {
   ADMIN_BTN_DANGER,
   ADMIN_BTN_GHOST,
@@ -23,9 +23,8 @@ import {
 
 type VariantDraft = {
   id: string;
-  colourSlug: string;
   colourHex: string;
-  colourLabel: LocalizedText;
+  colourLabel: string;
   storage: string;
   price: string;
   compareAt: string;
@@ -33,19 +32,16 @@ type VariantDraft = {
   images: string[];
 };
 
-type SpecDraft = { key: string; label: LocalizedText; value: string };
-type HighlightDraft = { value: string; unit: string; label: LocalizedText };
-
-const emptyText = (): LocalizedText => ({ ar: '', fr: '', en: '' });
+type SpecDraft = { label: string; value: string };
+type HighlightDraft = { value: string; unit: string; label: string };
 
 const newVariant = (): VariantDraft => ({
   // Minted here rather than server-side, which is what lets the whole payload
   // validate against `productVariantSchema` (it requires an `id`) before it is
   // ever sent. A lowercase uuid satisfies the schema's kebab-case slug regex.
   id: crypto.randomUUID(),
-  colourSlug: '',
   colourHex: '#000000',
-  colourLabel: emptyText(),
+  colourLabel: '',
   storage: '',
   price: '',
   compareAt: '',
@@ -62,7 +58,6 @@ function toDrafts(product: AdminProduct | null): {
   return {
     variants: product.variants.map((variant) => ({
       id: variant.id,
-      colourSlug: variant.colour.slug,
       colourHex: variant.colour.hex,
       colourLabel: variant.colour.label,
       storage: variant.storage ?? '',
@@ -71,7 +66,7 @@ function toDrafts(product: AdminProduct | null): {
       stock: variant.stock,
       images: [...variant.images],
     })),
-    specs: product.specs.map((spec) => ({ ...spec })),
+    specs: product.specs.map((spec) => ({ label: spec.label, value: spec.value })),
     highlights: product.highlights.map((h) => ({ ...h, unit: h.unit ?? '' })),
   };
 }
@@ -90,8 +85,8 @@ export function ProductForm({
   const [slug, setSlug] = useState(product?.slug ?? '');
   const [brand, setBrand] = useState(product?.brand ?? '');
   const [categorySlug, setCategorySlug] = useState<string>(product?.category ?? categories[0]?.slug ?? '');
-  const [name, setName] = useState<LocalizedText>(product?.name ?? emptyText());
-  const [description, setDescription] = useState<LocalizedText>(product?.description ?? emptyText());
+  const [name, setName] = useState(product?.name ?? '');
+  const [description, setDescription] = useState(product?.description ?? '');
   const [badges, setBadges] = useState<string[]>(product?.badges ?? []);
   const [featured, setFeatured] = useState(product?.featured ?? false);
   const [bestseller, setBestseller] = useState(product?.bestseller ?? false);
@@ -132,6 +127,27 @@ export function ProductForm({
     setVariants((current) => current.map((v, i) => (i === index ? { ...v, ...patch } : v)));
   }
 
+  /**
+   * The slug follows the name until the admin takes it over.
+   *
+   * Same "mirror until diverged" rule the old <LocalizedInput /> used for
+   * ar→fr/en: divergence is read from the values themselves — the slug is still
+   * being auto-filled exactly while it equals `slugify(previous name)` — so
+   * there is no separate "touched" flag to keep in sync. Typing in the slug by
+   * hand breaks that equality once and for all.
+   *
+   * `slugify` returns "" for Arabic-only input, and an empty auto-fill would
+   * both look broken and fail `slugSchema`. So a blank result leaves the field
+   * alone for the admin to fill in; it never clears what is already there.
+   */
+  function changeName(next: string) {
+    const wasAuto = slug === slugify(name);
+    setName(next);
+    if (!wasAuto) return;
+    const suggested = slugify(next);
+    if (suggested) setSlug(suggested);
+  }
+
   function buildPayload() {
     return {
       id: product?.id ?? null,
@@ -143,22 +159,35 @@ export function ProductForm({
         badges,
         featured,
         bestseller,
-        name,
-        description,
-        specs: specs.map((spec) => ({ key: spec.key.trim(), label: spec.label, value: spec.value.trim() })),
+        name: name.trim(),
+        // Optional in the schema now; an untouched field sends nothing rather
+        // than an empty string.
+        description: description.trim() || undefined,
+        /* `key` is derived, not typed — the admin never sees it. `stableSlug`
+           rather than bare `slugify` because an Arabic label slugifies to "",
+           which would fail `slugSchema` against a field that isn't on screen to
+           correct. */
+        specs: specs.map((spec) => ({
+          key: stableSlug(spec.label, 'spec'),
+          label: spec.label.trim(),
+          value: spec.value.trim(),
+        })),
         highlights: highlights.map((h) => ({
           value: h.value.trim(),
           unit: h.unit.trim() === '' ? null : h.unit.trim(),
-          label: h.label,
+          label: h.label.trim(),
         })),
         batteryHealthPercent:
           showBatteryHealth && batteryHealth.trim() !== '' ? Number(batteryHealth) : null,
         variants: variants.map((variant) => ({
           id: variant.id,
           colour: {
-            slug: variant.colourSlug.trim(),
+            // Derived from the colour name for the same reason as `spec.key`.
+            // Deterministic, so two variants named "أسود" share a colour slug
+            // and group correctly in `variantsForColour()`.
+            slug: stableSlug(variant.colourLabel, 'colour'),
             hex: variant.colourHex,
-            label: variant.colourLabel,
+            label: variant.colourLabel.trim(),
           },
           storage: variant.storage.trim() === '' ? null : variant.storage.trim(),
           price: Number(variant.price),
@@ -290,8 +319,31 @@ export function ProductForm({
       <section className={ADMIN_CARD}>
         <h2 className="text-lg font-semibold">النصوص</h2>
         <div className="mt-4 flex flex-col gap-5">
-          <LocalizedInput label="الاسم" value={name} onChange={setName} />
-          <LocalizedInput label="الوصف" value={description} onChange={setDescription} multiline />
+          <label className="flex flex-col gap-1.5">
+            <span className={ADMIN_LABEL}>الاسم</span>
+            {/* `dir="auto"` rather than a fixed direction: product names are
+                routinely mixed, like "آيفون 16 برو" or "MacBook Air M4", and the
+                browser picks per the first strong character in what was
+                actually typed. */}
+            <input
+              value={name}
+              onChange={(e) => changeName(e.target.value)}
+              dir="auto"
+              className={ADMIN_INPUT}
+            />
+          </label>
+
+          <label className="flex flex-col gap-1.5">
+            <span className={ADMIN_LABEL}>الوصف</span>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              dir="auto"
+              rows={3}
+              className={ADMIN_INPUT}
+            />
+            <span className="text-xs text-gray-500">اختياري.</span>
+          </label>
         </div>
       </section>
 
@@ -310,11 +362,11 @@ export function ProductForm({
                 onClick={() =>
                   setSpecs((current) => [
                     ...current,
-                    { key: suggestion.key, label: { ...suggestion.label }, value: '' },
+                    { label: suggestion.label, value: '' },
                   ])
                 }
               >
-                + {suggestion.label.ar}
+                + {suggestion.label}
               </button>
             ))}
           </div>
@@ -323,14 +375,18 @@ export function ProductForm({
         <div className="mt-4 flex flex-col gap-4">
           {specs.map((spec, index) => (
             <div key={index} className="rounded-lg border border-gray-300 p-3">
-              <div className="grid gap-3 sm:grid-cols-[1fr_2fr_auto]">
+              {/* No "key" field. It is derived from the label on save — it was
+                  never information the admin had, only a shape the schema
+                  wanted. */}
+              <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
                 <label className="flex flex-col gap-1.5">
-                  <span className="text-xs text-gray-500">المفتاح</span>
+                  <span className="text-xs text-gray-500">التسمية</span>
                   <input
-                    value={spec.key}
-                    dir="ltr"
+                    value={spec.label}
+                    dir="auto"
+                    placeholder="الشاشة"
                     onChange={(e) =>
-                      setSpecs((c) => c.map((s, i) => (i === index ? { ...s, key: e.target.value } : s)))
+                      setSpecs((c) => c.map((sp, i) => (i === index ? { ...sp, label: e.target.value } : sp)))
                     }
                     className={ADMIN_INPUT}
                   />
@@ -356,21 +412,13 @@ export function ProductForm({
                 </button>
               </div>
 
-              <div className="mt-3">
-                <LocalizedInput
-                  label="التسمية"
-                  compact
-                  value={spec.label}
-                  onChange={(label) => setSpecs((c) => c.map((s, i) => (i === index ? { ...s, label } : s)))}
-                />
-              </div>
             </div>
           ))}
 
           <button
             type="button"
             className={ADMIN_BTN_GHOST}
-            onClick={() => setSpecs((c) => [...c, { key: '', label: emptyText(), value: '' }])}
+            onClick={() => setSpecs((c) => [...c, { label: '', value: '' }])}
           >
             + مواصفة مخصّصة
           </button>
@@ -385,7 +433,7 @@ export function ProductForm({
         <div className="mt-4 flex flex-col gap-4">
           {highlights.map((highlight, index) => (
             <div key={index} className="rounded-lg border border-gray-300 p-3">
-              <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+              <div className="grid gap-3 sm:grid-cols-[1fr_1fr_1fr_auto]">
                 <label className="flex flex-col gap-1.5">
                   <span className="text-xs text-gray-500">القيمة</span>
                   <input
@@ -393,6 +441,18 @@ export function ProductForm({
                     dir="ltr"
                     onChange={(e) =>
                       setHighlights((c) => c.map((h, i) => (i === index ? { ...h, value: e.target.value } : h)))
+                    }
+                    className={ADMIN_INPUT}
+                  />
+                </label>
+                <label className="flex flex-col gap-1.5">
+                  <span className="text-xs text-gray-500">التسمية</span>
+                  <input
+                    value={highlight.label}
+                    dir="auto"
+                    placeholder="الكاميرا"
+                    onChange={(e) =>
+                      setHighlights((c) => c.map((h, i) => (i === index ? { ...h, label: e.target.value } : h)))
                     }
                     className={ADMIN_INPUT}
                   />
@@ -416,23 +476,13 @@ export function ProductForm({
                   حذف
                 </button>
               </div>
-              <div className="mt-3">
-                <LocalizedInput
-                  label="التسمية"
-                  compact
-                  value={highlight.label}
-                  onChange={(label) =>
-                    setHighlights((c) => c.map((h, i) => (i === index ? { ...h, label } : h)))
-                  }
-                />
-              </div>
             </div>
           ))}
 
           <button
             type="button"
             className={ADMIN_BTN_GHOST}
-            onClick={() => setHighlights((c) => [...c, { value: '', unit: '', label: emptyText() }])}
+            onClick={() => setHighlights((c) => [...c, { value: '', unit: '', label: '' }])}
           >
             + رقم بارز
           </button>
@@ -462,13 +512,16 @@ export function ProductForm({
               </div>
 
               <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {/* The colour's SLUG is no longer a field. It is derived from
+                    this name on save (see `buildPayload`), so the admin writes
+                    "أسود" and never thinks about kebab-case again. */}
                 <label className="flex flex-col gap-1.5">
-                  <span className="text-xs text-gray-500">معرّف اللون</span>
+                  <span className="text-xs text-gray-500">اسم اللون</span>
                   <input
-                    value={variant.colourSlug}
-                    dir="ltr"
-                    placeholder="black-titanium"
-                    onChange={(e) => patchVariant(index, { colourSlug: e.target.value })}
+                    value={variant.colourLabel}
+                    dir="auto"
+                    placeholder="أسود"
+                    onChange={(e) => patchVariant(index, { colourLabel: e.target.value })}
                     className={ADMIN_INPUT}
                   />
                 </label>
@@ -548,15 +601,6 @@ export function ProductForm({
                     ))}
                   </select>
                 </label>
-              </div>
-
-              <div className="mt-4">
-                <LocalizedInput
-                  label="اسم اللون"
-                  compact
-                  value={variant.colourLabel}
-                  onChange={(colourLabel) => patchVariant(index, { colourLabel })}
-                />
               </div>
 
               <div className="mt-4">

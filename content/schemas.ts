@@ -42,6 +42,27 @@ export const slugSchema = z
 
 export const hexColourSchema = z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'expected a #RRGGBB hex value');
 
+/**
+ * Lowercase kebab-case, accents stripped — used to auto-suggest slugs from
+ * free-typed names in the admin, never to silently rewrite what's stored.
+ *
+ * Returns an EMPTY STRING for input with no Latin letters or digits, which
+ * Arabic input always is. That is not a bug to paper over here, but callers
+ * must handle it: an empty slug fails `slugSchema`, so the admin form only
+ * auto-fills a visible slug when this returns something, and falls back to a
+ * deterministic hash for the two slugs it hides. See `stableSlug()` in
+ * `components/admin/slug.ts`.
+ */
+export function slugify(input: string): string {
+  return input
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '') // strip diacritics
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 /** Public path under /public. Still how `categorySchema.image` is stored. */
 export const imagePathSchema = z.string().startsWith('/');
 
@@ -102,10 +123,17 @@ export type IconKey = z.infer<typeof iconKeySchema>;
 /*  Products                                                                  */
 /* -------------------------------------------------------------------------- */
 
-/** A spec row: "الشاشة — 6.3 بوصة". Rendered in QuickView and on detail pages. */
+/**
+ * A spec row: "الشاشة — 6.3 بوصة". Rendered in QuickView and on detail pages.
+ *
+ * `label` is a single string, not `localizedTextSchema`. Catalogue words — the
+ * shop's own product vocabulary — are written once in the working language;
+ * the ar/fr/en switcher still governs site chrome. `key` is unchanged and is
+ * now derived from the label rather than typed.
+ */
 export const productSpecSchema = z.object({
   key: slugSchema,
-  label: localizedTextSchema,
+  label: z.string().min(1),
   value: z.string().min(1),
 });
 export type ProductSpec = z.infer<typeof productSpecSchema>;
@@ -117,14 +145,14 @@ export type ProductSpec = z.infer<typeof productSpecSchema>;
 export const productHighlightSchema = z.object({
   value: z.string().min(1),
   unit: z.string().nullable(),
-  label: localizedTextSchema,
+  label: z.string().min(1),
 });
 export type ProductHighlight = z.infer<typeof productHighlightSchema>;
 
 export const productColourSchema = z.object({
   slug: slugSchema,
   hex: hexColourSchema,
-  label: localizedTextSchema,
+  label: z.string().min(1),
 });
 export type ProductColour = z.infer<typeof productColourSchema>;
 
@@ -159,8 +187,13 @@ export const productSchema = z.object({
   featured: z.boolean(),
   /** Surfaces the product in the "الأكثر مبيعاً" grid. */
   bestseller: z.boolean(),
-  name: localizedTextSchema,
-  description: localizedTextSchema,
+  name: z.string().min(1),
+  /**
+   * Optional: a product is publishable with a name and a price alone. Rendered
+   * as the card tagline and the detail view's paragraph, both of which handle
+   * its absence.
+   */
+  description: z.string().optional(),
   specs: z.array(productSpecSchema),
   highlights: z.array(productHighlightSchema),
   /**

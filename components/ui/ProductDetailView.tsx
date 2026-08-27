@@ -1,8 +1,7 @@
 'use client';
 
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import type { Product } from '@/content/schemas';
-import { pickLocale } from '@/lib/format';
 import { primaryVariant, productColours } from '@/lib/product';
 import { Button } from './Button';
 import { Price } from './Price';
@@ -34,10 +33,9 @@ type ProductDetailViewProps = {
  * what checkout is now built to do instead of handing off to WhatsApp.
  */
 export function ProductDetailView({ product, titleId, onOrder }: ProductDetailViewProps) {
-  const locale = useLocale();
   const t = useTranslations('product');
 
-  const name = pickLocale(product.name, locale);
+  const name = product.name;
   const variant = primaryVariant(product);
   const colours = productColours(product);
 
@@ -54,7 +52,9 @@ export function ProductDetailView({ product, titleId, onOrder }: ProductDetailVi
           {name}
         </h2>
 
-        <p className="mt-4 text-base text-gray-700">{pickLocale(product.description, locale)}</p>
+        {product.description ? (
+          <p className="mt-4 text-base text-gray-700">{product.description}</p>
+        ) : null}
 
         <div className="mt-6">
           <Price value={variant.price} compareAt={variant.compareAt} size="lg" showSaving />
@@ -68,11 +68,11 @@ export function ProductDetailView({ product, titleId, onOrder }: ProductDetailVi
               {colours.map((colour) => (
                 <li key={colour.slug}>
                   <span
-                    title={pickLocale(colour.label, locale)}
+                    title={colour.label}
                     className="block h-7 w-7 rounded-full border border-gray-300"
                     style={{ backgroundColor: colour.hex }}
                   >
-                    <span className="sr-only">{pickLocale(colour.label, locale)}</span>
+                    <span className="sr-only">{colour.label}</span>
                   </span>
                 </li>
               ))}
@@ -86,7 +86,7 @@ export function ProductDetailView({ product, titleId, onOrder }: ProductDetailVi
             <dl className="mt-3 divide-y divide-gray-300 border-t border-gray-300">
               {product.specs.map((spec) => (
                 <div key={spec.key} className="flex items-baseline justify-between gap-4 py-2.5">
-                  <dt className="text-sm text-gray-700">{pickLocale(spec.label, locale)}</dt>
+                  <dt className="text-sm text-gray-700">{spec.label}</dt>
                   <dd className="text-sm font-medium">
                     <bdi className="num">{spec.value}</bdi>
                   </dd>

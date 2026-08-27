@@ -1,7 +1,6 @@
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import type { ProductColour } from '@/content/schemas';
 import { cn } from '@/lib/cn';
-import { pickLocale } from '@/lib/format';
 
 /** Apple shows five or six then a plain +N. Five keeps the row short on a card. */
 const MAX_VISIBLE = 5;
@@ -34,7 +33,6 @@ export async function ColourSwatches({ colours, className }: ColourSwatchesProps
   // One colour is not a choice, and an empty row is worse than no row.
   if (colours.length < 2) return null;
 
-  const locale = await getLocale();
   const t = await getTranslations('product');
   const overflow = Math.max(0, colours.length - MAX_VISIBLE);
 
@@ -55,7 +53,7 @@ export async function ColourSwatches({ colours, className }: ColourSwatchesProps
                 style={{ backgroundColor: colour.hex }}
               />
             ) : null}
-            <span className="sr-only">{pickLocale(colour.label, locale)}</span>
+            <span className="sr-only">{colour.label}</span>
           </li>
         ))}
       </ul>

@@ -1,7 +1,6 @@
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import type { Product } from '@/content/schemas';
 import { cn } from '@/lib/cn';
-import { pickLocale } from '@/lib/format';
 import { priceFrom } from '@/lib/product';
 import { Price } from './Price';
 
@@ -22,7 +21,6 @@ type CompareTableProps = {
  * being silently dropped.
  */
 export function CompareTable({ products, className }: CompareTableProps) {
-  const locale = useLocale();
   const t = useTranslations('product');
 
   const rowOrder: string[] = [];
@@ -32,7 +30,7 @@ export function CompareTable({ products, className }: CompareTableProps) {
     for (const spec of product.specs) {
       if (!rowLabels.has(spec.key)) {
         rowOrder.push(spec.key);
-        rowLabels.set(spec.key, pickLocale(spec.label, locale));
+        rowLabels.set(spec.key, spec.label);
       }
     }
   }
@@ -51,7 +49,7 @@ export function CompareTable({ products, className }: CompareTableProps) {
               <th key={product.slug} scope="col" className="py-4 text-start align-bottom">
                 <span className="block text-caption uppercase text-gray-700">{product.brand}</span>
                 <span className="mt-1 block text-base font-semibold">
-                  {pickLocale(product.name, locale)}
+                  {product.name}
                 </span>
                 <Price value={priceFrom(product)} size="sm" className="mt-2" />
               </th>

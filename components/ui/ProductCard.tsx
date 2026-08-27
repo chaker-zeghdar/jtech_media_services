@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import type { Product } from '@/content/schemas';
 import { cn } from '@/lib/cn';
-import { firstClause, pickLocale } from '@/lib/format';
+import { firstClause } from '@/lib/format';
 import type { Locale } from '@/i18n/routing';
 import { primaryBadge, priceFrom, primaryVariant, productColours } from '@/lib/product';
 import { Badge } from './Badge';
@@ -91,8 +91,10 @@ export async function ProductCard({
   const typedLocale = locale as Locale;
   const t = await getTranslations({ locale: typedLocale, namespace: 'product' });
 
-  const name = pickLocale(product.name, typedLocale);
-  const tagline = firstClause(pickLocale(product.description, typedLocale));
+  const name = product.name;
+  // Optional now — an empty tagline still occupies its reserved two lines,
+  // so cards stay aligned down the rail whether or not one was written.
+  const tagline = product.description ? firstClause(product.description) : '';
   const variant = primaryVariant(product);
   const badge = primaryBadge(product);
   const colours = productColours(product);

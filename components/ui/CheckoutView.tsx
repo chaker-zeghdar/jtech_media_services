@@ -3,7 +3,7 @@
 import { type FormEvent, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import type { Product, ProductVariant } from '@/content/schemas';
-import { pickLocale, pickWilayaName } from '@/lib/format';
+import { pickWilayaName } from '@/lib/format';
 import { primaryVariant, productColours, resolveVariant, variantsForColour } from '@/lib/product';
 import { wilayas } from '@/content/wilayas';
 import { cn } from '@/lib/cn';
@@ -89,7 +89,7 @@ export function CheckoutView({ product, titleId, onSubmit }: CheckoutViewProps) 
   const t = useTranslations('checkout');
   const tProduct = useTranslations('product');
 
-  const name = pickLocale(product.name, locale);
+  const name = product.name;
   const colours = productColours(product);
   const initial = primaryVariant(product);
 
@@ -139,7 +139,7 @@ export function CheckoutView({ product, titleId, onSubmit }: CheckoutViewProps) 
     // see that through `nextErrors` — the local const restates it.
     const confirmedWilaya = wilaya!;
 
-    const variantLabel = [pickLocale(variant.colour.label, locale), variant.storage]
+    const variantLabel = [variant.colour.label, variant.storage]
       .filter(Boolean)
       .join(' — ');
 
@@ -193,7 +193,7 @@ export function CheckoutView({ product, titleId, onSubmit }: CheckoutViewProps) 
                 {name}
                 {variant.storage || colours.length > 1 ? (
                   <span className="block text-caption text-gray-500">
-                    {[pickLocale(variant.colour.label, locale), variant.storage].filter(Boolean).join(' — ')}
+                    {[variant.colour.label, variant.storage].filter(Boolean).join(' — ')}
                     {' × '}
                     <bdi className="num">{quantity}</bdi>
                   </span>
@@ -239,7 +239,7 @@ export function CheckoutView({ product, titleId, onSubmit }: CheckoutViewProps) 
                     key={colour.slug}
                     type="button"
                     aria-pressed={selected}
-                    aria-label={pickLocale(colour.label, locale)}
+                    aria-label={colour.label}
                     onClick={() => selectColour(colour.slug)}
                     className={cn(
                       'h-9 w-9 rounded-full border-2 transition-[border-color,box-shadow] duration-200 ease-brand',
