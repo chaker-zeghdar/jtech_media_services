@@ -51,7 +51,7 @@ type ProductRow = {
   featured: boolean;
   bestseller: boolean;
   name: unknown;
-  description: unknown;
+  description: string | null;
   specs: unknown;
   highlights: unknown;
   battery_health_percent: number | null;
@@ -68,7 +68,12 @@ function fromRow(row: ProductRow): unknown {
     featured: row.featured,
     bestseller: row.bestseller,
     name: row.name,
-    description: row.description,
+    // `?? undefined`, not a pass-through: the column is nullable, so a product
+    // saved without a description arrives as NULL, and `productSchema.description`
+    // is `.optional()` — which accepts `undefined` but rejects `null`. Without
+    // this, one description-less product throws in `parseContent` and takes down
+    // every page that reads the catalogue.
+    description: row.description ?? undefined,
     specs: row.specs,
     highlights: row.highlights,
     batteryHealthPercent: row.battery_health_percent,

@@ -9,7 +9,7 @@ export default async function NewProductPage() {
 
   return (
     <div>
-      <Link href="/admin" className="text-sm text-gray-700 hover:text-ink">
+      <Link href="/admin/products" className="text-sm text-gray-700 hover:text-ink">
         ← كل المنتجات
       </Link>
       <h1 className="mt-2 text-2xl font-semibold">منتج جديد</h1>

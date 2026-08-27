@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { IBM_Plex_Sans_Arabic, Inter } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
@@ -12,6 +12,7 @@ import { SocialFab } from '@/components/layout/SocialFab';
 import type { LocalizedText } from '@/content/schemas';
 import { settings, telHref, whatsappLink } from '@/content/settings';
 import { localeDirections, localeTags, routing, type Locale } from '@/i18n/routing';
+import { plexArabic } from '@/lib/fonts';
 import { clientMessages } from '@/lib/clientMessages';
 import { pickLocale } from '@/lib/format';
 import '../../globals.css';
@@ -54,21 +55,16 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-const plexArabic = IBM_Plex_Sans_Arabic({
-  /**
-   * Arabic glyphs only. The Latin subset was measured as ~1.1s of extra First
-   * Contentful Paint on the Arabic page (2.3s vs 1.2s for French) for glyphs
-   * that were almost never used: Latin runs on the Arabic page — prices, the
-   * JTECH wordmark, spec values like "A18 Pro" — resolve through
-   * `--font-stack-latin`, which puts the system face (SF Pro, Segoe UI, Roboto)
-   * ahead of any webfont. Those runs were already being rendered by the system,
-   * so the downloaded Latin glyphs were dead weight on the critical path.
-   */
-  subsets: ['arabic'],
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-  variable: '--font-plex-arabic',
-});
+/* `plexArabic` now lives in `lib/fonts.ts` and is shared with the admin root
+   layout, which was falling back to the system UI face because it never defined
+   this variable. Instantiating the same family twice would emit two preloads
+   and two variables, so there is exactly one instantiation.
+
+   Its Arabic-only subset is unchanged and still deliberate: the Latin subset
+   measured ~1.1s of extra First Contentful Paint on the Arabic page (2.3s vs
+   1.2s for French) for glyphs that were almost never used. Latin runs here —
+   prices, the JTECH wordmark, spec values like "A18 Pro" — resolve through
+   `--font-stack-latin`, which puts the system face ahead of any webfont. */
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));

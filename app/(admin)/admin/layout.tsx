@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { AdminNav } from '@/components/admin/AdminNav';
 import { LogoutButton } from '@/components/admin/LogoutButton';
+import { plexArabic } from '@/lib/fonts';
 import { getAdminUser } from '@/lib/supabase/server';
 import '../../globals.css';
 
@@ -35,7 +37,13 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   const user = await getAdminUser();
 
   return (
-    <html lang="ar" dir="ltr">
+    /* `plexArabic.variable` is what actually defines `--font-plex-arabic`. Without
+       it this subtree resolved `--font-stack-arabic` past the variable and into
+       its `-apple-system, …, sans-serif` tail, so the whole panel rendered in the
+       browser's UI font while the storefront rendered in Plex. `lang="ar"` already
+       matches the `html[lang^='ar']` rule in globals.css that points `--font-ui`
+       at the Arabic stack, so this one className is the entire fix. */
+    <html lang="ar" dir="ltr" className={plexArabic.variable}>
       <body className="min-h-screen bg-gray-50 text-ink antialiased">
         {user ? (
           <header className="border-b border-gray-300 bg-white">
@@ -44,6 +52,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
                 <Link href="/admin" className="text-base font-semibold">
                   JTECH · لوحة التحكم
                 </Link>
+
+                <AdminNav />
+
                 {/* Crosses into the storefront root layout, so Next does a full
                     document navigation here rather than a client transition —
                     which is correct: the two groups load different CSS and a

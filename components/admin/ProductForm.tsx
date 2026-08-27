@@ -637,7 +637,9 @@ export function ProductForm({
       ) : null}
 
       <div className="sticky bottom-0 -mx-6 flex items-center justify-end gap-3 border-t border-gray-300 bg-white/95 px-6 py-4 backdrop-blur">
-        <Link href="/admin" className={ADMIN_BTN_GHOST}>
+        {/* Back to the product LIST, not the dashboard — cancelling an edit
+            should land where the edit started. */}
+        <Link href="/admin/products" className={ADMIN_BTN_GHOST}>
           إلغاء
         </Link>
         <button type="submit" disabled={pending} className={ADMIN_BTN_PRIMARY}>

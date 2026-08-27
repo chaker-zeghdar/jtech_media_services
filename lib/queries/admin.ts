@@ -47,7 +47,7 @@ type ProductRow = {
   bestseller: boolean;
   published: boolean;
   name: unknown;
-  description: unknown;
+  description: string | null;
   specs: unknown;
   highlights: unknown;
   battery_health_percent: number | null;
@@ -66,7 +66,12 @@ function toContentShape(row: ProductRow): unknown {
     featured: row.featured,
     bestseller: row.bestseller,
     name: row.name,
-    description: row.description,
+    // `?? undefined`, not a pass-through: the column is nullable, so a product
+    // saved without a description arrives as NULL, and `productSchema.description`
+    // is `.optional()` — which accepts `undefined` but rejects `null`. Without
+    // this, one description-less product throws in `parseContent` and takes down
+    // every page that reads the catalogue.
+    description: row.description ?? undefined,
     specs: row.specs,
     highlights: row.highlights,
     batteryHealthPercent: row.battery_health_percent,
@@ -111,6 +116,77 @@ export async function getAdminProduct(id: string): Promise<AdminProduct | null> 
   if (error) throw new Error(`getAdminProduct: ${error.message}`);
   if (!data) return null;
   return toAdminProduct(data as unknown as ProductRow);
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Orders — dashboard reads only. The full order views land in prompt 3.      */
+/* -------------------------------------------------------------------------- */
+
+/** The `order_status` enum, in the order a dashboard should read them. */
+export const ORDER_STATUSES = ['pending', 'confirmed', 'delivered', 'canceled'] as const;
+export type OrderStatus = (typeof ORDER_STATUSES)[number];
+
+export type OrderSummary = {
+  id: string;
+  productName: string;
+  variantLabel: string | null;
+  customerName: string;
+  total: number;
+  createdAt: string;
+};
+
+/**
+ * How many orders sit in each status.
+ *
+ * One row-per-order fetch of just the `status` column, tallied in JS. Postgres
+ * could group this server-side, but PostgREST has no GROUP BY without a
+ * database view or RPC, and four `head: true` counts would be four round trips
+ * for a number this small. Revisit if the table ever gets large enough to care.
+ *
+ * Every status is present in the result even at zero, so the dashboard renders
+ * a stable set of cards rather than a row that changes shape with the data.
+ */
+export async function countOrdersByStatus(): Promise<Record<OrderStatus, number>> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from('orders').select('status');
+  if (error) throw new Error(`countOrdersByStatus: ${error.message}`);
+
+  const counts = Object.fromEntries(ORDER_STATUSES.map((s) => [s, 0])) as Record<
+    OrderStatus,
+    number
+  >;
+  for (const row of (data ?? []) as { status: OrderStatus }[]) {
+    if (row.status in counts) counts[row.status] += 1;
+  }
+  return counts;
+}
+
+/** The newest orders still awaiting action — the dashboard's one worklist. */
+export async function recentPendingOrders(limit = 5): Promise<OrderSummary[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('orders')
+    .select('id, product_name, variant_label, customer_name, total, created_at')
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(`recentPendingOrders: ${error.message}`);
+
+  return ((data ?? []) as {
+    id: string;
+    product_name: string;
+    variant_label: string | null;
+    customer_name: string;
+    total: number;
+    created_at: string;
+  }[]).map((row) => ({
+    id: row.id,
+    productName: row.product_name,
+    variantLabel: row.variant_label,
+    customerName: row.customer_name,
+    total: row.total,
+    createdAt: row.created_at,
+  }));
 }
 
 /** Slug → id, for resolving `products.category_id` on save. */
