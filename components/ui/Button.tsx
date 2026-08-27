@@ -34,6 +34,13 @@ type ButtonProps = {
   /** Overrides the accessible name when the visible label isn't enough. */
   ariaLabel?: string;
   fullWidth?: boolean;
+  /**
+   * `<button>` only. A disabled `<a>` is not a thing the platform has — an
+   * anchor with `disabled` is still clickable — so a caller that needs a
+   * disabled state must be rendering a button, and passing this alongside
+   * `href` is a mistake worth not silently absorbing.
+   */
+  disabled?: boolean;
   children: ReactNode;
   className?: string;
 };
@@ -81,6 +88,7 @@ export function Button({
   external = false,
   ariaLabel,
   fullWidth = false,
+  disabled = false,
   children,
   className,
 }: ButtonProps) {
@@ -91,6 +99,7 @@ export function Button({
     isLink && (size === 'sm' ? 'text-sm' : 'text-base'),
     PILL_TONE[variant][surface],
     fullWidth && 'w-full',
+    disabled && 'pointer-events-none opacity-60',
     className,
   );
 
@@ -138,7 +147,13 @@ export function Button({
   }
 
   return (
-    <button type={type} onClick={onClick} aria-label={ariaLabel} className={classes}>
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={ariaLabel}
+      className={classes}
+    >
       {content}
     </button>
   );

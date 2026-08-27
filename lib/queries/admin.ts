@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { type Product, parseContent, productSchema } from '@/content/schemas';
+import { type OrderStatus, type Product, orderStatusSchema, parseContent, productSchema } from '@/content/schemas';
 import { createClient } from '@/lib/supabase/server';
 
 /**
@@ -122,9 +122,124 @@ export async function getAdminProduct(id: string): Promise<AdminProduct | null> 
 /*  Orders — dashboard reads only. The full order views land in prompt 3.      */
 /* -------------------------------------------------------------------------- */
 
-/** The `order_status` enum, in the order a dashboard should read them. */
-export const ORDER_STATUSES = ['pending', 'confirmed', 'delivered', 'canceled'] as const;
-export type OrderStatus = (typeof ORDER_STATUSES)[number];
+/**
+ * The `order_status` values, in the order a dashboard should read them.
+ * Derived from `orderStatusSchema` rather than restated, so the enum has one
+ * definition shared by the schema, the admin action and this file.
+ */
+export const ORDER_STATUSES = orderStatusSchema.options;
+export type { OrderStatus };
+
+/**
+ * A full order row, camelCased.
+ *
+ * Nullable columns are typed and normalised as `| null`, NOT dropped to
+ * `undefined`: `daira_id`, `address`, `product_id`, `variant_id` and `notes`
+ * are all genuinely nullable, and the `productSchema.description` incident —
+ * where `.optional()` rejected the `null` Postgres actually returns and 500'd
+ * every catalogue page — is exactly what happens when a nullable column meets a
+ * schema that only allows `undefined`. Null is the value here; it is kept.
+ */
+export type AdminOrder = {
+  id: string;
+  createdAt: string;
+  status: OrderStatus;
+  productId: string | null;
+  variantId: string | null;
+  productName: string;
+  variantLabel: string | null;
+  quantity: number;
+  unitPrice: number;
+  wilayaCode: number;
+  dairaId: number | null;
+  deliveryMethod: string;
+  deliveryFee: number;
+  total: number;
+  customerName: string;
+  customerPhone: string;
+  address: string | null;
+  landingSlug: string | null;
+  notes: string | null;
+};
+
+type OrderRowShape = {
+  id: string;
+  created_at: string;
+  status: OrderStatus;
+  product_id: string | null;
+  variant_id: string | null;
+  product_name: string;
+  variant_label: string | null;
+  quantity: number;
+  unit_price: number;
+  wilaya_code: number;
+  daira_id: number | null;
+  delivery_method: string;
+  delivery_fee: number;
+  total: number;
+  customer_name: string;
+  customer_phone: string;
+  address: string | null;
+  landing_slug: string | null;
+  notes: string | null;
+};
+
+function toAdminOrder(row: OrderRowShape): AdminOrder {
+  return {
+    id: row.id,
+    createdAt: row.created_at,
+    status: row.status,
+    productId: row.product_id,
+    variantId: row.variant_id,
+    productName: row.product_name,
+    variantLabel: row.variant_label,
+    quantity: row.quantity,
+    unitPrice: row.unit_price,
+    wilayaCode: row.wilaya_code,
+    dairaId: row.daira_id,
+    deliveryMethod: row.delivery_method,
+    deliveryFee: row.delivery_fee,
+    total: row.total,
+    customerName: row.customer_name,
+    customerPhone: row.customer_phone,
+    address: row.address,
+    landingSlug: row.landing_slug,
+    notes: row.notes,
+  };
+}
+
+/** Newest first. Optionally narrowed to one status for the filter pills. */
+export async function listAdminOrders(status?: OrderStatus): Promise<AdminOrder[]> {
+  const supabase = await createClient();
+  let query = supabase.from('orders').select('*').order('created_at', { ascending: false });
+  if (status) query = query.eq('status', status);
+
+  const { data, error } = await query;
+  if (error) throw new Error(`listAdminOrders: ${error.message}`);
+  return ((data ?? []) as OrderRowShape[]).map(toAdminOrder);
+}
+
+export async function getAdminOrder(id: string): Promise<AdminOrder | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from('orders').select('*').eq('id', id).maybeSingle();
+  if (error) throw new Error(`getAdminOrder: ${error.message}`);
+  return data ? toAdminOrder(data as OrderRowShape) : null;
+}
+
+/** One daira's display name, for the order detail page. Null when unset. */
+export async function getDairaName(id: number | null): Promise<string | null> {
+  if (id === null) return null;
+  const supabase = await createClient();
+  const { data } = await supabase.from('dairas').select('name').eq('id', id).maybeSingle();
+  return (data?.name as string) ?? null;
+}
+
+/** Wilaya display name for an order row. */
+export async function getWilayaName(code: number): Promise<string | null> {
+  const supabase = await createClient();
+  const { data } = await supabase.from('wilayas').select('name_ar').eq('code', code).maybeSingle();
+  return (data?.name_ar as string) ?? null;
+}
 
 export type OrderSummary = {
   id: string;

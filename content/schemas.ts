@@ -87,6 +87,13 @@ export type CategorySlug = z.infer<typeof categorySlugSchema>;
 export const stockStatusSchema = z.enum(['in-stock', 'low-stock', 'out-of-stock']);
 export type StockStatus = z.infer<typeof stockStatusSchema>;
 
+/**
+ * Order lifecycle. Mirrors the `order_status` enum in Postgres — the database
+ * rejects anything outside this set, so the two must not drift.
+ */
+export const orderStatusSchema = z.enum(['pending', 'confirmed', 'delivered', 'canceled']);
+export type OrderStatus = z.infer<typeof orderStatusSchema>;
+
 /** Badge keys resolve to copy in messages under `badges.*`. */
 export const badgeSchema = z.enum(['new', 'bestseller', 'promo', 'last-units', 'warranty']);
 export type Badge = z.infer<typeof badgeSchema>;

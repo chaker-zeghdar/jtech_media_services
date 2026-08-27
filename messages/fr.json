@@ -232,7 +232,15 @@
     "totalLabel": "Total",
     "submitCta": "Confirmer la commande",
     "confirmedTitle": "Commande reçue !",
-    "confirmedBody": "Nous vous appellerons ou vous écrirons sur WhatsApp très vite pour confirmer la commande et le total."
+    "confirmedBody": "Nous vous appellerons ou vous écrirons sur WhatsApp très vite pour confirmer la commande et le total.",
+    "dairaLabel": "Daïra",
+    "dairaPlaceholder": "Choisissez la daïra (facultatif)",
+    "dairaLoading": "Chargement…",
+    "submitting": "Envoi en cours…",
+    "orderRef": "N° de commande",
+    "submitInvalid": "Impossible d'envoyer la commande. Vérifiez vos informations et réessayez.",
+    "submitUnavailable": "Ce produit n'est plus disponible. Veuillez actualiser la page.",
+    "submitFailed": "Envoi impossible pour le moment. Réessayez dans un instant ou contactez-nous sur WhatsApp."
   },
   "locale": {
     "label": "Langue"

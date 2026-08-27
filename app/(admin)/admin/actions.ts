@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { type OrderStatus, orderStatusSchema } from '@/content/schemas';
 import { saveInputSchema } from '@/lib/admin/productInput';
 import { categoryIdBySlug } from '@/lib/queries/admin';
 import { createClient, getAdminUser } from '@/lib/supabase/server';
@@ -119,6 +120,28 @@ export async function setPublished(id: string, published: boolean): Promise<void
   if (error) throw new Error(`Updating publication failed: ${error.message}`);
 
   revalidateEverything();
+}
+
+export async function setOrderStatus(id: string, status: OrderStatus): Promise<void> {
+  await requireAdmin();
+  /* `orderStatusSchema` is the shared definition from content/schemas.ts, not a
+     second copy — the Postgres enum, this action and the admin UI all read the
+     same four values, so none of them can drift. */
+  const parsed = z
+    .object({ id: z.string().uuid(), status: orderStatusSchema })
+    .parse({ id, status });
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('orders')
+    .update({ status: parsed.status })
+    .eq('id', parsed.id);
+  if (error) throw new Error(`Updating order status failed: ${error.message}`);
+
+  revalidatePath('/admin/orders');
+  revalidatePath(`/admin/orders/${parsed.id}`);
+  // The dashboard's pending count is derived from these rows.
+  revalidatePath('/admin');
 }
 
 export async function deleteProduct(id: string): Promise<void> {

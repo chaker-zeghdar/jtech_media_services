@@ -1,7 +1,8 @@
 'use client';
 
-import { type FormEvent, useMemo, useState } from 'react';
+import { type FormEvent, useEffect, useMemo, useState, useTransition } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
+import { submitOrder } from '@/app/(storefront)/actions';
 import type { Product, ProductVariant } from '@/content/schemas';
 import { pickWilayaName } from '@/lib/format';
 import { primaryVariant, productColours, resolveVariant, variantsForColour } from '@/lib/product';
@@ -22,6 +23,9 @@ type DeliveryMethod = 'desk' | 'home';
  * confirmation has nothing else to read from.
  */
 export type ConfirmedOrder = {
+  /** The database's own id for this order — a real reference a customer or the
+   *  shop can quote, rather than a snapshot of what was typed. */
+  orderId: string;
   productName: string;
   variantLabel: string;
   quantity: number;
@@ -53,7 +57,9 @@ function isPlausiblePhone(value: string): boolean {
   return /^0[5-7]\d{8}$/.test(value.replace(/\s+/g, ''));
 }
 
-type Errors = Partial<Record<'name' | 'phone' | 'wilaya' | 'address', string>>;
+type Errors = Partial<Record<'name' | 'phone' | 'wilaya' | 'address' | 'submit', string>>;
+
+type Daira = { id: number; name: string; name_ascii: string };
 
 /**
  * The order form + live summary, switched in by `<QuickView />` when its view
@@ -102,6 +108,11 @@ export function CheckoutView({ product, titleId, onSubmit }: CheckoutViewProps) 
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [errors, setErrors] = useState<Errors>({});
+  const [dairaId, setDairaId] = useState<number | null>(null);
+  const [dairas, setDairas] = useState<Daira[] | null>(null);
+  /** Honeypot. Never shown, never focusable — see the field at the end of the form. */
+  const [website, setWebsite] = useState('');
+  const [pending, startTransition] = useTransition();
 
   const storageOptions = useMemo(
     () => [...new Set(variantsForColour(product, colourSlug).map((v) => v.storage))],
@@ -113,6 +124,40 @@ export function CheckoutView({ product, titleId, onSubmit }: CheckoutViewProps) 
   const deliveryFee = wilaya ? (deliveryMethod === 'home' ? wilaya.homeFee : wilaya.deskFee) : 0;
   const subtotal = variant.price * quantity;
   const total = subtotal + deliveryFee;
+
+  /**
+   * Dairas are fetched per wilaya rather than bundled: there are 548 of them,
+   * and a customer sees at most one wilaya's worth. Fetched through a tiny
+   * public route handler because this is a client component inside a lazily
+   * mounted dialog, so it has no server render in which to read them.
+   *
+   * `ignore` guards the out-of-order response: switching wilaya twice quickly
+   * can land the first reply after the second, which would show the wrong
+   * wilaya's dairas.
+   */
+  useEffect(() => {
+    if (wilayaCode === null) {
+      setDairas(null);
+      return;
+    }
+
+    let ignore = false;
+    setDairas(null);
+
+    fetch(`/api/dairas?wilaya=${wilayaCode}`)
+      .then((res) => (res.ok ? res.json() : { dairas: [] }))
+      .then((body: { dairas?: Daira[] }) => {
+        if (!ignore) setDairas(body.dairas ?? []);
+      })
+      .catch(() => {
+        // A failed lookup must not block the order — the daira is optional.
+        if (!ignore) setDairas([]);
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [wilayaCode]);
 
   function selectColour(nextSlug: string) {
     setColourSlug(nextSlug);
@@ -144,25 +189,54 @@ export function CheckoutView({ product, titleId, onSubmit }: CheckoutViewProps) 
       .join(' — ');
 
     /**
-     * PHASE 3 (not built yet): a real submit sends the order somewhere —
-     * POST to the backend once it exists, or hand off to whatever the client
-     * decides replaces manual WhatsApp confirmation. Today this only builds a
-     * local snapshot and hands it to `onSubmit`, which is a plain state
-     * setter in <QuickView /> — no network call, nothing persisted, nothing
-     * sent to WhatsApp. Swap this block for the real call when there is one.
+     * The real submit. `submitOrder` re-looks-up the price and the delivery fee
+     * server-side and returns ITS numbers, which is what the confirmation
+     * shows — not the ones computed in this component. In the normal case they
+     * are identical; when they are not, the server is right.
+     *
+     * `onSubmit` (which switches <QuickView /> to the confirmation) only runs
+     * after the insert succeeds, so a failed order can never render as a
+     * successful one.
      */
-    onSubmit({
-      productName: name,
-      variantLabel,
-      quantity,
-      unitPrice: variant.price,
-      deliveryFee,
-      total,
-      deliveryMethod,
-      wilayaLabel: pickWilayaName(confirmedWilaya, locale),
-      name: customerName.trim(),
-      phone: phone.trim(),
-      address: deliveryMethod === 'home' ? address.trim() : null,
+    startTransition(async () => {
+      const result = await submitOrder({
+        variantId: variant.id,
+        quantity,
+        deliveryMethod,
+        wilayaCode: confirmedWilaya.code,
+        dairaId,
+        customerName: customerName.trim(),
+        customerPhone: phone.replace(/\s+/g, ''),
+        address: deliveryMethod === 'home' ? address.trim() : null,
+        landingSlug: null,
+        website,
+      });
+
+      if (!result.ok) {
+        const message =
+          result.error === 'unavailable'
+            ? t('submitUnavailable')
+            : result.error === 'invalid'
+              ? t('submitInvalid')
+              : t('submitFailed');
+        setErrors({ submit: message });
+        return;
+      }
+
+      onSubmit({
+        orderId: result.orderId,
+        productName: name,
+        variantLabel,
+        quantity,
+        unitPrice: result.unitPrice,
+        deliveryFee: result.deliveryFee,
+        total: result.total,
+        deliveryMethod,
+        wilayaLabel: pickWilayaName(confirmedWilaya, locale),
+        name: customerName.trim(),
+        phone: phone.trim(),
+        address: deliveryMethod === 'home' ? address.trim() : null,
+      });
     });
   }
 
@@ -370,6 +444,31 @@ export function CheckoutView({ product, titleId, onSubmit }: CheckoutViewProps) 
           )}
         </Field>
 
+        {/* Optional, and deliberately not gated on being loaded: a customer who
+            doesn't know their daira can still order with just the wilaya. Only
+            rendered once a wilaya is chosen, since the list depends on it. */}
+        {wilayaCode !== null ? (
+          <Field id="checkout-daira" label={t('dairaLabel')} className="mt-6">
+            {(props) => (
+              <select
+                {...props}
+                value={dairaId ?? ''}
+                disabled={dairas === null}
+                onChange={(event) => setDairaId(event.target.value ? Number(event.target.value) : null)}
+              >
+                <option value="">
+                  {dairas === null ? t('dairaLoading') : t('dairaPlaceholder')}
+                </option>
+                {(dairas ?? []).map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name}
+                  </option>
+                ))}
+              </select>
+            )}
+          </Field>
+        ) : null}
+
         {deliveryMethod === 'home' ? (
           <Field
             id="checkout-address"
@@ -425,9 +524,33 @@ export function CheckoutView({ product, titleId, onSubmit }: CheckoutViewProps) 
           )}
         </Field>
 
+        {/* Honeypot. Off-screen rather than `display:none` (some bots skip
+            hidden inputs), `tabIndex={-1}` and `aria-hidden` so no keyboard or
+            screen-reader user can reach it, and `autoComplete="off"` so a
+            browser never helpfully fills it in. A human leaves it empty; the
+            server rejects anything else without saying why. */}
+        <div aria-hidden="true" className="absolute left-[-9999px] top-0 h-0 w-0 overflow-hidden">
+          <label htmlFor="checkout-website">Website</label>
+          <input
+            id="checkout-website"
+            name="website"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            value={website}
+            onChange={(event) => setWebsite(event.target.value)}
+          />
+        </div>
+
+        {errors.submit ? (
+          <p role="alert" className="mt-6 rounded-card bg-red-50 px-4 py-3 text-sm text-red-700">
+            {errors.submit}
+          </p>
+        ) : null}
+
         <div className="mt-8">
-          <Button type="submit" fullWidth>
-            {t('submitCta')}
+          <Button type="submit" fullWidth disabled={pending}>
+            {pending ? t('submitting') : t('submitCta')}
           </Button>
         </div>
       </form>

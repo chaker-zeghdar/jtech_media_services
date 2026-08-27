@@ -37,7 +37,17 @@ export function OrderConfirmation({ order, titleId }: OrderConfirmationProps) {
       </h2>
       <p className="mt-2 max-w-[46ch] text-base text-gray-700">{t('confirmedBody')}</p>
 
-      <dl className="mt-8 w-full max-w-[420px] rounded-card border border-gray-300 p-5 text-start">
+      {/* The real database id, shortened. A customer quoting an order over
+          WhatsApp needs something they can actually read back, and eight hex
+          characters are both unambiguous at this volume and short enough to
+          say out loud — the full uuid is neither. Uppercased and `num`-classed
+          so it reads as a reference code rather than as prose. */}
+      <p className="mt-6 text-caption uppercase text-gray-700">
+        {t('orderRef')}{' '}
+        <bdi className="num font-semibold text-ink">{order.orderId.slice(0, 8).toUpperCase()}</bdi>
+      </p>
+
+      <dl className="mt-4 w-full max-w-[420px] rounded-card border border-gray-300 p-5 text-start">
         <h3 className="text-caption uppercase text-gray-700">{t('summaryTitle')}</h3>
 
         <div className="mt-4 flex flex-col gap-3">
