@@ -1,5 +1,6 @@
 'use server';
 
+import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 
@@ -132,9 +133,23 @@ export async function submitOrder(rawInput: unknown): Promise<SubmitOrderResult>
 
   const variantLabel = [variant.colour_label, variant.storage].filter(Boolean).join(' — ');
 
-  const { data: inserted, error: insertError } = await supabase
+  /**
+   * The id is minted here rather than read back from the insert.
+   *
+   * `.insert().select()` needs BOTH an INSERT and a SELECT policy, and `anon`
+   * deliberately cannot read `orders` — a customer must not be able to list
+   * other people's orders. Asking for the row back therefore failed with
+   * "new row violates row-level security policy", which reads like the INSERT
+   * was refused when in fact only the read-back was. Generating the uuid
+   * up-front means the write needs no return value, and the confirmation still
+   * gets a real database id.
+   */
+  const orderId = randomUUID();
+
+  const { error: insertError } = await supabase
     .from('orders')
     .insert({
+      id: orderId,
       product_id: variant.product.id,
       variant_id: variant.id,
       // Snapshotted, not joined at read time: an order is a record of what was
@@ -152,15 +167,13 @@ export async function submitOrder(rawInput: unknown): Promise<SubmitOrderResult>
       customer_phone: input.customerPhone.replace(/\s+/g, ''),
       address: input.deliveryMethod === 'home' ? (input.address ?? '').trim() : null,
       landing_slug: input.landingSlug,
-    })
-    .select('id')
-    .single();
+    });
 
-  if (insertError || !inserted) return { ok: false, error: 'failed' };
+  if (insertError) return { ok: false, error: 'failed' };
 
   /* The server's own numbers go back to the client. In the normal case they
      match what the live summary already showed; returning them means the
      confirmation shows what was actually recorded rather than what the browser
      believed. */
-  return { ok: true, orderId: inserted.id as string, total, deliveryFee, unitPrice };
+  return { ok: true, orderId, total, deliveryFee, unitPrice };
 }
