@@ -13,6 +13,14 @@ import { WhyJtech } from '@/components/sections/WhyJtech';
 import { routing } from '@/i18n/routing';
 
 /**
+ * Rendered per request rather than prebuilt at deploy time, matching the
+ * category page. Every section here reads the live catalogue out of Supabase,
+ * and prerendering turned that into a build-time database dependency: the
+ * deploy failed outright when the read came back empty.
+ */
+export const dynamic = 'force-dynamic';
+
+/**
  * The homepage.
  *
  * Two rules are enforced by this ordering, and both are easy to break by
