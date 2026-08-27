@@ -23,13 +23,42 @@ const ALLOWED = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/avif'])
 /** Presigned URL lifetime. Long enough for a slow phone upload, short enough. */
 const EXPIRES_IN = 300;
 
-function r2Client() {
-  const accountId = process.env.R2_ACCOUNT_ID;
-  const accessKeyId = process.env.R2_ACCESS_KEY_ID;
-  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
+/** Every variable this route needs, in the order they appear in .env.example. */
+const REQUIRED_R2_VARS = [
+  'R2_ACCOUNT_ID',
+  'R2_ACCESS_KEY_ID',
+  'R2_SECRET_ACCESS_KEY',
+  'R2_BUCKET_NAME',
+  'R2_PUBLIC_BASE_URL',
+] as const;
 
-  if (!accountId || !accessKeyId || !secretAccessKey) return null;
+/**
+ * Reads a required variable, treating whitespace-only as absent and trimming
+ * what it returns.
+ *
+ * The trim is not cosmetic. Pasting a value into a dashboard field very easily
+ * carries a trailing newline or space, which passes a plain `!value` check and
+ * then fails much later and much more confusingly — a signature computed over a
+ * key with a stray `\n` produces a SignatureDoesNotMatch from R2, and an
+ * account id with one produces a hostname that simply doesn't resolve.
+ */
+function readVar(name: (typeof REQUIRED_R2_VARS)[number]): string | null {
+  const value = process.env[name];
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
 
+/**
+ * Names of the variables that are missing or empty. **Names only, never
+ * values** — three of these five are secrets, and an error body is exactly the
+ * kind of thing that ends up pasted into a chat or a screenshot.
+ */
+function missingR2Vars(): string[] {
+  return REQUIRED_R2_VARS.filter((name) => readVar(name) === null);
+}
+
+function r2Client(accountId: string, accessKeyId: string, secretAccessKey: string) {
   return new S3Client({
     region: 'auto',
     endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
@@ -87,20 +116,32 @@ export async function POST(request: Request) {
   // 3 ─ Configuration. A 500 here means the deploy is missing R2 credentials,
   //     which is an operator problem and should say so rather than surfacing as
   //     an opaque AWS SDK error.
-  const bucket = process.env.R2_BUCKET_NAME;
-  const publicBase = process.env.R2_PUBLIC_BASE_URL;
-  const client = r2Client();
-
-  if (!client || !bucket || !publicBase) {
+  //
+  //     It names the specific variables that are missing rather than restating
+  //     the whole list: "R2 is not configured" is unactionable when four of the
+  //     five are already set and one has a typo. Safe to return because the
+  //     session check above already ran — only a signed-in admin sees this — and
+  //     because it carries variable NAMES only. Never add the values: three of
+  //     the five are secrets.
+  const missing = missingR2Vars();
+  if (missing.length > 0) {
     return Response.json(
       {
-        error:
-          'R2 is not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, ' +
-          'R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME and R2_PUBLIC_BASE_URL.',
+        error: `R2 is not configured. Missing or empty: ${missing.join(', ')}.`,
+        missing,
       },
       { status: 500 },
     );
   }
+
+  /* Non-null after the check above, and re-read through `readVar` so the
+     trimmed values are the ones actually used. */
+  const accountId = readVar('R2_ACCOUNT_ID')!;
+  const accessKeyId = readVar('R2_ACCESS_KEY_ID')!;
+  const secretAccessKey = readVar('R2_SECRET_ACCESS_KEY')!;
+  const bucket = readVar('R2_BUCKET_NAME')!;
+  const publicBase = readVar('R2_PUBLIC_BASE_URL')!;
+  const client = r2Client(accountId, accessKeyId, secretAccessKey);
 
   // 4 ─ A key that can't collide and stays browsable in the R2 console.
   const safeName = filename.replace(/[^a-zA-Z0-9.-]/g, '-').slice(-100);
