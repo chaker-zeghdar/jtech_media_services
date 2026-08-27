@@ -18,6 +18,10 @@ export async function AccessoriesRail() {
   const tA11y = await getTranslations('a11y');
   const products = (await accessories()).slice(0, 6);
 
+  /* Same reasoning as <OurLaptops />: an empty rail under a live heading reads
+     as a rendering fault, so the section stands down instead. */
+  if (products.length === 0) return null;
+
   return (
     <Section
       id="accessories"

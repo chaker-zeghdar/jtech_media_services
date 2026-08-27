@@ -30,6 +30,11 @@ export async function OurLaptops() {
 
   const products = (await productsByCategory('pc')).slice(0, RAIL_LIMIT);
 
+  /* A heading and a subhead over an empty rail is worse than no section: it
+     reads as a broken component rather than as an empty category. Only reached
+     when this category has nothing published. */
+  if (products.length === 0) return null;
+
   return (
     <Section
       id="laptops"

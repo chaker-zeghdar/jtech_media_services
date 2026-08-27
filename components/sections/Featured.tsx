@@ -49,7 +49,15 @@ export async function Featured() {
   const tProduct = await getTranslations('product');
   const tA11y = await getTranslations('a11y');
 
+  /**
+   * The whole section is the spotlight plus a rail of the same catalogue, so
+   * with no products there is nothing here to render — not an empty shell with
+   * a heading over a blank rail. Skipped entirely rather than crashing the page
+   * (see `featuredProduct()`), and unaffected once any product exists.
+   */
   const product = await featuredProduct();
+  if (!product) return null;
+
   const variant = primaryVariant(product);
   const colours = productColours(product);
   const name = pickLocale(product.name, locale);

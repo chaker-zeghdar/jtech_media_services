@@ -44,38 +44,49 @@ export async function OurPhones() {
   /* Three category queries, in parallel rather than awaited one after the
      other — they're independent, and serialising them would make this section
      three round trips deep for no reason. */
-  const tabs = await Promise.all(
-    PHONE_SLUGS.map(async (slug) => {
-      const category = categories.find((entry) => entry.slug === slug);
-      // Reuses the names already on the category rows — this section introduces
-      // no new copy for its own tab labels.
-      const name = category ? pickLocale(category.name, locale) : slug;
-      const products = (await productsByCategory(slug)).slice(0, RAIL_LIMIT);
-
-      return {
-        slug,
-        name,
-        // Rendered HERE, on the server, because <ProductCard /> is a server
-        // component. <PhoneTabs /> only chooses between them.
-        rail: (
-          <Carousel label={`${name} — ${tA11y('carouselProgress')}`} className="mt-8">
-            {products.map((product) => (
-              <div key={product.slug} className={RAIL_ITEM}>
-                <ProductCard product={product} locale={locale} bed="white" sizes={RAIL_SIZES} />
-              </div>
-            ))}
-          </Carousel>
-        ),
-        // The way out to the real category page, through the same helper the
-        // header, the category tiles and the footer all use.
-        viewAll: (
-          <Button variant="link" href={categoryHref(slug)}>
-            {tCommon('viewAll')}
-          </Button>
-        ),
-      };
-    }),
+  const phoneRails = await Promise.all(
+    PHONE_SLUGS.map(async (slug) => ({
+      slug,
+      products: (await productsByCategory(slug)).slice(0, RAIL_LIMIT),
+    })),
   );
+
+  /* An empty category drops its tab rather than parking an empty rail behind a
+     live label, and if none are left the section stands down — the same rule
+     <OurLaptops /> and <AccessoriesRail /> follow. No effect while the phone
+     categories have stock, which is the normal case. */
+  const stocked = phoneRails.filter((rail) => rail.products.length > 0);
+  if (stocked.length === 0) return null;
+
+  const tabs = stocked.map(({ slug, products }) => {
+    const category = categories.find((entry) => entry.slug === slug);
+    // Reuses the names already on the category rows — this section introduces
+    // no new copy for its own tab labels.
+    const name = category ? pickLocale(category.name, locale) : slug;
+
+    return {
+      slug,
+      name,
+      // Rendered HERE, on the server, because <ProductCard /> is a server
+      // component. <PhoneTabs /> only chooses between them.
+      rail: (
+        <Carousel label={`${name} — ${tA11y('carouselProgress')}`} className="mt-8">
+          {products.map((product) => (
+            <div key={product.slug} className={RAIL_ITEM}>
+              <ProductCard product={product} locale={locale} bed="white" sizes={RAIL_SIZES} />
+            </div>
+          ))}
+        </Carousel>
+      ),
+      // The way out to the real category page, through the same helper the
+      // header, the category tiles and the footer all use.
+      viewAll: (
+        <Button variant="link" href={categoryHref(slug)}>
+          {tCommon('viewAll')}
+        </Button>
+      ),
+    };
+  });
 
   return (
     <Section

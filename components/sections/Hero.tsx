@@ -46,8 +46,15 @@ export async function Hero() {
   // Reuses the alt text <BrandMarquee /> already has for these same four photos.
   const tSocial = await getTranslations('social');
 
+  /**
+   * Used for ONE thing: the alt text on the hero cutout below. That image is
+   * `/hero.png`, a fixed brand asset deliberately independent of the featured
+   * product's own photo, so an empty catalogue costs the hero nothing but a
+   * more specific alt string — it falls back to the brand name rather than
+   * failing the render.
+   */
   const product = await featuredProduct();
-  const name = pickLocale(product.name, locale);
+  const name = product ? pickLocale(product.name, locale) : t('title');
 
   /**
    * The client's four real channels — matching the reference's four-icon count
@@ -263,7 +270,12 @@ export async function Hero() {
                       padding-inline) and Tailwind emits the longhand after the
                       shorthand, so this is not the coin-flip DESIGN.md warns about
                       for two utilities setting the SAME property. */}
-                  <Button href="#range" className="pe-2 shadow-card">
+                  {/* `#range` is the rail's anchor and it lives inside
+                      <Featured />, which stands down on an empty catalogue —
+                      that would leave this CTA pointing at nothing. Falls back
+                      to the category strip, which renders from `categories` and
+                      is therefore always there. Unchanged with any product. */}
+                  <Button href={product ? '#range' : '#categories'} className="pe-2 shadow-card">
                     {t('ctaPrimary')}
                     <span
                       aria-hidden="true"

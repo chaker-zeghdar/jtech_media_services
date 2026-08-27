@@ -127,13 +127,22 @@ export async function productsByCategory(category: CategorySlug): Promise<Produc
   return queryProducts((query) => query.eq('category.slug', category));
 }
 
-/** The single dark featured block. Falls back to the first product. */
-export async function featuredProduct(): Promise<Product> {
+/**
+ * The single dark featured block. Falls back to the first product.
+ *
+ * Returns null on an empty catalogue rather than throwing. It used to throw
+ * "No products in the database", which took the whole homepage down with a 500
+ * — every visitor saw a server error because one section had nothing to show.
+ * An empty catalogue is a legitimate transient state (mid-rebuild through the
+ * admin panel, or a category briefly unpublished), not an exceptional one, so
+ * callers skip their section instead. Behaviour is unchanged the moment a
+ * single product exists.
+ */
+export async function featuredProduct(): Promise<Product | null> {
   const [found] = await queryProducts((query) => query.eq('featured', true).limit(1));
   if (found) return found;
   const [first] = await queryProducts((query) => query.limit(1));
-  if (!first) throw new Error('No products in the database');
-  return first;
+  return first ?? null;
 }
 
 export async function bestsellers(): Promise<Product[]> {
