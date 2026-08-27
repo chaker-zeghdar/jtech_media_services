@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { ProductImage } from '@/components/ui/ProductImage';
 import { SlideBanner } from '@/components/ui/SlideBanner';
-import { featuredProduct } from '@/content/products';
+import { featuredProduct } from '@/lib/queries/products';
 import { settings, whatsappLink } from '@/content/settings';
 import { pickLocale } from '@/lib/format';
 
@@ -46,7 +46,7 @@ export async function Hero() {
   // Reuses the alt text <BrandMarquee /> already has for these same four photos.
   const tSocial = await getTranslations('social');
 
-  const product = featuredProduct();
+  const product = await featuredProduct();
   const name = pickLocale(product.name, locale);
 
   /**

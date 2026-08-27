@@ -196,6 +196,7 @@
     "order": "Commander",
     "quickView": "Aperçu rapide",
     "quickViewOpen": "Aperçu rapide de {product}",
+    "photoOf": "Photo {index} sur {total}",
     "colours": "Coloris",
     "storage": "Capacité",
     "specs": "Caractéristiques",

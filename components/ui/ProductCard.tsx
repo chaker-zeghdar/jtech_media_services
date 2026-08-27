@@ -27,15 +27,32 @@ type ProductCardProps = {
 };
 
 /**
- * Apple lineup treatment, not an e-commerce tile.
+ * Apple lineup treatment, with one deliberate departure from it.
  *
- * Order is deliberate: bed → badge → name → one-line tagline → "من X دج" → two
- * text links. There is no solid button on the card face — Apple's lineup cards
- * use two links, and the filled button is reserved for the featured block and the
- * sticky mobile bar, which is what keeps it meaning something.
+ * Order is: bed (badge overlaid on it) → swatches → name → one-line tagline →
+ * "من X دج" → a filled order button with a small detail affordance beside it.
  *
- * Exactly ONE badge, and it sits above the name rather than floating over the
- * image: stacked badges over a product read as a rendering fault.
+ * ── The card now carries a filled button, reversing what it shipped with ────
+ *
+ * This component's original rule was the opposite: "there is no solid button on
+ * the card face — Apple's lineup cards use two links, and the filled button is
+ * reserved for the featured block and the sticky mobile bar, which is what keeps
+ * it meaning something." That was right for a catalogue you could only browse.
+ * It stopped being right once checkout existed: ordering meant finding the
+ * quieter of two identically-styled text links, opening a dialog, and only then
+ * meeting a button — three steps to start a purchase, on a shop whose traffic is
+ * almost entirely mobile. Reversed at the client's request, and the reference
+ * they sent puts a filled button on every card face.
+ *
+ * What keeps the filled button meaning something now is scarcity *within* the
+ * card rather than across the page: it is the only filled thing on it, and
+ * "learn more" was demoted from an equal text link to a 36px icon button beside
+ * it. Two links of equal weight asked the reader to choose; a button and an
+ * affordance tell them which one is the point.
+ *
+ * Exactly ONE badge, now overlaid on the image's top-start corner rather than
+ * occupying its own reserved row above the name. Stacked badges over a product
+ * would read as a rendering fault, which is why the cap stays at one.
  *
  * A **server component**. The hover choreography is CSS on the card's `group`:
  *   bed         gray-50 → gold-tint
@@ -53,10 +70,10 @@ type ProductCardProps = {
  * Only <ProductDialogTrigger /> is a client island, and it is the two text
  * links plus one lazily-mounted dialog behind both of them.
  *
- * PHASE 2: "اعرف أكثر" opens the quick view because product detail pages don't
- * exist yet; point it at /products/{slug} when they do.
+ * PHASE 2: the detail affordance opens the quick view because product detail
+ * pages don't exist yet; point it at /products/{slug} when they do.
  *
- * "اطلبها" now opens that same dialog straight to its checkout view — a real
+ * "اطلب الآن" opens that same dialog straight to its checkout view — a real
  * variant/quantity/delivery form with a live total, built on `content/
  * wilayas.ts`'s per-wilaya fees. It replaced the old WhatsApp deep link
  * (`whatsappLink(t('orderMessage', ...))`), which is still what `<Header />`'s
@@ -108,12 +125,28 @@ export async function ProductCard({
             className="drop-shadow-product"
           />
         </div>
+
+        {/* Overlaid on the bed rather than sitting in its own row above the
+            name — that row and its `h-6` reserve are where most of this card's
+            height reduction came from.
+
+            OUTSIDE the transform wrapper above, deliberately: the product lifts
+            and rotates on hover and the badge must not travel with it, or a
+            label describing the product starts behaving like part of the
+            photograph. `z-20` clears both the product (`z-10`) and the
+            `.light-sweep` pseudo-element, which carries no z-index of its own.
+            `start-3`, not `left-3` — it mirrors under Arabic for free. */}
+        {badge ? (
+          <div className="absolute start-3 top-3 z-20">
+            <Badge badge={badge} />
+          </div>
+        ) : null}
       </div>
 
       {/* ---- Info --------------------------------------------------------
           Order follows apple.com/store's accessory cards: swatches sit directly
           under the image, then the eyebrow tag, then the name. */}
-      <div className="mt-5 flex flex-1 flex-col items-start">
+      <div className="mt-4 flex flex-1 flex-col items-start">
         {/* Every variable-height zone in this column reserves its space, so a
             card with no swatches and a one-line name lands its name, tagline and
             price at the same y as the card beside it with six colours and a
@@ -123,13 +156,14 @@ export async function ProductCard({
 
             <ColourSwatches /> returns null under two colours ("one colour is not
             a choice"), so without a floor here that row simply vanishes. The
-            height is the dot row plus its own mb-3. */}
-        <div className="mb-3 h-4">
+            height is the dot row plus its own margin.
+
+            The badge's reserved row used to sit directly below this one. It is
+            gone — the badge moved onto the image bed, so there is no longer a
+            variable-height zone here to reserve for it. */}
+        <div className="mb-2.5 h-4">
           <ColourSwatches colours={colours} />
         </div>
-
-        {/* Same reasoning: only some products carry a badge. */}
-        <div className="mb-3 h-6">{badge ? <Badge badge={badge} /> : null}</div>
 
         {/* Clamped and floored like the tagline below. Two lines, not one:
             "لينوفو آيديا باد سليم 3" and "Galaxy Watch Ultra 2" are real
@@ -152,13 +186,18 @@ export async function ProductCard({
             own 19 x 1.45 = 27.55px — removing it let the token's real leading
             apply.
 
-            The floor is TWO lines (3.4375rem = 2 x the measured 27.5px line
-            box), not one — re-measured against this new size, the same way
-            the original 4.375rem was measured against text-h3. Flooring at
-            one line only reserves space for the shorter case, which leaves
-            one- and two-line names out of step with each other down the
-            rail. */}
-        <h3 className="line-clamp-2 min-h-[3.4375rem] text-subhead-sm font-semibold">
+            The floor is TWO lines, not one — flooring at one line only reserves
+            space for the shorter case, which leaves one- and two-line names out
+            of step with each other down the rail.
+
+            Re-measured against THIS layout rather than carried forward: the
+            rendered line box is 27.55px, so two lines is 55.10px = 3.4438rem.
+            The previous value (3.4375rem = 55px) was rounded down from the same
+            measurement, which left a two-line name 0.1px proud of its own floor
+            — sub-pixel, but it meant the floor wasn't actually doing its job for
+            the case it exists for. The token itself didn't change in this pass;
+            only the rounding was wrong. */}
+        <h3 className="line-clamp-2 min-h-[3.4438rem] text-subhead-sm font-semibold">
           {name}
         </h3>
 
@@ -166,28 +205,30 @@ export async function ProductCard({
             matter: the clamp stops a long tagline pushing the price row down,
             the floor stops a short one pulling it up. Without the pair, cards in
             the same rail landed their price at different heights purely because
-            their descriptions differed in length. 2.625rem = 2 x the measured 21px line box
-            line-height `text-sm` computes to here. */}
+            their descriptions differed in length. Re-measured alongside the name
+            above: `text-sm` computes to a 21px line box here, so two lines is
+            42px = 2.625rem — exact, and unchanged by this pass. */}
         <p className="mt-2 line-clamp-2 min-h-[2.625rem] max-w-[34ch] text-sm text-gray-700">
           {tagline}
         </p>
 
         {/* `mt-auto` is the other half of the fix. The column is already
             `flex-1`, so any height the rail's stretch gives this card beyond its
-            content collects here instead of trailing under the links — which
+            content collects here instead of trailing under the actions — which
             pins price and CTAs to a shared baseline across the row. */}
-        <div className="mt-auto pt-4">
+        <div className="mt-auto w-full pt-3">
           <PriceFrom value={priceFrom(product)} />
         </div>
 
-        {/* Two text links, never a solid button — see the note above. Both
-            open the SAME dialog now — see <ProductDialogTrigger />'s own doc
-            comment for why "learn more" and "order" share one client island
-            instead of each managing their own. */}
-        <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3">
+        {/* The filled order button and the detail affordance beside it. Both
+            open the SAME dialog — see <ProductDialogTrigger />'s own doc comment
+            for why they share one client island instead of each managing their
+            own. `w-full` because the column is `items-start`, which would
+            otherwise shrink this row to its content and leave the button
+            floating at the card's inline start. */}
+        <div className="mt-3 w-full">
           <ProductDialogTrigger
             product={product}
-            learnMoreLabel={t('learnMore')}
             learnMoreAriaLabel={t('quickViewOpen', { product: name })}
             orderLabel={t('order')}
             orderAriaLabel={`${t('order')} — ${name}`}

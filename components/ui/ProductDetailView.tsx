@@ -6,7 +6,7 @@ import { pickLocale } from '@/lib/format';
 import { primaryVariant, productColours } from '@/lib/product';
 import { Button } from './Button';
 import { Price } from './Price';
-import { ProductImage } from './ProductImage';
+import { ProductGallery } from './ProductGallery';
 import { StockDot } from './StockDot';
 
 type ProductDetailViewProps = {
@@ -43,16 +43,10 @@ export function ProductDetailView({ product, titleId, onOrder }: ProductDetailVi
 
   return (
     <>
-      <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-card bg-gray-50">
-        <ProductImage
-          src={variant.images[0]}
-          name={name}
-          width={520}
-          height={520}
-          sizes="(max-width: 767px) 88vw, 400px"
-          className="drop-shadow-product"
-        />
-      </div>
+      {/* Every photo on the variant, not just the first. <ProductGallery />
+          collapses to a single static frame when there is one photo or none,
+          which is still most of the catalogue. */}
+      <ProductGallery images={variant.images} name={name} />
 
       <div className="flex flex-col">
         <p className="text-caption uppercase text-ink/70">{product.brand}</p>

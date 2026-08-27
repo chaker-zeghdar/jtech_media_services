@@ -196,6 +196,7 @@
     "order": "اطلب الآن",
     "quickView": "نظرة سريعة",
     "quickViewOpen": "نظرة سريعة على {product}",
+    "photoOf": "صورة {index} من {total}",
     "colours": "الألوان",
     "storage": "السعة",
     "specs": "المواصفات",

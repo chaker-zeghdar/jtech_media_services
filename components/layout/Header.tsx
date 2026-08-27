@@ -1,7 +1,7 @@
 import { getLocale, getTranslations } from 'next-intl/server';
 import { LogoMark } from '@/components/brand/LogoMark';
 import { Icon } from '@/components/ui/Icon';
-import { categories } from '@/content/categories';
+import { getCategories } from '@/lib/queries/categories';
 import { settings, telLink, whatsappLink } from '@/content/settings';
 import { Link } from '@/i18n/navigation';
 import { pickLocale } from '@/lib/format';
@@ -89,7 +89,7 @@ export async function Header() {
   const t = await getTranslations('a11y');
   const tProduct = await getTranslations('product');
 
-  const items = [...categories]
+  const items = [...(await getCategories())]
     .sort((a, b) => a.position - b.position)
     .map((category) => ({
       slug: category.slug,

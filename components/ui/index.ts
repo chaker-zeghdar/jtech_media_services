@@ -10,6 +10,7 @@ export { Icon, type AnyIconKey, type UiIconKey } from './Icon';
 export { Price, PriceFrom } from './Price';
 export { ProductCard } from './ProductCard';
 export { ProductDialogTrigger } from './ProductDialogTrigger';
+export { ProductGallery } from './ProductGallery';
 export { ProductImage } from './ProductImage';
 export { QuickView } from './QuickView';
 export { SpecStat } from './SpecStat';

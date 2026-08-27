@@ -7,12 +7,12 @@ import { Section } from '@/components/layout/Section';
 import { SectionHeader } from '@/components/layout/SectionHeader';
 import { Button } from '@/components/ui/Button';
 import { ProductCard } from '@/components/ui/ProductCard';
-import { categories } from '@/content/categories';
-import { productsByCategory } from '@/content/products';
-import type { CategorySlug } from '@/content/schemas';
+import { type CategorySlug, categorySlugSchema } from '@/content/schemas';
 import { whatsappLink } from '@/content/settings';
 import { routing } from '@/i18n/routing';
 import { pickLocale } from '@/lib/format';
+import { getCategory } from '@/lib/queries/categories';
+import { productsByCategory } from '@/lib/queries/products';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,7 +29,13 @@ export const dynamic = 'force-dynamic';
  * rather than a second design language bolted on.
  */
 
-const SLUGS: readonly CategorySlug[] = categories.map((category) => category.slug);
+/**
+ * Read from the enum rather than from the category rows: this runs at module
+ * scope, where there is nothing to await, and the enum is the actual source of
+ * truth for the `CategorySlug` union anyway. A slug outside it never existed,
+ * which is a 404 decision that needs no database round trip to make.
+ */
+const SLUGS: readonly CategorySlug[] = categorySlugSchema.options;
 
 function isCategorySlug(value: string): value is CategorySlug {
   return (SLUGS as readonly string[]).includes(value);
@@ -41,7 +47,7 @@ export async function generateMetadata({ params }: PageParams): Promise<Metadata
   const { locale, slug } = await params;
   if (!hasLocale(routing.locales, locale) || !isCategorySlug(slug)) return {};
 
-  const category = categories.find((entry) => entry.slug === slug);
+  const category = await getCategory(slug);
   if (!category) return {};
 
   const t = await getTranslations({ locale, namespace: 'categoryPage' });
@@ -72,13 +78,13 @@ export default async function CategoryPage({ params }: PageParams) {
 
   setRequestLocale(locale);
 
-  const category = categories.find((entry) => entry.slug === slug);
+  const category = await getCategory(slug);
   if (!category) notFound();
 
   const t = await getTranslations({ locale, namespace: 'categoryPage' });
   const tProduct = await getTranslations({ locale, namespace: 'product' });
   const name = pickLocale(category.name, locale);
-  const items = productsByCategory(slug);
+  const items = await productsByCategory(slug);
 
   return (
     <Section id="category" background="white">

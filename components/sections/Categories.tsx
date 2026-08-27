@@ -5,7 +5,7 @@ import { SectionHeader } from '@/components/layout/SectionHeader';
 import { categoryHref } from '@/components/layout/navigation';
 import { Carousel } from '@/components/ui/Carousel';
 import { CategoryTile } from '@/components/ui/CategoryTile';
-import { categories } from '@/content/categories';
+import { getCategories } from '@/lib/queries/categories';
 import { pickLocale } from '@/lib/format';
 
 /**
@@ -51,7 +51,7 @@ export async function Categories() {
   const t = await getTranslations('categories');
   const tA11y = await getTranslations('a11y');
 
-  const items = [...categories]
+  const items = [...(await getCategories())]
     .sort((a, b) => a.position - b.position)
     .map((category) => ({
       category,

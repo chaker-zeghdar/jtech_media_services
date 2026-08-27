@@ -12,6 +12,12 @@ const nextConfig: NextConfig = {
     // Matches the breakpoints the product grid and carousels actually request.
     deviceSizes: [360, 420, 640, 828, 1080, 1200, 1680, 1920],
     imageSizes: [64, 96, 128, 176, 256, 320, 420],
+    /**
+     * Product photos live in the Cloudflare R2 bucket rather than /public, so
+     * next/image has to be told the host is allowed. Category art is still a
+     * local path and needs no entry here.
+     */
+    remotePatterns: [{ protocol: 'https', hostname: 'pub-f51214cc125a4234abf27d1cd4aa8938.r2.dev' }],
   },
   eslint: {
     dirs: ['app', 'components', 'content', 'i18n', 'lib'],

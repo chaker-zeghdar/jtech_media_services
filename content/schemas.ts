@@ -42,8 +42,18 @@ export const slugSchema = z
 
 export const hexColourSchema = z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'expected a #RRGGBB hex value');
 
-/** Public path under /public, or null when the client hasn't sent the photo yet. */
+/** Public path under /public. Still how `categorySchema.image` is stored. */
 export const imagePathSchema = z.string().startsWith('/');
+
+/**
+ * Full URL to a photo in the Cloudflare R2 bucket.
+ *
+ * Product photos moved out of /public and into R2 when the catalogue moved to
+ * Supabase, so they are absolute URLs rather than local paths. Category art is
+ * unaffected — it is part of the design, not client-uploaded content, and stays
+ * on `imagePathSchema` above.
+ */
+export const productImageUrlSchema = z.string().url();
 
 /* -------------------------------------------------------------------------- */
 /*  Enums                                                                     */
@@ -129,10 +139,11 @@ export const productVariantSchema = z
     compareAt: priceSchema.nullable(),
     stock: stockStatusSchema,
     /**
-     * Ordered image paths, first is the card/hero shot. Empty array is a valid
-     * state — <ProductImage /> renders the branded empty state instead.
+     * Ordered image URLs, first is the card/hero shot. Empty array is a valid
+     * state — <ProductImage /> renders the branded empty state instead, which
+     * is what every product shows until its photos are re-uploaded to R2.
      */
-    images: z.array(imagePathSchema),
+    images: z.array(productImageUrlSchema),
   })
   .refine((v) => v.compareAt === null || v.compareAt > v.price, {
     message: 'compareAt must be greater than price',
@@ -152,6 +163,11 @@ export const productSchema = z.object({
   description: localizedTextSchema,
   specs: z.array(productSpecSchema),
   highlights: z.array(productHighlightSchema),
+  /**
+   * Battery health as a percentage, for second-hand phones. Null for anything
+   * that doesn't carry a reading — see `categorySchema.hasBatteryHealth`.
+   */
+  batteryHealthPercent: z.number().int().min(0).max(100).nullable(),
   variants: z.array(productVariantSchema).min(1, 'a product needs at least one variant'),
 });
 export type Product = z.infer<typeof productSchema>;
@@ -186,6 +202,12 @@ export const categorySchema = z.object({
     .optional(),
   /** Display order in the category strip. */
   position: z.number().int().positive(),
+  /**
+   * Whether products in this category carry a battery-health reading. True for
+   * the phone categories, false for computers and accessories. Drives whether
+   * the admin form shows the battery-health field at all.
+   */
+  hasBatteryHealth: z.boolean(),
 });
 export type Category = z.infer<typeof categorySchema>;
 

@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import type { Product } from '@/content/schemas';
-import { cn } from '@/lib/cn';
+import { Button } from './Button';
 import { Icon } from './Icon';
 
 /**
@@ -16,25 +16,34 @@ const QuickView = dynamic(() => import('./QuickView').then((module) => module.Qu
 
 type ProductDialogTriggerProps = {
   product: Product;
-  /** Pre-resolved on the server so this island needs no locale lookup. */
-  learnMoreLabel: string;
+  /**
+   * Pre-resolved on the server so this island needs no locale lookup. The
+   * detail trigger is icon-only, so this label is its ONLY accessible name —
+   * it is not a redundant description of visible text.
+   */
   learnMoreAriaLabel: string;
   orderLabel: string;
   orderAriaLabel: string;
 };
 
-const LINK_CLASS =
-  'group/link inline-flex items-center gap-1.5 text-sm font-semibold leading-none text-gold-text transition-colors duration-200 ease-brand hover:text-ink';
-
-const CHEVRON_CLASS = cn(
-  'rtl:-scale-x-100',
-  'transition-transform duration-200 ease-brand',
-  'ltr:group-hover/link:translate-x-[3px] rtl:group-hover/link:-translate-x-[3px]',
-);
+/**
+ * Matches `<Carousel />`'s arrow buttons rather than inventing a fourth circular
+ * treatment: same 36px disc, same gray-300 border, same invert-to-ink hover.
+ */
+const DETAIL_CLASS =
+  'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-300 text-gray-700 ' +
+  'transition-[background-color,border-color,color] duration-200 ease-brand ' +
+  'hover:border-ink hover:bg-ink hover:text-white';
 
 /**
- * The card's two text links — "learn more" and "order" — and the single
- * `<QuickView />` dialog behind both of them.
+ * The card's filled order button, the small detail affordance beside it, and the
+ * single `<QuickView />` dialog behind both.
+ *
+ * Both used to be identically-styled text links. They are now a primary and a
+ * secondary: a filled `<Button />` for ordering, and a 36px icon button for the
+ * detail view — see `<ProductCard />`'s doc comment for why that hierarchy
+ * changed. The `expand` glyph is the one already drawn for "open larger", which
+ * is exactly what this does.
  *
  * Was `QuickViewTrigger`, one button and one dialog mount for "learn more"
  * only; "order" was a plain `<Button href={whatsappLink(...)}>` living
@@ -52,7 +61,6 @@ const CHEVRON_CLASS = cn(
  */
 export function ProductDialogTrigger({
   product,
-  learnMoreLabel,
   learnMoreAriaLabel,
   orderLabel,
   orderAriaLabel,
@@ -70,15 +78,29 @@ export function ProductDialogTrigger({
 
   return (
     <>
-      <button type="button" onClick={() => openAt('detail')} aria-label={learnMoreAriaLabel} className={LINK_CLASS}>
-        {learnMoreLabel}
-        <Icon name="chevron" size={16} className={CHEVRON_CLASS} />
-      </button>
+      {/* Order first in the DOM, so Tab reaches the primary action before the
+          secondary one. It is also first visually in both scripts — the row is
+          laid out with logical properties, so it mirrors under Arabic. */}
+      <div className="flex w-full items-center gap-2">
+        <Button
+          type="button"
+          onClick={() => openAt('checkout')}
+          ariaLabel={orderAriaLabel}
+          size="sm"
+          className="flex-1"
+        >
+          {orderLabel}
+        </Button>
 
-      <button type="button" onClick={() => openAt('checkout')} aria-label={orderAriaLabel} className={LINK_CLASS}>
-        {orderLabel}
-        <Icon name="chevron" size={16} className={CHEVRON_CLASS} />
-      </button>
+        <button
+          type="button"
+          onClick={() => openAt('detail')}
+          aria-label={learnMoreAriaLabel}
+          className={DETAIL_CLASS}
+        >
+          <Icon name="expand" size={16} />
+        </button>
+      </div>
 
       {mounted ? (
         <QuickView product={product} open={open} initialView={initialView} onClose={() => setOpen(false)} />

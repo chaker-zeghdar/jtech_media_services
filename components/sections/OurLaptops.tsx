@@ -7,7 +7,7 @@ import { categoryHref } from '@/components/layout/navigation';
 import { Button } from '@/components/ui/Button';
 import { Carousel } from '@/components/ui/Carousel';
 import { ProductCard } from '@/components/ui/ProductCard';
-import { productsByCategory } from '@/content/products';
+import { productsByCategory } from '@/lib/queries/products';
 import { RAIL_ITEM, RAIL_LIMIT, RAIL_SIZES } from '@/lib/rail';
 
 /**
@@ -28,7 +28,7 @@ export async function OurLaptops() {
   const tCommon = await getTranslations('common');
   const tA11y = await getTranslations('a11y');
 
-  const products = productsByCategory('pc').slice(0, RAIL_LIMIT);
+  const products = (await productsByCategory('pc')).slice(0, RAIL_LIMIT);
 
   return (
     <Section

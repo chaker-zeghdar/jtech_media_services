@@ -2,7 +2,7 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { Halftone } from '@/components/brand/Halftone';
 import { Logo } from '@/components/brand/LogoMark';
 import { Icon } from '@/components/ui/Icon';
-import { categories } from '@/content/categories';
+import { getCategories } from '@/lib/queries/categories';
 import { services } from '@/content/services';
 import { settings, telLink, whatsappLink } from '@/content/settings';
 import { pickLocale } from '@/lib/format';
@@ -27,6 +27,7 @@ export async function Footer() {
   const tProduct = await getTranslations('product');
 
   const year = new Date().getFullYear();
+  const categories = await getCategories();
 
   const helpLinks = [
     /* Still points at #contact, and that is now the honest target rather than a

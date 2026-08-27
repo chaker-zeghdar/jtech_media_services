@@ -14,7 +14,7 @@ import { settings, telHref, whatsappLink } from '@/content/settings';
 import { localeDirections, localeTags, routing, type Locale } from '@/i18n/routing';
 import { clientMessages } from '@/lib/clientMessages';
 import { pickLocale } from '@/lib/format';
-import '../globals.css';
+import '../../globals.css';
 
 /**
  * <SocialFab />'s phone pills, keyed by `department.key`. The pill's visible

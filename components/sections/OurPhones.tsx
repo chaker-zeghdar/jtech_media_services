@@ -5,16 +5,16 @@ import { Section } from '@/components/layout/Section';
 import { SectionHeader } from '@/components/layout/SectionHeader';
 import { categoryHref } from '@/components/layout/navigation';
 import { PhoneTabs } from '@/components/sections/PhoneTabs';
-import { categories } from '@/content/categories';
 import { Button } from '@/components/ui/Button';
 import { Carousel } from '@/components/ui/Carousel';
 import { ProductCard } from '@/components/ui/ProductCard';
-import { productsByCategory } from '@/content/products';
 import type { CategorySlug } from '@/content/schemas';
+import { getCategories } from '@/lib/queries/categories';
+import { productsByCategory } from '@/lib/queries/products';
 import { pickLocale } from '@/lib/format';
 import { RAIL_ITEM, RAIL_LIMIT, RAIL_SIZES } from '@/lib/rail';
 
-/** The three phone categories, in the order content/categories.ts declares. */
+/** The three phone categories, in the order the category strip declares. */
 const PHONE_SLUGS = ['iphone', 'samsung', 'android'] as const satisfies readonly CategorySlug[];
 
 /**
@@ -39,37 +39,43 @@ export async function OurPhones() {
   const tCommon = await getTranslations('common');
   const tA11y = await getTranslations('a11y');
 
-  const tabs = PHONE_SLUGS.map((slug) => {
-    const category = categories.find((entry) => entry.slug === slug);
-    // Reuses the names already in content/categories.ts — this section
-    // introduces no new copy for its own tab labels.
-    const name = category ? pickLocale(category.name, locale) : slug;
+  const categories = await getCategories();
 
-    return {
-      slug,
-      name,
-      // Rendered HERE, on the server, because <ProductCard /> is a server
-      // component. <PhoneTabs /> only chooses between them.
-      rail: (
-        <Carousel label={`${name} — ${tA11y('carouselProgress')}`} className="mt-8">
-          {productsByCategory(slug)
-            .slice(0, RAIL_LIMIT)
-            .map((product) => (
+  /* Three category queries, in parallel rather than awaited one after the
+     other — they're independent, and serialising them would make this section
+     three round trips deep for no reason. */
+  const tabs = await Promise.all(
+    PHONE_SLUGS.map(async (slug) => {
+      const category = categories.find((entry) => entry.slug === slug);
+      // Reuses the names already on the category rows — this section introduces
+      // no new copy for its own tab labels.
+      const name = category ? pickLocale(category.name, locale) : slug;
+      const products = (await productsByCategory(slug)).slice(0, RAIL_LIMIT);
+
+      return {
+        slug,
+        name,
+        // Rendered HERE, on the server, because <ProductCard /> is a server
+        // component. <PhoneTabs /> only chooses between them.
+        rail: (
+          <Carousel label={`${name} — ${tA11y('carouselProgress')}`} className="mt-8">
+            {products.map((product) => (
               <div key={product.slug} className={RAIL_ITEM}>
                 <ProductCard product={product} locale={locale} bed="white" sizes={RAIL_SIZES} />
               </div>
             ))}
-        </Carousel>
-      ),
-      // The way out to the real category page, through the same helper the
-      // header, the category tiles and the footer all use.
-      viewAll: (
-        <Button variant="link" href={categoryHref(slug)}>
-          {tCommon('viewAll')}
-        </Button>
-      ),
-    };
-  });
+          </Carousel>
+        ),
+        // The way out to the real category page, through the same helper the
+        // header, the category tiles and the footer all use.
+        viewAll: (
+          <Button variant="link" href={categoryHref(slug)}>
+            {tCommon('viewAll')}
+          </Button>
+        ),
+      };
+    }),
+  );
 
   return (
     <Section

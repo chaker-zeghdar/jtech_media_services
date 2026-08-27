@@ -5,7 +5,7 @@ import { Section } from '@/components/layout/Section';
 import { SectionHeader } from '@/components/layout/SectionHeader';
 import { Carousel } from '@/components/ui/Carousel';
 import { ProductCard } from '@/components/ui/ProductCard';
-import { accessories } from '@/content/products';
+import { accessories } from '@/lib/queries/products';
 import { RAIL_ITEM, RAIL_SIZES } from '@/lib/rail';
 
 /**
@@ -16,7 +16,7 @@ export async function AccessoriesRail() {
   const locale = await getLocale();
   const t = await getTranslations('accessoriesSection');
   const tA11y = await getTranslations('a11y');
-  const products = accessories().slice(0, 6);
+  const products = (await accessories()).slice(0, 6);
 
   return (
     <Section

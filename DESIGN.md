@@ -740,6 +740,72 @@ lifting and rotating, and a fourth thing fading in read as busy competing for
 attention, not as a fourth premium beat. The remaining three-beat hover
 choreography (bed tint, light sweep, lift+rotate) is unchanged.
 
+#### The card grew a filled button, reversing its own rule
+
+The card shipped on an explicit rule: **no solid button on the card face**, two
+text links only, with the filled button reserved for the featured block and the
+sticky mobile bar so that it kept meaning something. That is now reversed, at
+the client's request and matching the reference they sent. The reasoning that
+justified it stopped holding once checkout existed: ordering meant picking the
+quieter of two identically-weighted links, opening a dialog, and only meeting a
+button there — three steps to begin a purchase, on a shop whose traffic is
+almost entirely mobile.
+
+What keeps the filled button from becoming wallpaper is that scarcity moved from
+the page down into the card. It is the only filled thing on a card, and "learn
+more" was demoted from an equal text link to a 36px `expand` icon button beside
+it — the same disc treatment `<Carousel />`'s arrows already use, rather than a
+fourth circular style. Two links of equal weight asked the reader to choose; a
+button plus an affordance tells them which one is the point. Order comes first
+in the DOM, so Tab reaches the primary action first.
+
+The badge moved off its own reserved row and onto the image bed's top-start
+corner (`absolute start-3 top-3 z-20`), which is where most of the height came
+from. It sits **outside** the transform wrapper deliberately: the product lifts
+and rotates on hover, and a label describing the product must not travel with
+it. `z-20` clears both the product (`z-10`) and `.light-sweep`'s pseudo-element,
+which carries no z-index of its own. Its one-badge cap is unchanged — stacked
+badges over a photo read as a rendering fault.
+
+Measured, not estimated: **591.59px → 557.59px, −34px (−5.7%)** at `xl`. The
+badge row was −36 (24px + 12px margin), spacing tightening another −18
+(`mt-5→mt-4`, `mb-3→mb-2.5`, `pt-4→pt-3`, `mt-5→mt-3`), and the action row gave
++20 back (16px of text links → a 36px button row). The image bed is 320px of the
+remaining 558 — dropping its `aspect-[4/5]` is the only large lever left if it
+ever needs to be shorter again.
+
+Both reserved-space floors were re-measured against this layout rather than
+carried forward. The tagline's is exact (`text-sm` → a 21px line box → `42px =
+2.625rem`). The name's was not: `text-subhead-sm` renders a **27.55px** line
+box, so two lines is `55.10px`, and the old `3.4375rem` had rounded that down to
+55px — which left a two-line name sitting 0.1px proud of the floor meant to
+contain it. Now `3.4438rem`. Sub-pixel, but a floor that doesn't cover its own
+worst case isn't doing the job it exists for.
+
+### The detail view's photo gallery
+
+`<ProductGallery />` replaced the detail view's single `variant.images[0]`. One
+image per slide with dot indicators — **not** `<Carousel />`, which is a
+multi-item rail with arrows and a continuous progress bar. A gallery is one
+full-bleed image and a discrete "3 of 4"; sharing the component would have meant
+threading a mode flag through arrows, progress bar and item widths alike.
+
+The *mechanism* is shared rather than reinvented: the same `.snap-rail` native
+scroll-snap, no transform track and no drag library, and the same RTL handling
+(`scrollLeft` runs negative from the origin, so position reads from its
+magnitude and `scrollTo` sign-flips off the computed direction).
+
+The dots read the scroll position rather than driving it — `active` is derived
+in the scroll handler from where the rail actually is, the same way
+`<Carousel />` derives its progress bar. Clicking a dot scrolls the rail; the
+rail scrolling is what updates the dot. State set on click instead would drift
+the moment someone swiped. Each dot is a real button with its own label, and the
+24px target is padding around a much smaller visual dot.
+
+It collapses to a plain static frame at `images.length <= 1` — gallery chrome
+around a single photo, or worse around the branded empty state, is navigation to
+nowhere. That is still most of the catalogue.
+
 ### Checkout lives inside `<QuickView>`, not a second dialog
 
 `components/ui/CheckoutView.tsx` + `components/ui/OrderConfirmation.tsx` are

@@ -14,15 +14,9 @@ import { SpecStat } from '@/components/ui/SpecStat';
 import { ProductCard } from '@/components/ui/ProductCard';
 import { ProductImage } from '@/components/ui/ProductImage';
 import { StockDot } from '@/components/ui/StockDot';
-import {
-  bestsellers,
-  deviceRange,
-  featuredProduct,
-  priceFrom,
-  primaryVariant,
-  productColours,
-} from '@/content/products';
 import { whatsappLink } from '@/content/settings';
+import { priceFrom, primaryVariant, productColours } from '@/lib/product';
+import { bestsellers, deviceRange, featuredProduct } from '@/lib/queries/products';
 import { pickLocale } from '@/lib/format';
 import { RAIL_ITEM, RAIL_LIMIT, RAIL_SIZES } from '@/lib/rail';
 
@@ -55,7 +49,7 @@ export async function Featured() {
   const tProduct = await getTranslations('product');
   const tA11y = await getTranslations('a11y');
 
-  const product = featuredProduct();
+  const product = await featuredProduct();
   const variant = primaryVariant(product);
   const colours = productColours(product);
   const name = pickLocale(product.name, locale);
@@ -68,7 +62,7 @@ export async function Featured() {
    * RAIL_LIMIT. De-duplicated by slug, because a product can legitimately be in
    * both and the old two-section layout hid that by keeping them apart.
    */
-  const railProducts = [...bestsellers(), ...deviceRange()]
+  const railProducts = [...(await bestsellers()), ...(await deviceRange())]
     .filter((product, index, all) => all.findIndex((p) => p.slug === product.slug) === index)
     .slice(0, RAIL_LIMIT);
 

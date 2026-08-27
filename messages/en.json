@@ -196,6 +196,7 @@
     "order": "Order this",
     "quickView": "Quick view",
     "quickViewOpen": "Quick view of {product}",
+    "photoOf": "Photo {index} of {total}",
     "colours": "Colours",
     "storage": "Capacity",
     "specs": "Specifications",
