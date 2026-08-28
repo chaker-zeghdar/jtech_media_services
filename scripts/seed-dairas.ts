@@ -104,7 +104,7 @@ function parseDairas(sql: string): Daira[] {
       !nameAscii ||
       !Number.isInteger(code) ||
       code < 1 ||
-      code > 58
+      code > 69
     ) {
       skipped += 1;
       console.warn(`  skipped malformed tuple: ${match[1]!.slice(0, 70)}…`);

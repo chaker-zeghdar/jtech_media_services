@@ -18,8 +18,8 @@ import { createClient } from '@/lib/supabase/server';
 export async function GET(request: Request) {
   const wilaya = Number(new URL(request.url).searchParams.get('wilaya'));
 
-  if (!Number.isInteger(wilaya) || wilaya < 1 || wilaya > 58) {
-    return Response.json({ error: 'A wilaya code between 1 and 58 is required.' }, { status: 400 });
+  if (!Number.isInteger(wilaya) || wilaya < 1 || wilaya > 69) {
+    return Response.json({ error: 'A wilaya code between 1 and 69 is required.' }, { status: 400 });
   }
 
   const supabase = await createClient();

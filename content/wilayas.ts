@@ -2,9 +2,20 @@ import { z } from 'zod';
 import { type Wilaya, parseContent, wilayaSchema } from './schemas';
 
 /**
- * Mirrors table `wilayas` — all 58, including the 10 created in 2019.
+ * Mirrors table `wilayas` — all 69.
  *
- * Fees are grouped into four tiers rather than typed out 58 times, so the
+ * Algeria went from 48 to 58 wilayas in 2019, and from 58 to 69 in 2026 when
+ * the decentralisation decree split 11 new ones out of existing wilayas. Both
+ * expansions are reflected here.
+ *
+ * ── This file is NOT dead ─────────────────────────────────────────────────
+ *
+ * `submitOrder` reads fees from the DATABASE, and a comment there says so. But
+ * `<CheckoutView />` still imports this list to populate the wilaya dropdown —
+ * so a wilaya missing here is a wilaya a customer cannot select, no matter what
+ * the database holds. It has to stay in step with the table.
+ *
+ * Fees are grouped into four tiers rather than typed out 69 times, so the
  * *reason* a fee differs stays visible. The exported value is still a flat list
  * of rows identical in shape to what Supabase will return.
  *
@@ -82,12 +93,29 @@ const WILAYA_ROWS: ReadonlyArray<readonly [number, string, string, Tier]> = [
   [56, 'جانت', 'Djanet', 'sahara'],
   [57, 'عين صالح', 'In Salah', 'sahara'],
   [58, 'عين قزام', 'In Guezzam', 'sahara'],
+  /* The 11 wilayas created by the 2026 decentralisation decree, each split out
+     of an existing wilaya. Their tier is inherited from that "mother" wilaya,
+     which is what the SQL migration seeded the database with — so the two
+     agree. These are a STARTING POINT, not confirmed carrier pricing: a new
+     wilaya may well cost differently to reach than the one it was carved from.
+     Re-check them against the courier's rate card. */
+  [59, 'أفلو', 'Aflou', 'extended'],            // ← 3  Laghouat
+  [60, 'بريكة', 'Barika', 'local'],             // ← 5  Batna
+  [61, 'القنطرة', 'El Kantara', 'standard'],    // ← 7  Biskra
+  [62, 'بئر العاتر', 'Bir El Ater', 'standard'], // ← 12 Tébessa
+  [63, 'العريشة', 'El Aricha', 'standard'],     // ← 13 Tlemcen
+  [64, 'قصر الشلالة', 'Ksar Chellala', 'standard'], // ← 14 Tiaret
+  [65, 'عين وسارة', 'Aïn Oussera', 'extended'], // ← 17 Djelfa
+  [66, 'مسعد', 'Messaad', 'extended'],          // ← 17 Djelfa
+  [67, 'قصر البخاري', 'Ksar El Boukhari', 'standard'], // ← 26 Médéa
+  [68, 'بوسعادة', 'Bou Saâda', 'standard'],     // ← 28 M'Sila
+  [69, 'الأبيض سيدي الشيخ', 'El Abiodh Sidi Cheikh', 'extended'], // ← 32 El Bayadh
 ];
 
 /** Mirrors table `wilayas`, ordered by code. */
 export const wilayas: readonly Wilaya[] = parseContent(
   'content/wilayas.ts',
-  z.array(wilayaSchema).length(58, 'Algeria has exactly 58 wilayas'),
+  z.array(wilayaSchema).length(69, 'Algeria has exactly 69 wilayas'),
   WILAYA_ROWS.map(([code, nameAr, nameFr, tier]) => ({
     code,
     nameAr,

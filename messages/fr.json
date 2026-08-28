@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "JTECH Media Services — Téléphones, accessoires et ordinateurs à Batna",
-    "description": "iPhone, Samsung, Android et ordinateurs authentiques avec garantie écrite. Livraison dans les 58 wilayas, paiement à la réception, réparation et déblocage en magasin à Batna."
+    "description": "iPhone, Samsung, Android et ordinateurs authentiques avec garantie écrite. Livraison dans les 69 wilayas, paiement à la réception, réparation et déblocage en magasin à Batna."
   },
   "common": {
     "currency": "DA",
@@ -51,7 +51,7 @@
     "outOfStock": "Épuisé"
   },
   "announcement": {
-    "delivery": "Livraison dans les 58 wilayas",
+    "delivery": "Livraison dans les 69 wilayas",
     "cod": "Paiement à la réception",
     "call": "Appelez-nous"
   },
@@ -69,7 +69,7 @@
   "hero": {
     "eyebrow": "Téléphonie et informatique à Batna",
     "title": "JTECH Media Services",
-    "subhead": "iPhone, Samsung, Android et ordinateurs — garantie écrite, livraison dans les 58 wilayas, et vous payez à la réception.",
+    "subhead": "iPhone, Samsung, Android et ordinateurs — garantie écrite, livraison dans les 69 wilayas, et vous payez à la réception.",
     "ctaPrimary": "Voir la gamme",
     "ctaSecondary": "Nous écrire sur WhatsApp",
     "trust": "Depuis 2013, on vend, on achète et on répare — plus de 5 000 clients satisfaits."
@@ -80,22 +80,22 @@
   },
   "categoryPage": {
     "eyebrow": "La gamme",
-    "count": "{count, plural, one {# produit} other {# produits}} — tous garantis par écrit, livrés dans les 58 wilayas.",
+    "count": "{count, plural, one {# produit} other {# produits}} — tous garantis par écrit, livrés dans les 69 wilayas.",
     "empty": "Rien dans cette catégorie pour le moment. Écrivez-nous sur WhatsApp et on vous le trouve.",
     "emptyCta": "Demander cette catégorie",
     "metaTitle": "{category} — JTECH Media Services",
-    "metaDescription": "{category} authentique avec garantie écrite chez JTECH Batna. Livraison dans les 58 wilayas, paiement à la réception."
+    "metaDescription": "{category} authentique avec garantie écrite chez JTECH Batna. Livraison dans les 69 wilayas, paiement à la réception."
   },
   "featured": {
-    "eyebrow": "L’appareil en vedette",
-    "title": "Le <em>titane</em>, et une caméra de cinéma.",
-    "subhead": "L’iPhone 16 Pro, puce A18 Pro et système à trois objectifs. Un seul appareil pour tout faire, de la photo au jeu.",
+    "eyebrow": "Le produit en vedette",
+    "title": "<em>{product}</em>, notre sélection du mois.",
+    "subhead": "Choisi dans notre catalogue. Consultez les caractéristiques et les coloris disponibles, puis commandez directement.",
     "coloursLabel": "Coloris disponibles",
     "priceLabel": "À partir de",
-    "cta": "Commander l’iPhone 16 Pro",
-    "ctaSecondary": "Voir tous les iPhone",
-    "sectionTitle": "Nos meilleurs téléphones",
-    "sectionSubhead": "Nos meilleurs téléphones, choisis à la main — et les plus demandés ce mois-ci.",
+    "cta": "Commander {product}",
+    "ctaSecondary": "Voir toute la catégorie",
+    "sectionTitle": "Notre sélection",
+    "sectionSubhead": "Nos coups de cœur du catalogue, et les produits les plus demandés ce mois-ci.",
     "railLabel": "Les plus demandés"
   },
   "accessoriesSection": {
@@ -115,7 +115,7 @@
         "body": "Vérifiez l'IMEI devant vous, avant de payer le moindre dinar."
       },
       "delivery": {
-        "title": "Livraison dans les <em>58 wilayas</em>, payée à la réception.",
+        "title": "Livraison dans les <em>69 wilayas</em>, payée à la réception.",
         "body": "Bureau de livraison ou chez vous — vous choisissez, confirmé en moins de 24h."
       },
       "aftersales": {
@@ -141,7 +141,7 @@
   },
   "delivery": {
     "title": "On livre où que vous soyez",
-    "subhead": "58 wilayas, paiement à la réception, et commande confirmée en moins de 24 heures.",
+    "subhead": "69 wilayas, paiement à la réception, et commande confirmée en moins de 24 heures.",
     "stats": {
       "wilayas": "wilayas couvertes",
       "desk": "au bureau du transporteur",

@@ -38,7 +38,11 @@ const submitOrderSchema = z.object({
   variantId: z.string().uuid(),
   quantity: z.number().int().min(1).max(10),
   deliveryMethod: z.enum(['desk', 'home']),
-  wilayaCode: z.number().int().min(1).max(58),
+  /* 69, not 58: the 2026 decree created wilayas 59–69, and this bound is
+     what a real customer in one of them hits first. Too low here and their
+     order is rejected at validation with a generic message — the failure looks
+     like a broken form, not a missing wilaya. */
+  wilayaCode: z.number().int().min(1).max(69),
   dairaId: z.number().int().nullable(),
   customerName: z.string().min(1).max(200),
   customerPhone: z.string().regex(PHONE),

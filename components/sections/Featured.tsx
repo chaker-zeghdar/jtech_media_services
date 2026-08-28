@@ -14,6 +14,7 @@ import { SpecStat } from '@/components/ui/SpecStat';
 import { ProductCard } from '@/components/ui/ProductCard';
 import { ProductImage } from '@/components/ui/ProductImage';
 import { StockDot } from '@/components/ui/StockDot';
+import { categoryHref } from '@/components/layout/navigation';
 import { whatsappLink } from '@/content/settings';
 import { priceFrom, primaryVariant, productColours } from '@/lib/product';
 import { bestsellers, deviceRange, featuredProduct } from '@/lib/queries/products';
@@ -147,7 +148,11 @@ export async function Featured() {
                   brightest thing in a dark section, which is why exactly one word
                   carries it. */}
               <h3 id="featured-spotlight-title" className="mt-4 text-section font-semibold">
-                {t.rich('title', { em: goldPill })}
+                {/* The product's real name, interpolated — this headline named
+                    "iPhone 16 Pro" in hardcoded copy long after that product left
+                    the catalogue. The gold pill now falls on the name itself,
+                    which is the thing a spotlight is actually emphasising. */}
+                {t.rich('title', { product: name, em: goldPill })}
               </h3>
               <Swash />
               <p className="mt-5 max-w-[46ch] text-subhead text-gray-300">{t('subhead')}</p>
@@ -224,9 +229,13 @@ export async function Featured() {
                   href={whatsappLink(tProduct('orderMessage', { product: name }))}
                   external
                 >
-                  {t('cta')}
+                  {t('cta', { product: name })}
                 </Button>
-                <Button variant="link" surface="ink" href="#phones">
+                {/* The product's OWN category, not a fixed "#phones" anchor.
+                    The old link read "see every iPhone" and jumped to the phones
+                    rail, which is wrong the moment a laptop or an accessory is
+                    the featured product. */}
+                <Button variant="link" surface="ink" href={categoryHref(product.category)}>
                   {t('ctaSecondary')}
                 </Button>
               </div>

@@ -111,7 +111,7 @@ refactor.
 | `products.ts`   | `products` + `product_variants`               |
 | `categories.ts` | `categories`                                  |
 | `services.ts`   | `services`                                    |
-| `wilayas.ts`    | `wilayas` (all 58)                            |
+| `wilayas.ts`    | `wilayas` (all 69)                            |
 | `settings.ts`   | `settings` (single row)                       |
 | `contact.ts`    | Client-safe contact constants — see below     |
 
@@ -266,10 +266,10 @@ No component hardcodes a phone number, an address or a social handle.
 
 ### Delivery fees
 
-`content/wilayas.ts` holds all 58 wilayas grouped into four fee bands (`local`,
+`content/wilayas.ts` holds all 69 wilayas grouped into four fee bands (`local`,
 `standard`, `extended`, `sahara`) so the reason a fee differs stays visible. The
 homepage's delivery section renders those bands as an accordion, which makes the
-"58 wilayas" claim checkable in two taps. Editing `FEE_TIERS` updates the
+"69 wilayas" claim checkable in two taps. Editing `FEE_TIERS` updates the
 headline figures, the accordion and the footer at once.
 
 ---
@@ -382,5 +382,5 @@ subset.
 What would close the rest is content volume, which is a client decision rather
 than an engineering one: fewer product cards per rail (`RAIL_LIMIT` in
 `components/sections/FullRange.tsx`), or moving a section such as the Instagram
-strip or the 58-wilaya accordion off the homepage. Each rail item is ~35 DOM
+strip or the 69-wilaya accordion off the homepage. Each rail item is ~35 DOM
 nodes; dropping the three rails to four cards each is worth roughly 8 points.

@@ -101,7 +101,7 @@ export const settings: Settings = parseContent('content/settings.ts', settingsSc
     deskFee: 350,
     homeFee: 600,
     confirmationHours: 24,
-    wilayaCount: 58,
+    wilayaCount: 69,
   },
 
   /**

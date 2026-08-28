@@ -271,8 +271,8 @@ export type Service = z.infer<typeof serviceSchema>;
 /* -------------------------------------------------------------------------- */
 
 export const wilayaSchema = z.object({
-  /** Official wilaya number, 1–58. */
-  code: z.number().int().min(1).max(58),
+  /** Official wilaya number, 1–69 (58 before the 2026 decree). */
+  code: z.number().int().min(1).max(69),
   nameAr: z.string().min(1),
   nameFr: z.string().min(1),
   /** Door-to-door delivery fee, DZD. */

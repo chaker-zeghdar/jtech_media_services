@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "JTECH Media Services — Phones, accessories and computers in Batna",
-    "description": "Genuine iPhone, Samsung, Android and computers with a written warranty. Delivery to all 58 wilayas, cash on delivery, plus in-store repair and unlocking in Batna."
+    "description": "Genuine iPhone, Samsung, Android and computers with a written warranty. Delivery to all 69 wilayas, cash on delivery, plus in-store repair and unlocking in Batna."
   },
   "common": {
     "currency": "DA",
@@ -51,7 +51,7 @@
     "outOfStock": "Out of stock"
   },
   "announcement": {
-    "delivery": "Delivery to all 58 wilayas",
+    "delivery": "Delivery to all 69 wilayas",
     "cod": "Cash on delivery",
     "call": "Call us"
   },
@@ -69,7 +69,7 @@
   "hero": {
     "eyebrow": "Phones and computers in Batna",
     "title": "JTECH Media Services",
-    "subhead": "iPhone, Samsung, Android and computers — a written warranty, delivery to all 58 wilayas, and you pay when it arrives.",
+    "subhead": "iPhone, Samsung, Android and computers — a written warranty, delivery to all 69 wilayas, and you pay when it arrives.",
     "ctaPrimary": "See the range",
     "ctaSecondary": "Message us on WhatsApp",
     "trust": "Selling, buying and repairing since 2013 — 5,000+ happy customers."
@@ -80,22 +80,22 @@
   },
   "categoryPage": {
     "eyebrow": "The range",
-    "count": "{count, plural, one {# product} other {# products}} — all with a written warranty, delivered to all 58 wilayas.",
+    "count": "{count, plural, one {# product} other {# products}} — all with a written warranty, delivered to all 69 wilayas.",
     "empty": "Nothing in this category right now. Message us on WhatsApp and we'll source it.",
     "emptyCta": "Ask about this category",
     "metaTitle": "{category} — JTECH Media Services",
-    "metaDescription": "Genuine {category} with a written warranty from JTECH Batna. Delivery to all 58 wilayas, cash on delivery."
+    "metaDescription": "Genuine {category} with a written warranty from JTECH Batna. Delivery to all 69 wilayas, cash on delivery."
   },
   "featured": {
-    "eyebrow": "Featured device",
-    "title": "<em>Titanium</em>, and a camera that shoots cinema.",
-    "subhead": "The iPhone 16 Pro, with the A18 Pro chip and a three-lens system. One device that does everything, from filming to gaming.",
+    "eyebrow": "Featured product",
+    "title": "<em>{product}</em>, our pick this month.",
+    "subhead": "Chosen from our catalogue. Check the specs and the colours available, then order it directly.",
     "coloursLabel": "Available colours",
     "priceLabel": "From",
-    "cta": "Order the iPhone 16 Pro",
-    "ctaSecondary": "See every iPhone",
-    "sectionTitle": "Our best phones and deals",
-    "sectionSubhead": "Our best phones, picked by hand — and this month's most requested.",
+    "cta": "Order {product}",
+    "ctaSecondary": "See the full category",
+    "sectionTitle": "Our picks",
+    "sectionSubhead": "Our favourites from the catalogue, and the most requested products this month.",
     "railLabel": "Most requested"
   },
   "accessoriesSection": {
@@ -115,7 +115,7 @@
         "body": "Check the IMEI yourself, in front of us, before a single dinar changes hands."
       },
       "delivery": {
-        "title": "Delivery to <em>all 58 wilayas</em>, paid when it arrives.",
+        "title": "Delivery to <em>all 69 wilayas</em>, paid when it arrives.",
         "body": "Carrier desk or your door — your call, confirmed in under 24 hours."
       },
       "aftersales": {
@@ -141,7 +141,7 @@
   },
   "delivery": {
     "title": "We deliver wherever you are",
-    "subhead": "58 wilayas, cash on delivery, and your order confirmed in under 24 hours.",
+    "subhead": "69 wilayas, cash on delivery, and your order confirmed in under 24 hours.",
     "stats": {
       "wilayas": "wilayas covered",
       "desk": "to the carrier desk",

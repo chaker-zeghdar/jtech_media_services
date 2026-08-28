@@ -824,7 +824,7 @@ ever offering "black, 256GB" when only "black, 512GB" is a real row in
 `content/products.ts`.
 
 **The fee calculator is real data, not a placeholder.** `content/wilayas.ts`'s
-58 rows and their `deskFee`/`homeFee` were written for exactly this — see its
+69 rows and their `deskFee`/`homeFee` were written for exactly this — see its
 own comment. `lib/format.ts → pickWilayaName` picks `nameAr`/`nameFr`; English
 falls back to `nameFr` (Algerian wilayas have no distinct English exonym, and
 French is the conventional way they're referred to in mixed French/English
