@@ -27,23 +27,27 @@ export default async function AdminProductsPage() {
       </div>
 
       <div className="mt-8 overflow-hidden rounded-xl border border-gray-300 bg-white">
-        <table className="w-full text-sm">
-          <thead className="border-b border-gray-300 bg-gray-50 text-start">
-            <tr>
-              <th className="px-4 py-3 text-start font-medium">المنتج</th>
-              <th className="px-4 py-3 text-start font-medium">القسم</th>
-              <th className="px-4 py-3 text-start font-medium">السعر من</th>
-              <th className="px-4 py-3 text-start font-medium">النسخ</th>
-              <th className="px-4 py-3 text-start font-medium">منشور</th>
-              <th className="px-4 py-3" />
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-300">
-            {products.map((product) => (
-              <ProductRow key={product.id} product={product} />
-            ))}
-          </tbody>
-        </table>
+        {/* See the orders table for why this wraps in a scrolling div rather
+            than shrinking columns or relying on the outer `overflow-hidden`. */}
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] text-sm">
+            <thead className="border-b border-gray-300 bg-gray-50 text-start">
+              <tr>
+                <th className="px-4 py-3 text-start font-medium">المنتج</th>
+                <th className="px-4 py-3 text-start font-medium">القسم</th>
+                <th className="px-4 py-3 text-start font-medium">السعر من</th>
+                <th className="px-4 py-3 text-start font-medium">النسخ</th>
+                <th className="px-4 py-3 text-start font-medium">منشور</th>
+                <th className="px-4 py-3" />
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-300">
+              {products.map((product) => (
+                <ProductRow key={product.id} product={product} />
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {products.length === 0 ? (
           <p className="px-4 py-10 text-center text-sm text-gray-700">

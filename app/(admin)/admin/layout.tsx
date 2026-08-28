@@ -47,9 +47,16 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       <body className="min-h-screen bg-gray-50 text-ink antialiased">
         {user ? (
           <header className="border-b border-gray-300 bg-white">
-            <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-              <div className="flex items-center gap-6">
-                <Link href="/admin" className="text-base font-semibold">
+            {/* `flex-wrap` on both rows — same pattern the page headers below
+                already use (see `/admin` and `/admin/products`). Without it,
+                this row never wraps, so on a narrow screen the logo, the three
+                nav links, "عرض المتجر", the email and logout button all fight
+                for one line and the row overflows the viewport, taking the
+                whole page with it (every table below inherited that overflow
+                too — a table can only be as narrow as its ancestors let it). */}
+            <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-6 py-4">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                <Link href="/admin" className="whitespace-nowrap text-base font-semibold">
                   JTECH · لوحة التحكم
                 </Link>
 

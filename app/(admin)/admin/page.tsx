@@ -113,42 +113,46 @@ export default async function AdminDashboardPage() {
 
         <div className="mt-3 overflow-hidden rounded-xl border border-gray-300 bg-white">
           {pending.length > 0 ? (
-            <table className="w-full text-sm">
-              <thead className="border-b border-gray-300 bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3 text-start font-medium">المنتج</th>
-                  <th className="px-4 py-3 text-start font-medium">الزبون</th>
-                  <th className="px-4 py-3 text-start font-medium">المجموع</th>
-                  <th className="px-4 py-3 text-start font-medium">التاريخ</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-300">
-                {pending.map((order) => (
-                  <tr key={order.id}>
-                    <td className="px-4 py-3">
-                      <Link
-                        href={`/admin/orders/${order.id}`}
-                        className="font-medium hover:underline"
-                      >
-                        {order.productName}
-                      </Link>
-                      {order.variantLabel ? (
-                        <span className="block text-xs text-gray-500">{order.variantLabel}</span>
-                      ) : null}
-                    </td>
-                    <td className="px-4 py-3 text-gray-700">{order.customerName}</td>
-                    <td className="px-4 py-3">{formatInteger(order.total)} دج</td>
-                    <td className="px-4 py-3 text-gray-700">
-                      {/* `en-GB` for a stable dd/mm/yyyy in Latin digits: this is
-                          a scan-and-compare column, and `ar-DZ` would render
-                          Arabic-Indic numerals inconsistently with every other
-                          number in this panel. */}
-                      {new Date(order.createdAt).toLocaleDateString('en-GB')}
-                    </td>
+            // See the orders table for why this wraps in a scrolling div
+            // rather than shrinking columns or relying on `overflow-hidden`.
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[520px] text-sm">
+                <thead className="border-b border-gray-300 bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-start font-medium">المنتج</th>
+                    <th className="px-4 py-3 text-start font-medium">الزبون</th>
+                    <th className="px-4 py-3 text-start font-medium">المجموع</th>
+                    <th className="px-4 py-3 text-start font-medium">التاريخ</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-gray-300">
+                  {pending.map((order) => (
+                    <tr key={order.id}>
+                      <td className="px-4 py-3">
+                        <Link
+                          href={`/admin/orders/${order.id}`}
+                          className="font-medium hover:underline"
+                        >
+                          {order.productName}
+                        </Link>
+                        {order.variantLabel ? (
+                          <span className="block text-xs text-gray-500">{order.variantLabel}</span>
+                        ) : null}
+                      </td>
+                      <td className="px-4 py-3 text-gray-700">{order.customerName}</td>
+                      <td className="px-4 py-3">{formatInteger(order.total)} دج</td>
+                      <td className="px-4 py-3 text-gray-700">
+                        {/* `en-GB` for a stable dd/mm/yyyy in Latin digits: this is
+                            a scan-and-compare column, and `ar-DZ` would render
+                            Arabic-Indic numerals inconsistently with every other
+                            number in this panel. */}
+                        {new Date(order.createdAt).toLocaleDateString('en-GB')}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ) : (
             <p dir="auto" className="px-4 py-10 text-center text-sm text-gray-700">
               لا توجد طلبات قيد الانتظار.

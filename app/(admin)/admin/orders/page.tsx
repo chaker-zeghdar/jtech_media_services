@@ -67,53 +67,60 @@ export default async function AdminOrdersPage({
       </div>
 
       <div className="mt-6 overflow-hidden rounded-xl border border-gray-300 bg-white">
-        <table className="w-full text-sm">
-          <thead className="border-b border-gray-300 bg-gray-50">
-            <tr>
-              <th className="px-4 py-3 text-start font-medium">التاريخ</th>
-              <th className="px-4 py-3 text-start font-medium">الزبون</th>
-              <th className="px-4 py-3 text-start font-medium">المنتج</th>
-              <th className="px-4 py-3 text-start font-medium">الولاية</th>
-              <th className="px-4 py-3 text-start font-medium">المجموع</th>
-              <th className="px-4 py-3 text-start font-medium">الحالة</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-300">
-            {orders.map((order) => (
-              <tr key={order.id} className="transition-colors hover:bg-gray-50">
-                <td className="px-4 py-3 text-gray-700">
-                  <Link href={`/admin/orders/${order.id}`} className="hover:underline">
-                    {/* `en-GB` for a stable dd/mm/yyyy in Latin digits — every
-                        other number in this panel is Latin too. */}
-                    {new Date(order.createdAt).toLocaleDateString('en-GB')}
-                  </Link>
-                  <span className="block text-xs text-gray-500">
-                    {order.id.slice(0, 8).toUpperCase()}
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  <Link href={`/admin/orders/${order.id}`} className="font-medium hover:underline">
-                    {order.customerName}
-                  </Link>
-                  <span className="block text-xs text-gray-500" dir="ltr">
-                    {order.customerPhone}
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  {order.productName}
-                  <span className="block text-xs text-gray-500">
-                    {[order.variantLabel, `× ${order.quantity}`].filter(Boolean).join(' — ')}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-gray-700">{order.wilayaCode}</td>
-                <td className="px-4 py-3">{formatInteger(order.total)} دج</td>
-                <td className="px-4 py-3">
-                  <OrderStatusBadge status={order.status} />
-                </td>
+        {/* Narrow screens: the table keeps its full desktop column widths and
+            scrolls horizontally inside this wrapper instead of squeezing every
+            column (which pushed the status/total columns off-screen with no
+            way to reach them) or clipping them (the outer `overflow-hidden`,
+            kept only so the rounded corners still clip the table's edges). */}
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[720px] text-sm">
+            <thead className="border-b border-gray-300 bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-start font-medium">التاريخ</th>
+                <th className="px-4 py-3 text-start font-medium">الزبون</th>
+                <th className="px-4 py-3 text-start font-medium">المنتج</th>
+                <th className="px-4 py-3 text-start font-medium">الولاية</th>
+                <th className="px-4 py-3 text-start font-medium">المجموع</th>
+                <th className="px-4 py-3 text-start font-medium">الحالة</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-300">
+              {orders.map((order) => (
+                <tr key={order.id} className="transition-colors hover:bg-gray-50">
+                  <td className="px-4 py-3 text-gray-700">
+                    <Link href={`/admin/orders/${order.id}`} className="hover:underline">
+                      {/* `en-GB` for a stable dd/mm/yyyy in Latin digits — every
+                          other number in this panel is Latin too. */}
+                      {new Date(order.createdAt).toLocaleDateString('en-GB')}
+                    </Link>
+                    <span className="block text-xs text-gray-500">
+                      {order.id.slice(0, 8).toUpperCase()}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <Link href={`/admin/orders/${order.id}`} className="font-medium hover:underline">
+                      {order.customerName}
+                    </Link>
+                    <span className="block text-xs text-gray-500" dir="ltr">
+                      {order.customerPhone}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    {order.productName}
+                    <span className="block text-xs text-gray-500">
+                      {[order.variantLabel, `× ${order.quantity}`].filter(Boolean).join(' — ')}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-gray-700">{order.wilayaCode}</td>
+                  <td className="px-4 py-3">{formatInteger(order.total)} دج</td>
+                  <td className="px-4 py-3">
+                    <OrderStatusBadge status={order.status} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {orders.length === 0 ? (
           <div className={ADMIN_CARD.replace('rounded-xl border border-gray-300 bg-white', '')}>
