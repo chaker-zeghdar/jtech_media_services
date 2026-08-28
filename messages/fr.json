@@ -199,6 +199,7 @@
     "photoOf": "Photo {index} sur {total}",
     "colours": "Coloris",
     "storage": "Capacité",
+    "batteryHealth": "Santé batterie",
     "specs": "Caractéristiques",
     "save": "{percent} % d’économie",
     "orderMessage": "Bonjour, je suis intéressé par le {product}. Quel est le prix et la disponibilité ?",

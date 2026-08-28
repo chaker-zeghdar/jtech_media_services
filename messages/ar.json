@@ -199,6 +199,7 @@
     "photoOf": "صورة {index} من {total}",
     "colours": "الألوان",
     "storage": "السعة",
+    "batteryHealth": "صحة البطارية",
     "specs": "المواصفات",
     "save": "وفّر {percent}٪",
     "orderMessage": "مرحباً، أنا مهتم بمنتج {product}. ما السعر وهل المنتج متوفر؟",

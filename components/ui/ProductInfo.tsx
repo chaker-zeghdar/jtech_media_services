@@ -55,6 +55,16 @@ export function ProductInfo({
   const colours = productColours(product);
   const Heading = headingLevel;
 
+  /**
+   * Shown when the product actually carries a reading — which the admin form
+   * only ever lets happen for a category with battery health enabled: it clears
+   * the field on a category switch and sends null unless the flag is on. So the
+   * storefront and the dashboard cannot disagree about whether a badge belongs,
+   * because the condition is enforced where the value is WRITTEN rather than
+   * re-derived here from a flag this component would have to be handed.
+   */
+  const batteryHealth = product.batteryHealthPercent;
+
   return (
     <div className="flex flex-col">
       <p className="text-caption uppercase text-ink/70">{product.brand}</p>
@@ -70,6 +80,27 @@ export function ProductInfo({
         <Price value={variant.price} compareAt={variant.compareAt} size="lg" showSaving />
         <StockDot status={variant.stock} className="mt-3" />
       </div>
+
+      {/* At-a-glance facts, beside the price where the buying decision is made.
+          Both were captured in the admin and shown nowhere a customer looks:
+          capacity only appeared inside the checkout summary line, AFTER someone
+          had already scrolled down and committed to ordering, and battery health
+          appeared nowhere at all. */}
+      {variant.storage || batteryHealth !== null ? (
+        <ul className="mt-4 flex flex-wrap items-center gap-2">
+          {variant.storage ? (
+            <li className="rounded-full border border-gray-300 px-3 py-1.5 text-caption font-medium">
+              {t('storage')} <bdi className="num">{variant.storage}</bdi>
+            </li>
+          ) : null}
+
+          {batteryHealth !== null ? (
+            <li className="rounded-full border border-gold bg-gold-tint px-3 py-1.5 text-caption font-medium text-gold-text">
+              {t('batteryHealth')} <bdi className="num">{batteryHealth}٪</bdi>
+            </li>
+          ) : null}
+        </ul>
+      ) : null}
 
       {colours.length > 1 ? (
         <div className="mt-7">

@@ -9,6 +9,8 @@ import type { Category, CategorySlug } from '@/content/schemas';
 import { badgeSchema, slugify, stockStatusSchema } from '@/content/schemas';
 import { saveInputSchema } from '@/lib/admin/productInput';
 import type { AdminProduct } from '@/lib/queries/admin';
+import { colourHexFor } from '@/content/colours';
+import { ColourPicker } from './ColourPicker';
 import { ImageUploader } from './ImageUploader';
 import { stableSlug } from './slug';
 import {
@@ -40,7 +42,9 @@ const newVariant = (): VariantDraft => ({
   // validate against `productVariantSchema` (it requires an `id`) before it is
   // ever sent. A lowercase uuid satisfies the schema's kebab-case slug regex.
   id: crypto.randomUUID(),
-  colourHex: '#000000',
+  /* No default colour. `#000000` used to make "never touched it" look exactly
+     like "chose black", which is how a `white` variant ended up painted black. */
+  colourHex: colourHexFor(''),
   colourLabel: '',
   storage: '',
   price: '',
@@ -100,6 +104,7 @@ export function ProductForm({
   const [highlights, setHighlights] = useState<HighlightDraft[]>(initial.highlights);
   const [variants, setVariants] = useState<VariantDraft[]>(initial.variants);
   const [errors, setErrors] = useState<string[]>([]);
+  const [saved, setSaved] = useState(false);
 
   /**
    * The category-conditional field, driven by the DATA not by the slug.
@@ -186,7 +191,10 @@ export function ProductForm({
             // Deterministic, so two variants named "أسود" share a colour slug
             // and group correctly in `variantsForColour()`.
             slug: stableSlug(variant.colourLabel, 'colour'),
-            hex: variant.colourHex,
+            /* Re-derived at save rather than trusting the draft's stored hex.
+               The picker already keeps them together, but this makes a stale or
+               hand-edited hex unrepresentable rather than merely unlikely. */
+            hex: colourHexFor(variant.colourLabel),
             label: variant.colourLabel.trim(),
           },
           storage: variant.storage.trim() === '' ? null : variant.storage.trim(),
@@ -202,6 +210,7 @@ export function ProductForm({
   function onSubmit(event: React.FormEvent) {
     event.preventDefault();
     setErrors([]);
+    setSaved(false);
 
     /* The same schema the server re-runs and the storefront renders through.
        Running it here first turns "compareAt must be greater than price" from a
@@ -219,6 +228,10 @@ export function ProductForm({
     startTransition(async () => {
       try {
         const { id } = await saveProduct(parsed.data);
+        /* Explicit confirmation. Success used to be signalled only by a URL
+           change, which on an EDIT (same route, same URL) is no signal at all —
+           the admin pressed save and nothing visibly happened. */
+        setSaved(true);
         router.push(`/admin/products/${id}`);
         router.refresh();
       } catch (err) {
@@ -348,8 +361,18 @@ export function ProductForm({
       </section>
 
       {/* ---- Specs ---- */}
-      <section className={ADMIN_CARD}>
-        <h2 className="text-lg font-semibold">المواصفات</h2>
+      {/* Optional, and empty for most products — collapsed unless it already
+          has rows, so a new product isn't a wall of fields nobody fills in.
+          <details> rather than a state toggle: it keeps the section in the
+          document (so browser find-in-page and form validation still reach it)
+          and needs no JavaScript. */}
+      <details open={specs.length > 0} className={ADMIN_CARD}>
+        <summary className="cursor-pointer text-lg font-semibold">
+          المواصفات{' '}
+          <span className="text-sm font-normal text-gray-500">
+            (اختياري{specs.length > 0 ? ` — ${specs.length}` : ''})
+          </span>
+        </summary>
 
         {suggestions.length > 0 ? (
           <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -423,11 +446,16 @@ export function ProductForm({
             + مواصفة مخصّصة
           </button>
         </div>
-      </section>
+      </details>
 
       {/* ---- Highlights ---- */}
-      <section className={ADMIN_CARD}>
-        <h2 className="text-lg font-semibold">الأرقام البارزة</h2>
+      <details open={highlights.length > 0} className={ADMIN_CARD}>
+        <summary className="cursor-pointer text-lg font-semibold">
+          الأرقام البارزة{' '}
+          <span className="text-sm font-normal text-gray-500">
+            (اختياري{highlights.length > 0 ? ` — ${highlights.length}` : ''})
+          </span>
+        </summary>
         <p className="mt-1 text-xs text-gray-500">تظهر في البطاقة المميّزة فقط (48 · MP · الكاميرا).</p>
 
         <div className="mt-4 flex flex-col gap-4">
@@ -487,7 +515,7 @@ export function ProductForm({
             + رقم بارز
           </button>
         </div>
-      </section>
+      </details>
 
       {/* ---- Variants ---- */}
       <section className={ADMIN_CARD}>
@@ -511,39 +539,18 @@ export function ProductForm({
                 </button>
               </div>
 
+              {/* The colour's slug AND its hex are both derived from the name
+                  now — neither is a field. See <ColourPicker />. */}
+              <div className="mt-4">
+                <ColourPicker
+                  label={variant.colourLabel}
+                  onChange={({ label, hex }) =>
+                    patchVariant(index, { colourLabel: label, colourHex: hex })
+                  }
+                />
+              </div>
+
               <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {/* The colour's SLUG is no longer a field. It is derived from
-                    this name on save (see `buildPayload`), so the admin writes
-                    "أسود" and never thinks about kebab-case again. */}
-                <label className="flex flex-col gap-1.5">
-                  <span className="text-xs text-gray-500">اسم اللون</span>
-                  <input
-                    value={variant.colourLabel}
-                    dir="auto"
-                    placeholder="أسود"
-                    onChange={(e) => patchVariant(index, { colourLabel: e.target.value })}
-                    className={ADMIN_INPUT}
-                  />
-                </label>
-
-                <label className="flex flex-col gap-1.5">
-                  <span className="text-xs text-gray-500">لون (hex)</span>
-                  <span className="flex items-center gap-2">
-                    <input
-                      type="color"
-                      value={variant.colourHex}
-                      onChange={(e) => patchVariant(index, { colourHex: e.target.value.toUpperCase() })}
-                      className="h-9 w-12 shrink-0 rounded border border-gray-300"
-                    />
-                    <input
-                      value={variant.colourHex}
-                      dir="ltr"
-                      onChange={(e) => patchVariant(index, { colourHex: e.target.value.toUpperCase() })}
-                      className={ADMIN_INPUT}
-                    />
-                  </span>
-                </label>
-
                 <label className="flex flex-col gap-1.5">
                   <span className="text-xs text-gray-500">السعة (اختياري)</span>
                   <input
@@ -625,6 +632,19 @@ export function ProductForm({
         </div>
       </section>
 
+      {saved ? (
+        <p
+          role="status"
+          dir="auto"
+          className="rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
+        >
+          تم الحفظ.{' '}
+          {published
+            ? 'المنتج منشور وظاهر في المتجر.'
+            : 'المنتج محفوظ كمسودة — لن يظهر في المتجر حتى تفعّل «منشور».'}
+        </p>
+      ) : null}
+
       {errors.length > 0 ? (
         <div role="alert" className="rounded-xl bg-red-50 p-4 text-sm text-red-700">
           <p className="font-semibold">تعذّر الحفظ:</p>
@@ -642,6 +662,15 @@ export function ProductForm({
         <Link href="/admin/products" className={ADMIN_BTN_GHOST}>
           إلغاء
         </Link>
+        {/* The default for a NEW product is unpublished, which is the safe
+            default — but nothing said so, so a product could be filled in,
+            saved successfully, and then 404 on its own storefront URL with no
+            explanation. This states it where the decision is made. */}
+        {!published ? (
+          <span dir="auto" className="text-xs text-gold-text">
+            مسودة — لن يظهر في المتجر.
+          </span>
+        ) : null}
         <button type="submit" disabled={pending} className={ADMIN_BTN_PRIMARY}>
           {pending ? 'جارٍ الحفظ…' : 'حفظ'}
         </button>
