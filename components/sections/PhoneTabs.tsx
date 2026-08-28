@@ -80,7 +80,10 @@ export function PhoneTabs({ tabs }: { tabs: Tab[] }) {
         role="tabpanel"
         aria-labelledby={`phones-tab-${current.slug}`}
       >
-        {current.rail}
+        {/* Same gutter fix as <Featured />'s rail: without a <Container> the
+            first card is flush against the viewport edge while every other
+            element in the section is inset. */}
+        <Container>{current.rail}</Container>
         <Container className="mt-8">{current.viewAll}</Container>
       </div>
     </>

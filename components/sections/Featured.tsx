@@ -261,13 +261,22 @@ export async function Featured() {
         </p>
       </Container>
 
-      <Carousel label={`${t('railLabel')} — ${tA11y('carouselProgress')}`} className="mt-6">
-        {railProducts.map((product) => (
-          <div key={product.slug} className={RAIL_ITEM}>
-            <ProductCard product={product} locale={locale} bed="white" sizes={RAIL_SIZES} />
-          </div>
-        ))}
-      </Carousel>
+      {/* Inside <Container>, like <Categories /> and <AccessoriesRail />.
+          Rendered outside it, the rail spanned the full viewport and its first
+          card sat FLUSH against the screen edge — 0px gutter — while the
+          headline, price and button beside it all sat within the normal page
+          margin. That mismatch is the bug: a white card bed running into the
+          browser edge reads as broken, not as full-bleed. Cards still peek past
+          the container's inline end, so the row still reads as scrollable. */}
+      <Container className="mt-6">
+        <Carousel label={`${t('railLabel')} — ${tA11y('carouselProgress')}`}>
+          {railProducts.map((product) => (
+            <div key={product.slug} className={RAIL_ITEM}>
+              <ProductCard product={product} locale={locale} bed="white" sizes={RAIL_SIZES} />
+            </div>
+          ))}
+        </Carousel>
+      </Container>
     </Section>
   );
 }
