@@ -214,6 +214,49 @@ export async function ProductCard({
           {tagline}
         </p>
 
+        {/* Capacity and battery health, the two facts a buyer of a used phone
+            actually scans for. They were on the product page but not here, so a
+            customer had to open a product to compare the thing that decides
+            between two of them.
+
+            RESERVED, like the swatch row above and the two text floors: some
+            products have both, some have neither, and a conditional row would
+            land the price and the button at different heights on adjacent cards
+            in the same rail. The floor is the pill's MEASURED height —
+            11px text at `leading-none` inside `py-0.5` renders a 17px box, so
+            1.0625rem. A first guess of 1.375rem over-reserved by 5px on every
+            card in the catalogue; measuring is the same discipline the name and
+            tagline floors above were set with.
+
+            Quieter than the product page's version of the same badges: 11px,
+            tighter padding. On a page they are headline facts with room around
+            them; on a 256px card they sit between a name, a tagline, a price and
+            a button, and matching the page's weight would make the card the
+            busy thing DESIGN.md cut the hover spec-pills to avoid. */}
+        <div className="mt-2.5 flex h-[1.0625rem] items-center gap-1.5">
+          {variant.storage ? (
+            <span
+              title={`${t('storage')} ${variant.storage}`}
+              className="inline-flex items-center rounded-full border border-gray-300 px-2 py-0.5 text-[11px] font-medium leading-none text-gray-700"
+            >
+              {/* The bare value carries the visual weight — a capacity chip
+                  reads as capacity on a product tile, and spelling out "السعة"
+                  would double the pill's width on a 256px card. The label is
+                  still SPOKEN, so a screen reader hears "السعة 128" rather than
+                  a naked number with no unit. */}
+              <span className="sr-only">{t('storage')} </span>
+              <bdi className="num">{variant.storage}</bdi>
+            </span>
+          ) : null}
+
+          {product.batteryHealthPercent !== null ? (
+            <span className="inline-flex items-center gap-1 rounded-full border border-gold bg-gold-tint px-2 py-0.5 text-[11px] font-medium leading-none text-gold-text">
+              {t('batteryHealth')}
+              <bdi className="num">{product.batteryHealthPercent}٪</bdi>
+            </span>
+          ) : null}
+        </div>
+
         {/* `mt-auto` is the other half of the fix. The column is already
             `flex-1`, so any height the rail's stretch gives this card beyond its
             content collects here instead of trailing under the actions — which
