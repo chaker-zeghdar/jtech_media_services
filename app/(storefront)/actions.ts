@@ -53,7 +53,16 @@ const submitOrderSchema = z.object({
 });
 
 export type SubmitOrderResult =
-  | { ok: true; orderId: string; total: number; deliveryFee: number; unitPrice: number }
+  | {
+      ok: true;
+      orderId: string;
+      total: number;
+      deliveryFee: number;
+      unitPrice: number;
+      /** Echoed back for the same reason as the prices below: so the caller
+       *  reports what was RECORDED rather than what its own state still says. */
+      quantity: number;
+    }
   /**
    * A stable code, not a sentence. The storefront is trilingual and every
    * user-facing string in it comes from `messages/{ar,fr,en}.json`; returning
@@ -179,5 +188,5 @@ export async function submitOrder(rawInput: unknown): Promise<SubmitOrderResult>
      match what the live summary already showed; returning them means the
      confirmation shows what was actually recorded rather than what the browser
      believed. */
-  return { ok: true, orderId, total, deliveryFee, unitPrice };
+  return { ok: true, orderId, total, deliveryFee, unitPrice, quantity: input.quantity };
 }
