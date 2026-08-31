@@ -31,8 +31,13 @@ import { getSiteUrl } from '@/lib/siteUrl';
  * it still renders in `<QuickView />`, which is unchanged): `<ProductInfo />`'s
  * brand line, description, specs, stock dot, the capacity/battery-health pills,
  * and the compare-at price with its discount badge — the form's summary shows
- * the charged price only. `<ProductGallery />` went too, and `<CheckoutView />`
- * shows one static photo rather than all of a variant's.
+ * the charged price only.
+ *
+ * The PHOTOS came back, and did not need a second gallery to do it: removing
+ * this section left the page with a single `<img>`, because `<CheckoutView />`
+ * rendered `images[0]` alone. That component now renders `<ProductGallery />`
+ * instead, so the form carries the whole set — and the quick-view dialog's
+ * checkout step, which had the same lone image, gained it at the same time.
  */
 
 export const dynamic = 'force-dynamic';

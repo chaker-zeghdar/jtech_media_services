@@ -12,7 +12,7 @@ import { cn } from '@/lib/cn';
 import { Button } from './Button';
 import { Field } from './Field';
 import { Price } from './Price';
-import { ProductImage } from './ProductImage';
+import { ProductGallery } from './ProductGallery';
 
 type DeliveryMethod = 'desk' | 'home';
 
@@ -280,16 +280,21 @@ export function CheckoutView({
     <>
       {/* ---- Left: product + live summary --------------------------------- */}
       <div className="flex flex-col">
-        <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-card bg-gray-50">
-          <ProductImage
-            src={variant.images[0]}
-            name={name}
-            width={420}
-            height={420}
-            sizes="(max-width: 767px) 88vw, 360px"
-            className="drop-shadow-product"
-          />
-        </div>
+        {/* Every photo on the variant, not just the first.
+
+            This used to be a lone `images[0]`, which was survivable while the
+            quick-view dialog showed the full gallery one step earlier and this
+            was only the checkout's confirmation of what you'd picked. It stopped
+            being survivable when `/products/[slug]` dropped its own gallery: the
+            ad landing page then had exactly ONE <img> on it, so three of the
+            four photos on a product like `xo-neck-stand` — the angles that
+            actually sell a neck stand — were unreachable.
+
+            `key` on the variant so switching colour or capacity remounts the
+            gallery at that variant's first photo. Without it the rail keeps the
+            scroll position of the previous variant, leaving the customer on
+            "photo 3 of 4" of a set that may only have two. */}
+        <ProductGallery key={variant.id} images={variant.images} name={name} />
 
         {/* Recalculates on every change below — no submit needed to see it,
             per the brief. Reuses <Price /> rather than hand-formatting DZD
