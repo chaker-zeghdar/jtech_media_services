@@ -110,7 +110,7 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
         {images.map((src, index) => (
           <div
             key={`${index}-${src}`}
-            className="flex aspect-square w-full items-center justify-center p-6"
+            className="flex aspect-square w-full items-center justify-center"
           >
             <ProductImage
               src={src}
