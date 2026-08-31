@@ -252,7 +252,7 @@ export async function ProductCard({
           {product.batteryHealthPercent !== null ? (
             <span className="inline-flex items-center gap-1 rounded-full border border-gold bg-gold-tint px-2 py-0.5 text-[11px] font-medium leading-none text-gold-text">
               {t('batteryHealth')}
-              <bdi className="num">{product.batteryHealthPercent}٪</bdi>
+              <bdi className="num">{product.batteryHealthPercent}%</bdi>
             </span>
           ) : null}
         </div>

@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import type { Product } from '@/content/schemas';
 import { primaryVariant, productColours } from '@/lib/product';
 import { Price } from './Price';
+import { ProductFacts } from './ProductFacts';
 import { StockDot } from './StockDot';
 
 type ProductInfoProps = {
@@ -85,22 +86,13 @@ export function ProductInfo({
           Both were captured in the admin and shown nowhere a customer looks:
           capacity only appeared inside the checkout summary line, AFTER someone
           had already scrolled down and committed to ordering, and battery health
-          appeared nowhere at all. */}
-      {variant.storage || batteryHealth !== null ? (
-        <ul className="mt-4 flex flex-wrap items-center gap-2">
-          {variant.storage ? (
-            <li className="rounded-full border border-gray-300 px-3 py-1.5 text-caption font-medium">
-              {t('storage')} <bdi className="num">{variant.storage}</bdi>
-            </li>
-          ) : null}
-
-          {batteryHealth !== null ? (
-            <li className="rounded-full border border-gold bg-gold-tint px-3 py-1.5 text-caption font-medium text-gold-text">
-              {t('batteryHealth')} <bdi className="num">{batteryHealth}٪</bdi>
-            </li>
-          ) : null}
-        </ul>
-      ) : null}
+          appeared nowhere at all. Shared with <CheckoutView /> so the two can't
+          drift — and so neither can go missing without the other noticing. */}
+      <ProductFacts
+        storage={variant.storage}
+        batteryHealthPercent={batteryHealth}
+        className="mt-4"
+      />
 
       {colours.length > 1 ? (
         <div className="mt-7">

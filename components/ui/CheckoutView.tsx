@@ -12,6 +12,7 @@ import { cn } from '@/lib/cn';
 import { Button } from './Button';
 import { Field } from './Field';
 import { Price } from './Price';
+import { ProductFacts } from './ProductFacts';
 import { ProductGallery } from './ProductGallery';
 
 type DeliveryMethod = 'desk' | 'home';
@@ -342,6 +343,20 @@ export function CheckoutView({
         <h2 id={titleId} className="mt-2 text-h2 font-semibold">
           {name}
         </h2>
+
+        {/* Capacity and battery health, under the name where a customer reads
+            them before deciding — not buried in the summary's "أسود — 256 × 1"
+            line further down, which is a receipt of what you already picked
+            rather than a fact you shop on.
+
+            `variant` is the SELECTED variant, so capacity re-renders when the
+            colour or capacity buttons below change it. Battery health is a
+            product-level reading and is the same for every variant. */}
+        <ProductFacts
+          storage={variant.storage}
+          batteryHealthPercent={product.batteryHealthPercent}
+          className="mt-4"
+        />
 
         {colours.length > 1 ? (
           <div className="mt-6">
