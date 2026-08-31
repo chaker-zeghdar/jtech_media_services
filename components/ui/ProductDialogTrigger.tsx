@@ -33,7 +33,25 @@ type ProductDialogTriggerProps = {
 const DETAIL_CLASS =
   'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-300 text-gray-700 ' +
   'transition-[background-color,border-color,color] duration-200 ease-brand ' +
-  'hover:border-ink hover:bg-ink hover:text-white';
+  'hover:border-ink hover:bg-ink hover:text-white ' +
+  /* The whole card opens quick view, not just this 36px disc.
+  
+     A stretched pseudo-element rather than an onClick on the card: <ProductCard />
+     is a server component whose markup and entire hover choreography are static
+     HTML and CSS, and putting a handler on it would hydrate the whole card tree
+     to win a click this ::after gets for free. It also keeps the accessibility
+     tree honest — one real, focusable, labelled button, instead of a clickable
+     <div> wrapping the very buttons it would swallow.
+  
+     `inset-0` resolves against `<article className="group relative">`, the
+     nearest positioned ancestor, since nothing between here and it is
+     positioned. Coming last in DOM order, it paints over the image bed without
+     needing a z-index of its own.
+  
+     Nothing to stopPropagation: the order button sits ABOVE this layer rather
+     than inside it, so a click there never reaches it — there is no bubbling to
+     intercept, and no way for one click to fire both. */
+  "after:absolute after:inset-0 after:content-['']";
 
 /**
  * The card's filled order button, the small detail affordance beside it, and the
@@ -82,12 +100,17 @@ export function ProductDialogTrigger({
           secondary one. It is also first visually in both scripts — the row is
           laid out with logical properties, so it mirrors under Arabic. */}
       <div className="flex w-full items-center gap-2">
+        {/* `relative z-10` lifts this above the quick-view overlay described in
+            DETAIL_CLASS, which covers the rest of the card. That stacking IS
+            the separation: the overlay never receives this button's clicks, so
+            ordering stays a single, unambiguous action with no handler
+            juggling. Its own hit area is exactly what it was. */}
         <Button
           type="button"
           onClick={() => openAt('checkout')}
           ariaLabel={orderAriaLabel}
           size="sm"
-          className="flex-1"
+          className="relative z-10 flex-1"
         >
           {orderLabel}
         </Button>

@@ -73,6 +73,15 @@ type ProductCardProps = {
  * PHASE 2: the detail affordance opens the quick view because product detail
  * pages don't exist yet; point it at /products/{slug} when they do.
  *
+ * The WHOLE card opens that quick view, not only the 36px disc — the photo, the
+ * name, the badges, the price, the empty space around them. On a card this size
+ * people reach for the picture, not for an icon they have to find first. It is
+ * done with a stretched pseudo-element on the disc (see DETAIL_CLASS in
+ * <ProductDialogTrigger />) rather than a click handler here, which is what
+ * lets this stay a server component with exactly one hydrated island — and
+ * what keeps "اطلب الآن" a genuinely separate action rather than a click that
+ * has to be stopped from becoming two.
+ *
  * "اطلب الآن" opens that same dialog straight to its checkout view — a real
  * variant/quantity/delivery form with a live total, built on `content/
  * wilayas.ts`'s per-wilaya fees. It replaced the old WhatsApp deep link
