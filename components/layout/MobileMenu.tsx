@@ -9,6 +9,7 @@ import { Icon } from '@/components/ui/Icon';
 import { CONTACT, telLink, whatsappLink } from '@/content/contact';
 import { cn } from '@/lib/cn';
 import { LocaleSwitcher } from './LocaleSwitcher';
+import { SearchForm } from './SearchForm';
 import { SECTION_IDS } from './navigation';
 import { Link } from '@/i18n/navigation';
 
@@ -121,7 +122,14 @@ export function MobileMenu({ categories }: MobileMenuProps) {
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-8">
-          <nav aria-label={tA11y('primaryNav')}>
+          {/* The header's own search icon is a plain link to `/search` — see
+              its doc comment. Inside the drawer there's no reason to make the
+              customer land on that page just to start typing, so this is the
+              real box: submitting it closes the drawer, same as the category
+              links below already do. */}
+          <SearchForm onSubmitted={close} />
+
+          <nav aria-label={tA11y('primaryNav')} className="mt-8">
             <ul className="flex flex-col gap-1">
               {categories.map((category) => (
                 <li key={category.slug}>

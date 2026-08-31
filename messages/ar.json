@@ -20,6 +20,7 @@
     "socialLinks": "روابط التواصل الاجتماعي",
     "openMenu": "فتح القائمة",
     "closeMenu": "إغلاق القائمة",
+    "openSearch": "البحث",
     "localeSwitcher": "تغيير اللغة",
     "carouselPrev": "السابق",
     "carouselNext": "التالي",
@@ -85,6 +86,18 @@
     "emptyCta": "استفسر عن هذا القسم",
     "metaTitle": "{category} — JTECH Media Services",
     "metaDescription": "{category} أصلي بضمان مكتوب من JTECH باتنة، مع التوصيل إلى 69 ولاية والدفع عند الاستلام."
+  },
+  "search": {
+    "eyebrow": "البحث",
+    "titleQuery": "نتائج البحث عن «{query}»",
+    "titleEmpty": "ابحث في المتجر",
+    "placeholder": "ابحث عن هاتف، ماركة...",
+    "submit": "بحث",
+    "promptEmpty": "اكتب كلمة أو أكثر في الأعلى للبحث في كل منتجات المتجر.",
+    "count": "{count, plural, one {نتيجة واحدة} two {نتيجتان} few {# نتائج} many {# نتيجة} other {# نتيجة}}",
+    "noResults": "لم نعثر على أي منتج يطابق «{query}».",
+    "noResultsCta": "تصفح كل الأقسام",
+    "metaTitle": "البحث — JTECH Media Services"
   },
   "featured": {
     "eyebrow": "المنتج المميّز",

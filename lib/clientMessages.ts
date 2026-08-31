@@ -21,6 +21,12 @@ import type { Messages } from 'next-intl';
  * here, because this function narrows an object, not a set of keys a caller
  * declares up front. Caught by actually opening the checkout view in a
  * browser and reading the console, not by the type checker.
+ *
+ * `search` is the same gap, same shape: `<SearchForm />` is `'use client'`
+ * too, and without this entry every placeholder and button label rendered as
+ * the literal key (`"search.placeholder"`) instead of throwing — `t()` falls
+ * back to the key string rather than erroring, which is what made this one
+ * easy to miss until it actually rendered in a browser.
  */
 export function clientMessages(all: Messages) {
   return {
@@ -31,6 +37,7 @@ export function clientMessages(all: Messages) {
     nav: all.nav,
     product: all.product,
     checkout: all.checkout,
+    search: all.search,
     locale: all.locale,
   };
 }

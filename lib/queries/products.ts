@@ -164,6 +164,49 @@ export async function accessories(): Promise<Product[]> {
 }
 
 /**
+ * Escapes a raw search term for use inside a `%…%` ILIKE pattern, then quotes
+ * it for PostgREST's `.or()` filter string.
+ *
+ * Two independent layers, applied in this order because the first can produce
+ * characters the second must also escape:
+ *
+ *  1. ILIKE treats `%`, `_` and `\` itself as special — prefixing each with a
+ *     backslash is what makes them match literally rather than as wildcards.
+ *     Without this, searching for a plain product name that happens to
+ *     contain one (rare here, but not impossible) would silently behave like
+ *     a fuzzier query than the customer typed.
+ *  2. supabase-js's `.or('name.ilike.VALUE,brand.ilike.VALUE')` parses that
+ *     string itself, where `,`, `(` and `)` are syntax — a query like "xo,
+ *     black" would otherwise be read as two filters instead of one term.
+ *     Wrapping the value in double quotes makes it literal, which is why the
+ *     quotes and any backslash the step above just introduced need their own
+ *     escaping here.
+ */
+function ilikeTerm(raw: string): string {
+  const escaped = raw.replace(/[\\%_]/g, (char) => `\\${char}`);
+  const pattern = `%${escaped}%`;
+  return `"${pattern.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+}
+
+/**
+ * Matches against `name` and `brand`, published only (via `queryProducts`'s
+ * `baseQuery()`) — a search result is a storefront listing like any other, not
+ * a way to reach a draft.
+ *
+ * A blank or whitespace-only query returns `[]` rather than every product:
+ * `ILIKE '%%'` matches everything, and a search page silently showing the
+ * whole catalogue before anyone typed anything would read as broken, not
+ * helpful.
+ */
+export async function searchProducts(rawQuery: string): Promise<Product[]> {
+  const term = rawQuery.trim().replace(/\s+/g, ' ');
+  if (!term) return [];
+
+  const pattern = ilikeTerm(term);
+  return queryProducts((query) => query.or(`name.ilike.${pattern},brand.ilike.${pattern}`));
+}
+
+/**
  * Re-exported for call sites that read a product through these selectors. They
  * are pure functions over an already-fetched `Product`, not queries, and live
  * in `lib/product.ts` so client components can use them without pulling zod or

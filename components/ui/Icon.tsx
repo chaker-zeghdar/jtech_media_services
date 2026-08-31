@@ -9,7 +9,8 @@ export type UiIconKey =
   | 'menu'
   | 'external'
   | 'expand'
-  | 'chat';
+  | 'chat'
+  | 'search';
 
 export type AnyIconKey = IconKey | UiIconKey;
 
@@ -86,6 +87,9 @@ const PATHS: Record<AnyIconKey, { d: string; fill?: boolean }[]> = {
   // `external` arrow-out-of-a-box glyph turns to mush.
   expand: [{ d: 'M9.5 4.5H4.5V9.5' }, { d: 'M14.5 19.5h5v-5' }, { d: 'M4.5 4.5l6 6' }, { d: 'M19.5 19.5l-6-6' }],
   external: [{ d: 'M14 4.5h5.5V10' }, { d: 'M19.5 4.5 11 13' }, { d: 'M17 14v4.5a1 1 0 0 1-1 1H5.5a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1H10' }],
+  // Lens as the same two-arc circle other compound glyphs (camera, chip) build
+  // from, plus a short diagonal for the handle.
+  search: [{ d: 'M10 15a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11Z' }, { d: 'M14.3 13.8 19.5 19.5' }],
 };
 
 type IconProps = {

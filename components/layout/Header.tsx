@@ -149,6 +149,22 @@ export async function Header() {
         <NavHighlight items={items} label={t('primaryNav')} />
 
         <div className="flex shrink-0 items-center gap-2 justify-self-end">
+          {/* Links straight to `/search` rather than expanding in place. This
+              header already carries real state (`<HeaderShell />`'s
+              over-hero/scrolled swap, the RTL-safe sliding pill in
+              <NavHighlight />, the `1fr auto 1fr` grid that only applies at
+              `lg`) — an inline input would have to fit into all of that
+              without breaking any of it. A dedicated page owns the actual
+              typing instead: `/search` autofocuses its own box, so the
+              experience is still "click and start typing," just one page away.
+
+              Visible at EVERY width, unlike the phone/WhatsApp icons beside it
+              (`hidden sm:inline-flex`) — the prompt asked for it reachable on
+              the compact mobile header too, next to the hamburger. */}
+          <Link href="/search" aria-label={t('openSearch')} className={iconButton}>
+            <Icon name="search" size={17} />
+          </Link>
+
           {/* The two contact routes, as icon buttons. Both are external and both
               already have their own accessible names in `a11y`, so no new
               message keys. */}
