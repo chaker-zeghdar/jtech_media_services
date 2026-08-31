@@ -1,21 +1,14 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { hasLocale } from 'next-intl';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { TikTokViewContent } from '@/components/analytics/TikTokViewContent';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
-import { Button } from '@/components/ui/Button';
-import { ProductGallery } from '@/components/ui/ProductGallery';
-import { ProductInfo } from '@/components/ui/ProductInfo';
 import { ProductPageOrder } from '@/components/ui/ProductPageOrder';
-import { Link } from '@/i18n/navigation';
-import { routing, type Locale } from '@/i18n/routing';
-import { categoryHref } from '@/components/layout/navigation';
+import { routing } from '@/i18n/routing';
 import { primaryVariant } from '@/lib/product';
-import { getCategory } from '@/lib/queries/categories';
 import { getProduct } from '@/lib/queries/products';
-import { pickLocale } from '@/lib/format';
 import { getSiteUrl } from '@/lib/siteUrl';
 
 /**
@@ -27,9 +20,19 @@ import { getSiteUrl } from '@/lib/siteUrl';
  * exactly as it is for in-catalogue browsing, which is faster than a
  * navigation; the two coexist rather than one replacing the other.
  *
- * Structure is deliberately linear: the product, then the order form. There is
- * no dialog to open, so the primary CTA scrolls down rather than opening
- * anything — one page, one path through it.
+ * The page IS the order form. It used to open with a summary block — gallery,
+ * name, price, and a button whose only job was to scroll down to the form —
+ * above the form itself, which repeats the name and the photo and is
+ * self-sufficient without it. That duplication was the client's own report:
+ * the same product named twice, the same photo twice, and a button standing in
+ * for a section that could simply be first.
+ *
+ * What went with it is worth knowing before adding anything back here (all of
+ * it still renders in `<QuickView />`, which is unchanged): `<ProductInfo />`'s
+ * brand line, description, specs, stock dot, the capacity/battery-health pills,
+ * and the compare-at price with its discount badge — the form's summary shows
+ * the charged price only. `<ProductGallery />` went too, and `<CheckoutView />`
+ * shows one static photo rather than all of a variant's.
  */
 
 export const dynamic = 'force-dynamic';
@@ -103,11 +106,10 @@ export default async function ProductPage({ params }: PageParams) {
   const product = await getProduct(slug);
   if (!product) notFound();
 
-  const t = await getTranslations('product');
+  /* Still read, though nothing on the page renders it directly: the pixel
+     reports the price a visitor arrived to see, and `primaryVariant` is what
+     `<CheckoutView />` opens on, so the two agree by construction. */
   const variant = primaryVariant(product);
-  /* Category names are still trilingual — the single-language change in prompt
-     1 covered product words only — so this one goes through `pickLocale`. */
-  const category = await getCategory(product.category);
 
   return (
     <>
@@ -115,44 +117,6 @@ export default async function ProductPage({ params }: PageParams) {
           <CheckoutView />; both carry `content_id: product.slug`, which is what
           lets TikTok match a view to the order it produced. Renders nothing. */}
       <TikTokViewContent slug={slug} name={product.name} price={variant.price} />
-
-      <Section id="product" background="white">
-        <Container>
-          {/* Breadcrumb back into the catalogue. This page is often the FIRST
-              thing a visitor sees — they arrived from an ad, not the homepage —
-              so it needs a way into the site, not just out of it. Named after
-              the actual category rather than a generic "view all", because a
-              cold visitor needs to know where the link goes. */}
-          {category ? (
-            <nav aria-label="مسار التنقل" className="text-sm text-gray-700">
-              <Link href={categoryHref(product.category)} className="hover:text-ink">
-                ← {pickLocale(category.name, locale as Locale)}
-              </Link>
-            </nav>
-          ) : null}
-
-          <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-16">
-            <ProductGallery images={variant.images} name={product.name} />
-
-            <ProductInfo
-              product={product}
-              titleId="product-title"
-              /* This page owns the document outline — the dialog's copy is an
-                 h2 because it sits inside a page that already has an h1. */
-              headingLevel="h1"
-              action={
-                /* Scrolls to the form below rather than opening anything.
-                   `Button` renders a plain anchor for a `#` href, and
-                   globals.css already handles smooth scrolling and the
-                   sticky-header offset for anchor targets. */
-                <Button href="#order" fullWidth>
-                  {t('order')}
-                </Button>
-              }
-            />
-          </div>
-        </Container>
-      </Section>
 
       <Section id="order" background="gray">
         <Container>
