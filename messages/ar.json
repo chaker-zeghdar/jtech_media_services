@@ -93,8 +93,10 @@
     "titleEmpty": "ابحث في المتجر",
     "placeholder": "ابحث عن هاتف، ماركة...",
     "submit": "بحث",
+    "loading": "جارٍ البحث...",
     "promptEmpty": "اكتب كلمة أو أكثر في الأعلى للبحث في كل منتجات المتجر.",
     "count": "{count, plural, one {نتيجة واحدة} two {نتيجتان} few {# نتائج} many {# نتيجة} other {# نتيجة}}",
+    "viewAll": "عرض كل النتائج ({count})",
     "noResults": "لم نعثر على أي منتج يطابق «{query}».",
     "noResultsCta": "تصفح كل الأقسام",
     "metaTitle": "البحث — JTECH Media Services"

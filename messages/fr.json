@@ -93,8 +93,10 @@
     "titleEmpty": "Rechercher dans la boutique",
     "placeholder": "Rechercher un téléphone, une marque...",
     "submit": "Rechercher",
+    "loading": "Recherche en cours...",
     "promptEmpty": "Tapez un ou plusieurs mots ci-dessus pour chercher dans tous les produits.",
     "count": "{count, plural, one {# résultat} other {# résultats}}",
+    "viewAll": "Voir tous les résultats ({count})",
     "noResults": "Aucun produit ne correspond à « {query} ».",
     "noResultsCta": "Parcourir toutes les catégories",
     "metaTitle": "Recherche — JTECH Media Services"

@@ -93,8 +93,10 @@
     "titleEmpty": "Search the shop",
     "placeholder": "Search for a phone, a brand...",
     "submit": "Search",
+    "loading": "Searching...",
     "promptEmpty": "Type a word or two above to search every product.",
     "count": "{count, plural, one {# result} other {# results}}",
+    "viewAll": "View all results ({count})",
     "noResults": "No products matched \"{query}\".",
     "noResultsCta": "Browse all categories",
     "metaTitle": "Search — JTECH Media Services"
