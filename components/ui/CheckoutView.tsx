@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { submitOrder } from '@/app/(storefront)/actions';
 import type { Product, ProductVariant } from '@/content/schemas';
 import { pickWilayaName } from '@/lib/format';
-import { TIKTOK_CURRENCY, tiktokContent, trackTikTok } from '@/lib/tiktok';
+import { trackPurchase } from '@/lib/pixels';
 import { primaryVariant, productColours, resolveVariant, variantsForColour } from '@/lib/product';
 import { wilayas } from '@/content/wilayas';
 import { cn } from '@/lib/cn';
@@ -241,9 +241,10 @@ export function CheckoutView({
       }
 
       /**
-       * The conversion, reported from the ONE branch where the row actually
-       * landed in `orders` — not from an effect in the confirmation view, which
-       * re-runs on re-render and would count the same order more than once.
+       * The conversion, reported to every configured pixel from the ONE branch
+       * where the row actually landed in `orders` — not from an effect in the
+       * confirmation view, which re-runs on re-render and would count the same
+       * order more than once.
        *
        * Every number here is the server's. `result.total` and `result.quantity`
        * are what was recorded; the component's own `total` and `quantity` are
@@ -253,11 +254,11 @@ export function CheckoutView({
        * Fires for the dialog as well as `/products/[slug]` — both render this
        * component, and an order is an order wherever it was placed.
        */
-      trackTikTok('Purchase', {
-        ...tiktokContent(product),
+      trackPurchase({
+        slug: product.slug,
+        name: product.name,
         quantity: result.quantity,
         value: result.total,
-        currency: TIKTOK_CURRENCY,
       });
 
       onSubmit({

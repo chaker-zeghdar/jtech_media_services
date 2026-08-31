@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { hasLocale } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
-import { TikTokViewContent } from '@/components/analytics/TikTokViewContent';
+import { ProductViewContent } from '@/components/analytics/ProductViewContent';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { ProductPageOrder } from '@/components/ui/ProductPageOrder';
@@ -118,10 +118,11 @@ export default async function ProductPage({ params }: PageParams) {
 
   return (
     <>
-      {/* The ad-funnel's first half. Pairs with the `Purchase` fired from
-          <CheckoutView />; both carry `content_id: product.slug`, which is what
-          lets TikTok match a view to the order it produced. Renders nothing. */}
-      <TikTokViewContent slug={slug} name={product.name} price={variant.price} />
+      {/* The ad-funnel's first half, reported to every configured pixel. Pairs
+          with the `Purchase` fired from <CheckoutView />; both identify the
+          product by its slug, which is what lets TikTok and Meta match a view to
+          the order it produced. Renders nothing. */}
+      <ProductViewContent slug={slug} name={product.name} price={variant.price} />
 
       <Section id="order" background="gray">
         <Container>

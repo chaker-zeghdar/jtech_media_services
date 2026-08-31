@@ -6,7 +6,7 @@ import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server
 import type { ReactNode } from 'react';
 import type { AnyIconKey } from '@/components/ui/Icon';
 import { Footer } from '@/components/layout/Footer';
-import { TikTokPixel } from '@/components/analytics/TikTokPixel';
+import { Pixels } from '@/components/analytics/Pixels';
 import { HashAnchorFix } from '@/components/layout/HashAnchorFix';
 import { Header } from '@/components/layout/Header';
 import { SocialFab } from '@/components/layout/SocialFab';
@@ -155,10 +155,11 @@ export default async function LocaleLayout({
       data-scroll-behavior="smooth"
     >
       <body>
-        {/* Storefront only — the admin panel has its own root layout and is
-            deliberately left unmeasured. Renders nothing when
-            NEXT_PUBLIC_TIKTOK_PIXEL_ID is unset, which is the local-dev case. */}
-        <TikTokPixel />
+        {/* TikTok + Meta. Storefront only — the admin panel has its own root
+            layout and is deliberately left unmeasured. Each vendor renders
+            nothing when its own NEXT_PUBLIC_*_PIXEL_ID is unset, which is the
+            local-dev case and the case for a platform not signed up with. */}
+        <Pixels />
 
         <NextIntlClientProvider locale={locale} messages={clientMessages(messages)}>
           <a href="#main" className="skip-link">
