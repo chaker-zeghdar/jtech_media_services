@@ -15,6 +15,23 @@ type ProductImageProps = {
   sizes: string;
   /** True on the hero image only. */
   priority?: boolean;
+  /**
+   * `contain` (the default) fits the whole frame inside the box and gives the
+   * leftover back as empty space — right for a cutout floating on a bed, and
+   * for any slot whose shape the photo can't be assumed to match.
+   *
+   * `cover` fills the box and crops the overflow instead. Needed wherever the
+   * bed has a fixed shape and the catalogue does not: a 3:4 phone photo in
+   * <ProductCard />'s 4:5 bed fits to height under `contain` and hands the
+   * leftover width back as a visible border of bare bed.
+   *
+   * A PROP rather than an `object-cover` passed through `className`: `cn` is a
+   * plain joiner, not tailwind-merge, so that route emits `object-contain
+   * object-cover` together and leaves the winner to stylesheet order — which
+   * happens to be `cover` today and is not something this component should be
+   * betting on.
+   */
+  fit?: 'contain' | 'cover';
   className?: string;
 };
 
@@ -36,6 +53,7 @@ export function ProductImage({
   height,
   sizes,
   priority = false,
+  fit = 'contain',
   className,
 }: ProductImageProps) {
   const t = useTranslations('a11y');
@@ -67,7 +85,11 @@ export function ProductImage({
       priority={priority}
       // Non-hero images stay lazy; the hero opts in via `priority`.
       loading={priority ? undefined : 'lazy'}
-      className={cn('h-full w-full object-contain', className)}
+      className={cn(
+        'h-full w-full',
+        fit === 'cover' ? 'object-cover' : 'object-contain',
+        className,
+      )}
     />
   );
 }

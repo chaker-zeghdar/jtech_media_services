@@ -57,7 +57,11 @@ type ProductCardProps = {
  * A **server component**. The hover choreography is CSS on the card's `group`:
  *   bed         gray-50 → gold-tint
  *   light sweep one diagonal white pass over 600ms (globals.css)
- *   product     lifts 6px and rotates −1deg
+ *   product     lifts 6px, rotates −1deg and scales 1.07
+ *
+ * That scale is not a fourth beat — it is what keeps the third one from
+ * showing bare bed now that the photo fills the frame edge-to-edge. See the
+ * note on the transform wrapper below.
  *
  * A fourth beat — two spec-value pills fading in along the bottom of the bed —
  * was cut when the card shrank ~12% (lib/rail.ts). At the smaller footprint it
@@ -119,12 +123,48 @@ export async function ProductCard({
           'group-hover:bg-gold-tint group-focus-within:bg-gold-tint',
         )}
       >
+        {/* No padding, and `fit="cover"` — the photo IS the bed now.
+
+            This carried `p-6` and let <ProductImage />'s default `object-contain`
+            size the rest, which framed every product in a border of bare bed.
+            Measured on /categories/samsung, painted photo against bed:
+
+              before   24px top and bottom, 28.7px sides (mobile, 342px bed)
+                       24px top and bottom, 31.7px sides (desktop, 443px bed)
+              after    0px on all four sides, at every breakpoint
+
+            The sides were WIDER than the 24px padding because the padding was
+            only half of it. The client's photos are iPhone shots that display
+            3:4 (0.75) once the browser applies their EXIF orientation, and a
+            0.75 frame contained in this 4:5 (0.8) bed fits to height and gives
+            the leftover width back — the padding, plus a letterbox on top of
+            it. `cover` fills the bed and crops the overflow instead, so the
+            mismatch stops being visible at all.
+
+            Read the source's DISPLAYED aspect, not its stored one, if you
+            revisit this: those files are stored 4032x3024 landscape and are
+            portrait only by EXIF tag, so measuring the pixels off disk gives
+            the wrong answer by a quarter turn.
+
+            The `p-6` was NOT protecting the badge — that sits outside this
+            wrapper, positioned against the bed (see below) — nor the light
+            sweep, which is a pseudo-element on the bed at `inset: 0`. It was
+            the hover choreography's clearance, and that is real: with the photo
+            filling the bed exactly, lifting it 6px and rotating it 1deg pulls
+            its own edges inside the frame and opens wedges of bare bed along
+            the bottom and at the corners. `scale-[1.07]` on the same transition
+            is what replaces the padding for that job. 1.07 rather than a round
+            1.1: the minimum that stays covered is 1.0606, at the SMALLEST bed
+            this card is ever painted at (205px wide, the `lg:20vw` rail step) —
+            the 6px lift is absolute, so it eats a bigger fraction of a small
+            card than a large one, and the smallest is the one to solve for. */}
         <div
           className={cn(
-            'absolute inset-0 z-10 flex items-center justify-center p-6',
+            'absolute inset-0 z-10 flex items-center justify-center',
             'transition-transform duration-500 ease-brand',
-            'group-hover:-translate-y-1.5 group-hover:-rotate-1',
+            'group-hover:-translate-y-1.5 group-hover:-rotate-1 group-hover:scale-[1.07]',
             'group-focus-within:-translate-y-1.5 group-focus-within:-rotate-1',
+            'group-focus-within:scale-[1.07]',
           )}
         >
           <ProductImage
@@ -133,6 +173,7 @@ export async function ProductCard({
             width={420}
             height={420}
             sizes={sizes}
+            fit="cover"
             className="drop-shadow-product"
           />
         </div>
