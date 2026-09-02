@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { missingR2Vars, publicUrlFor, r2Client, r2Config } from '@/lib/r2';
 import { getAdminUser } from '@/lib/supabase/server';
 
 /**
@@ -23,48 +24,10 @@ const ALLOWED = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/avif'])
 /** Presigned URL lifetime. Long enough for a slow phone upload, short enough. */
 const EXPIRES_IN = 300;
 
-/** Every variable this route needs, in the order they appear in .env.example. */
-const REQUIRED_R2_VARS = [
-  'R2_ACCOUNT_ID',
-  'R2_ACCESS_KEY_ID',
-  'R2_SECRET_ACCESS_KEY',
-  'R2_BUCKET_NAME',
-  'R2_PUBLIC_BASE_URL',
-] as const;
-
-/**
- * Reads a required variable, treating whitespace-only as absent and trimming
- * what it returns.
- *
- * The trim is not cosmetic. Pasting a value into a dashboard field very easily
- * carries a trailing newline or space, which passes a plain `!value` check and
- * then fails much later and much more confusingly — a signature computed over a
- * key with a stray `\n` produces a SignatureDoesNotMatch from R2, and an
- * account id with one produces a hostname that simply doesn't resolve.
- */
-function readVar(name: (typeof REQUIRED_R2_VARS)[number]): string | null {
-  const value = process.env[name];
-  if (typeof value !== 'string') return null;
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : null;
-}
-
-/**
- * Names of the variables that are missing or empty. **Names only, never
- * values** — three of these five are secrets, and an error body is exactly the
- * kind of thing that ends up pasted into a chat or a screenshot.
- */
-function missingR2Vars(): string[] {
-  return REQUIRED_R2_VARS.filter((name) => readVar(name) === null);
-}
-
-function r2Client(accountId: string, accessKeyId: string, secretAccessKey: string) {
-  return new S3Client({
-    region: 'auto',
-    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
-    credentials: { accessKeyId, secretAccessKey },
-  });
-}
+/* R2 configuration, the client and the public-URL helper all moved to
+   `lib/r2.ts` when the normalize route and the batch script became the second
+   and third callers. The rules they encode — trim every value, report missing
+   ones by NAME and never by value — are unchanged and documented there. */
 
 export async function POST(request: Request) {
   // 1 ─ Session first, before R2 is even constructed.
@@ -123,8 +86,9 @@ export async function POST(request: Request) {
   //     session check above already ran — only a signed-in admin sees this — and
   //     because it carries variable NAMES only. Never add the values: three of
   //     the five are secrets.
-  const missing = missingR2Vars();
-  if (missing.length > 0) {
+  const config = r2Config();
+  if (!config) {
+    const missing = missingR2Vars();
     return Response.json(
       {
         error: `R2 is not configured. Missing or empty: ${missing.join(', ')}.`,
@@ -134,14 +98,7 @@ export async function POST(request: Request) {
     );
   }
 
-  /* Non-null after the check above, and re-read through `readVar` so the
-     trimmed values are the ones actually used. */
-  const accountId = readVar('R2_ACCOUNT_ID')!;
-  const accessKeyId = readVar('R2_ACCESS_KEY_ID')!;
-  const secretAccessKey = readVar('R2_SECRET_ACCESS_KEY')!;
-  const bucket = readVar('R2_BUCKET_NAME')!;
-  const publicBase = readVar('R2_PUBLIC_BASE_URL')!;
-  const client = r2Client(accountId, accessKeyId, secretAccessKey);
+  const client = r2Client(config);
 
   // 4 ─ A key that can't collide and stays browsable in the R2 console.
   const safeName = filename.replace(/[^a-zA-Z0-9.-]/g, '-').slice(-100);
@@ -151,13 +108,13 @@ export async function POST(request: Request) {
   try {
     const uploadUrl = await getSignedUrl(
       client,
-      new PutObjectCommand({ Bucket: bucket, Key: key, ContentType: contentType }),
+      new PutObjectCommand({ Bucket: config.bucket, Key: key, ContentType: contentType }),
       { expiresIn: EXPIRES_IN },
     );
 
     return Response.json({
       uploadUrl,
-      publicUrl: `${publicBase.replace(/\/$/, '')}/${key}`,
+      publicUrl: publicUrlFor(config, key),
     });
   } catch (error) {
     return Response.json(

@@ -117,47 +117,52 @@ export async function ProductCard({
       {/* ---- Image bed --------------------------------------------------- */}
       <div
         className={cn(
-          'light-sweep relative isolate aspect-[4/5] overflow-hidden rounded-card shadow-card',
+          'light-sweep relative isolate aspect-square overflow-hidden rounded-card shadow-card',
           bed === 'white' ? 'bg-white' : 'bg-gray-50',
           'transition-colors duration-500 ease-brand',
           'group-hover:bg-gold-tint group-focus-within:bg-gold-tint',
         )}
       >
-        {/* No padding, and `fit="cover"` — the photo IS the bed now.
+        {/* A SQUARE bed, no padding, and <ProductImage />'s default `contain`.
 
-            This carried `p-6` and let <ProductImage />'s default `object-contain`
-            size the rest, which framed every product in a border of bare bed.
-            Measured on /categories/samsung, painted photo against bed:
+            All three follow from the photos being normalized on the way into
+            R2 (`lib/images/normalize.ts`): every stored image is now a 1200px
+            square with its margin baked in, so a square box that never crops
+            fits it exactly — zero bed showing, zero zoom, for every product.
 
-              before   24px top and bottom, 28.7px sides (mobile, 342px bed)
-                       24px top and bottom, 31.7px sides (desktop, 443px bed)
-              after    0px on all four sides, at every breakpoint
+            ── What this replaced, and why twice was not enough ──────────────
 
-            The sides were WIDER than the 24px padding because the padding was
-            only half of it. The client's photos are iPhone shots that display
-            3:4 (0.75) once the browser applies their EXIF orientation, and a
-            0.75 frame contained in this 4:5 (0.8) bed fits to height and gives
-            the leftover width back — the padding, plus a letterbox on top of
-            it. `cover` fills the bed and crops the overflow instead, so the
-            mismatch stops being visible at all.
+            This bed was `aspect-[4/5]` with `p-6` and `contain`, which framed
+            every product in a border of bare bed: measured on
+            /categories/samsung, 24px top and bottom and 28.7px at the sides.
+            Dropping the padding for `cover` closed that, and then `cover`
+            zoomed hard into the cutouts — a product shot with a lot of tray or
+            fabric around it got cropped to its middle. Meanwhile
+            <ProductGallery />'s square frame kept `contain` and showed bars on
+            the same photos.
 
-            Read the source's DISPLAYED aspect, not its stored one, if you
-            revisit this: those files are stored 4032x3024 landscape and are
-            portrait only by EXIF tag, so measuring the pixels off disk gives
-            the wrong answer by a quarter turn.
+            Neither `object-fit` was wrong. The catalogue was: half flat-background
+            cutouts with dead margin, half raw 3:4 phone shots. No single fit
+            suits both, which is why fixing it in CSS moved the symptom each
+            time instead of ending it. The images are what got fixed; this
+            component just stopped compensating.
 
-            The `p-6` was NOT protecting the badge — that sits outside this
-            wrapper, positioned against the bed (see below) — nor the light
-            sweep, which is a pseudo-element on the bed at `inset: 0`. It was
-            the hover choreography's clearance, and that is real: with the photo
-            filling the bed exactly, lifting it 6px and rotating it 1deg pulls
-            its own edges inside the frame and opens wedges of bare bed along
-            the bottom and at the corners. `scale-[1.07]` on the same transition
-            is what replaces the padding for that job. 1.07 rather than a round
-            1.1: the minimum that stays covered is 1.0606, at the SMALLEST bed
-            this card is ever painted at (205px wide, the `lg:20vw` rail step) —
-            the 6px lift is absolute, so it eats a bigger fraction of a small
-            card than a large one, and the smallest is the one to solve for. */}
+            The card and the gallery now agree — square box, `contain`, no
+            padding — so a product is the same shape while browsing and while
+            previewing.
+
+            ── `scale-[1.07]` is still load-bearing ─────────────────────────
+
+            A normalized PHOTO fills its square edge to edge (it is centre-
+            cropped, not padded), so the hover lift and rotate would still pull
+            the image's own edges inside the frame and open wedges of bare bed
+            along the bottom and at the corners. The minimum scale that stays
+            covered is 1.0606, at the SMALLEST bed this card is painted at
+            (205px wide, the `lg:20vw` rail step) — the 6px lift is absolute, so
+            it eats a bigger fraction of a small card than a large one.
+
+            The badge is unaffected by any of this: it sits outside this
+            wrapper, positioned against the bed. */}
         <div
           className={cn(
             'absolute inset-0 z-10 flex items-center justify-center',
@@ -173,7 +178,6 @@ export async function ProductCard({
             width={420}
             height={420}
             sizes={sizes}
-            fit="cover"
             className="drop-shadow-product"
           />
         </div>

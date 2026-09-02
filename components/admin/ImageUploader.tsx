@@ -8,7 +8,11 @@ type ImageUploaderProps = {
   onChange: (images: string[]) => void;
 };
 
-type Status = { state: 'idle' } | { state: 'uploading'; name: string } | { state: 'error'; message: string };
+type Status =
+  | { state: 'idle' }
+  | { state: 'uploading'; name: string }
+  | { state: 'processing'; name: string }
+  | { state: 'error'; message: string };
 
 /**
  * File → presigned URL → **direct PUT to R2** → append the public URL to the
@@ -24,6 +28,18 @@ type Status = { state: 'idle' } | { state: 'uploading'; name: string } | { state
  * uploaded and then abandoned is an orphaned object in the bucket, which is
  * cheap — an image URL saved for a file that failed to upload would be a broken
  * product page, which is not.
+ *
+ * ── The third hop: normalize ───────────────────────────────────────────────
+ *
+ * After the PUT lands, `../normalize` rewrites the photo into the canonical
+ * square every card and gallery expects (`lib/images/normalize.ts`) and returns
+ * the URL of that copy, which is what gets stored. It is a separate call rather
+ * than part of the upload because the upload deliberately never passes through
+ * the server — see that route's own note.
+ *
+ * A normalize failure is SWALLOWED and the original URL kept. An un-normalized
+ * photo is merely inconsistent with its neighbours; losing the upload over a
+ * cosmetic step would be worse, and the batch script can pick it up later.
  */
 export function ImageUploader({ images, onChange }: ImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -59,7 +75,25 @@ export function ImageUploader({ images, onChange }: ImageUploaderProps) {
       // URL in the array — the file isn't there.
       if (!put.ok) throw new Error(`رفض التخزين الرفع (${put.status})`);
 
-      onChange([...images, publicUrl]);
+      /* Best-effort. Anything that goes wrong past this point leaves a
+         perfectly usable original in the array. */
+      let stored = publicUrl;
+      setStatus({ state: 'processing', name: file.name });
+      try {
+        const normalized = await fetch('/api/admin/uploads/normalize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: publicUrl }),
+        });
+        if (normalized.ok) {
+          const { url } = (await normalized.json()) as { url?: string };
+          if (typeof url === 'string' && url.length > 0) stored = url;
+        }
+      } catch {
+        // Keep `publicUrl`.
+      }
+
+      onChange([...images, stored]);
       setStatus({ state: 'idle' });
     } catch (err) {
       setStatus({
@@ -149,10 +183,14 @@ export function ImageUploader({ images, onChange }: ImageUploaderProps) {
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          disabled={status.state === 'uploading'}
+          disabled={status.state === 'uploading' || status.state === 'processing'}
           className={ADMIN_BTN_GHOST}
         >
-          {status.state === 'uploading' ? `جارٍ الرفع… ${status.name}` : '+ رفع صورة'}
+          {status.state === 'uploading'
+            ? `جارٍ الرفع… ${status.name}`
+            : status.state === 'processing'
+              ? `جارٍ المعالجة… ${status.name}`
+              : '+ رفع صورة'}
         </button>
 
         {images.length === 0 ? (
