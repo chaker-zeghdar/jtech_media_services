@@ -929,6 +929,19 @@ Non-negotiable, and mostly free if you don't fight it.
   control that changes corner when you change language is harder to find, not
   more correct. Scoped to that one element, and it is `verify.mjs`'s only
   expected left/right hit.
+  - **A fixed overlay must not hit-test where it paints nothing.** The cost of
+    the exception above is that this widget floats over the *content* column
+    under Arabic instead of over the empty gutter it sits in under French and
+    English. Its collapsed stack is `invisible` rather than `hidden` so the
+    open/close transition can animate — and `visibility: hidden` keeps layout,
+    so the root measured 93x392px on a 390px phone while only the 56px trigger
+    was ever visible. A div with no background still receives pointer events
+    across its whole box, so that invisible column silently ate taps: 119
+    controls unreachable under Arabic across seven pages, 32 under each of
+    French and English, including the product page's colour swatches and the
+    category grid's quick-view buttons. The rule is `pointer-events-none` on
+    the fixed root and `pointer-events-auto` on the parts that actually paint.
+    Anything new that is `fixed` and larger than its visible ink follows it.
 - No `any` in TypeScript (ESLint errors on it), no unused dependencies.
 - No overriding a component's colour via `className` when it sets its own — pass a
   prop instead. `<Swash className="bg-ink">` leaves both `bg-gold` and `bg-ink` in

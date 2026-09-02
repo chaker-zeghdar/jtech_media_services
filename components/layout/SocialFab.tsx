@@ -109,7 +109,26 @@ export function SocialFab({
       dir="ltr"
       /* <MobileOrderBar /> is gone, so this no longer needs a taller mobile
          offset to clear its 68px bar — one corner offset at every breakpoint. */
-      className="fixed bottom-6 right-4 z-fab flex flex-col items-center gap-4 md:right-6"
+      /* `pointer-events-none` on the ROOT, re-enabled on the two things that are
+         actually tappable. Without it this widget silently ate taps on the page
+         behind it.
+
+         The collapsed stack is `invisible`, not `hidden`, so the open/close
+         transition can animate — and `visibility: hidden` keeps an element's
+         LAYOUT. So even closed, this column measures 93x392px on a 390x664
+         phone: 56px of trigger and 336px of stack nobody can see. A div with no
+         background still hit-tests across its whole box, so that invisible
+         column was swallowing every tap in the bottom-right quadrant.
+
+         It went unnoticed for so long because it is invisible in both senses
+         and because the site is built LTR-first: this widget is pinned
+         physically right (see the note above), so in French and English it
+         floats over the empty gutter beside the content column. Under Arabic
+         the page mirrors and the widget does not, which puts it directly on top
+         of the controls — the product page's colour swatches sit at x=256..348
+         inside its x=281..374 box, and two of every three were untappable in
+         Arabic while all three worked in French and English. */
+      className="pointer-events-none fixed bottom-6 right-4 z-fab flex flex-col items-center gap-4 md:right-6"
     >
       {/* Rendered in both states so the links keep their place in the tab order
           only when reachable: `invisible` removes them from it when closed, and
@@ -122,7 +141,7 @@ export function SocialFab({
           to order is the higher-intent action of the two. */}
       <div
         className={cn(
-          'flex flex-col items-end gap-4 transition-[opacity,transform] duration-300 ease-brand',
+          'pointer-events-auto flex flex-col items-end gap-4 transition-[opacity,transform] duration-300 ease-brand',
           open ? 'visible opacity-100' : 'invisible translate-y-2 opacity-0',
         )}
       >
@@ -167,7 +186,7 @@ export function SocialFab({
         /* Ink disc rather than the header's white one: this floats over white,
            gray-50 and the gold panel in turn, and white-on-white would need a
            ring to survive the first of those. Ink reads on all three. */
-        className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-ink text-white shadow-card transition-[background-color,transform] duration-200 ease-brand hover:bg-gray-700 active:scale-95"
+        className="pointer-events-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-ink text-white shadow-card transition-[background-color,transform] duration-200 ease-brand hover:bg-gray-700 active:scale-95"
       >
         <Icon name={open ? 'close' : 'chat'} size={22} />
       </button>
